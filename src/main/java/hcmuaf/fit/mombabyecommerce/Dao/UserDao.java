@@ -1,5 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
+import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
@@ -12,12 +13,17 @@ public interface UserDao {
     @SqlQuery("SELECT * FROM users WHERE email = :email")
     User getUserByEmail(@Bind("email") String email);
 
-    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, role, salt) " +
-            "VALUES (:fullName, :displayName, :email, :passwordUserName, 'USER', :salt)")
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName,status,confirmationToken, salt,facebookId) " +
+            "VALUES (:fullName, :displayName, :email, :passwordUserName,'PENDING',:confirmationToken,:salt,:facebookId))")
     @GetGeneratedKeys("id")
-    String createUser(@Bind("fullName") String fullName,
+    Integer createUser(@Bind("fullName") String fullName,
                       @Bind("displayName") String displayName,
                       @Bind("email") String email,
                       @Bind("passwordUserName") String passwordUserName,
-                      @Bind("salt") String salt);
+                       @Bind("confirmationToken") String confirmationToken,
+                      @Bind("salt") String salt,
+                        @Bind("facebookId") String facebookId);
+
+    @SqlQuery("SELECT id, roleType, name, description, isActive FROM role WHERE roleType = 'USER' LIMIT 1")
+    Role getDefaultUserRole();
 }
