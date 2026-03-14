@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.OtpDao;
+import hcmuaf.fit.mombabyecommerce.model.UserOtp;
 import org.jdbi.v3.core.Jdbi;
 
 import java.sql.Timestamp;
@@ -27,5 +28,15 @@ public class OtpService {
             e.printStackTrace();
             return false;
         }
+
+    }
+
+    public boolean verifyOTP(String email, String enteredOtp) {
+        try {
+           // to do
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
