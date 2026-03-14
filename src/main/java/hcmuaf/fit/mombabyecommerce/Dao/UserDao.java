@@ -56,4 +56,11 @@ public interface UserDao {
             "    left join role as r on ur.roleId = r.id\n" +
             "where u.id  = :id")
     User getUserById(@Bind("id") Integer id);
+
+    @SqlQuery("SELECT * FROM users WHERE id = :id")
+    User getPasswordByUserId(@Bind("id") Integer userId);
+
+    @SqlUpdate("UPDATE users SET passwordUserName = :passwordUserName, salt = :salt WHERE id = :id")
+    int updatePassword(@Bind("id") Integer id, @Bind("passwordUserName") String passwordUserName,
+                       @Bind("salt") String salt);
 }
