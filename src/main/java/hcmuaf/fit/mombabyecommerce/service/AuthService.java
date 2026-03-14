@@ -103,6 +103,29 @@ public class AuthService {
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
     }
+
+    public boolean changePassword(Integer userId, String oldPassword, String newPassword, boolean verifyOldPassword) {
+        User user = userDao.getPasswordByUserId(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        if (verifyOldPassword) {
+            String storedSalt = user.getSalt();
+            String storedHashedPassword = user.getPasswordUsername();
+
+            String hashedPassword = HashUtils.hashWithSalt(oldPassword, storedSalt);
+
+            if (!hashedPassword.equals(storedHashedPassword)) {
+                throw new IllegalArgumentException("Current password is incorrect");
+            }
+        }
+
+        String newSalt = HashUtils.generateSalt();
+        String hashedNewPassword = HashUtils.hashWithSalt(newPassword, newSalt);
+
+        return userDao.updatePassword(userId, hashedNewPassword, newSalt) > 0;
+    }
     }
 
 
