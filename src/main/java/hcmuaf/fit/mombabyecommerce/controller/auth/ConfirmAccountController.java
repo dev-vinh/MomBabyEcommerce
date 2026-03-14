@@ -3,12 +3,14 @@ package hcmuaf.fit.mombabyecommerce.controller.auth;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.service.AuthService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@WebServlet("/confirm")
 public class ConfirmAccountController extends HttpServlet {
     private final AuthService authService = new AuthService(DBConnection.getJdbi());
 
