@@ -1,13 +1,18 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.PermissionDao;
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
 import hcmuaf.fit.mombabyecommerce.Dao.UserRoleDao;
 import hcmuaf.fit.mombabyecommerce.config.ConfigLoader;
+import hcmuaf.fit.mombabyecommerce.model.Permission;
 import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.util.HashUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
 import java.util.UUID;
 
 public class AuthService {
@@ -15,14 +20,17 @@ public class AuthService {
     private UserRoleDao userRoleDao;
     String facebookId = null;
     private EmailService emailService;
+    private PermissionDao permissionDao;
 
     public AuthService(Jdbi jdbi) {
         this.userDao = jdbi.onDemand(UserDao.class);
         this.userRoleDao = jdbi.onDemand(UserRoleDao.class);
         this.emailService = new EmailService();
+        this.permissionDao = jdbi.onDemand(PermissionDao.class);
     }
 
     public User getUserByEmail(String email) {
+
         return userDao.getUserByEmail(email);
     }
 
@@ -52,7 +60,51 @@ public class AuthService {
             return true;
         }
         return false;
-        }
     }
+
+    public User login(String email, String password) {
+        User user = userDao.getUserByEmail(email.trim());
+        if (user != null) {
+            if ("PENDING".equals(user.getStatus())) {
+                throw new RuntimeException("Tài khoản chưa được xác nhận. Vui lòng kiểm tra email của bạn.");
+            }
+            if ("DEACTIVE".equals(user.getStatus())) {
+                throw new RuntimeException("Tài khoản của bạn đã bị vô hiệu hóa.");
+            }
+            String storedSalt = user.getSalt();
+            String storedHashedPassword = user.getPasswordUsername();
+
+            String hashedPassword = HashUtils.hashWithSalt(password.trim(), storedSalt);
+
+            if (hashedPassword.equals(storedHashedPassword)) {
+                return user;
+            }
+        }
+        return null;
+    }
+    public List<Permission> getPermissionsByRoleId(Integer roleId) {
+        return permissionDao.getPermissionsByRoleId(roleId);
+    }
+
+    public void saveSessionId(HttpServletRequest request, String email, String sessionId) {
+        HttpSession session = request.getSession();
+        session.setAttribute("sessionId", sessionId);
+        session.setAttribute("email", email);
+    }
+
+    public boolean confirmAccount(String token) {
+        User user = userDao.getUserByConfirmationToken(token);
+        if (user != null && "PENDING".equals(user.getStatus())) {
+            userDao.updateUserStatusByToken(token, "ACTIVE");
+            return true;
+        }
+        return false;
+    }
+    public User getUserById(Integer userId) {
+        return userDao.getUserById(userId);
+    }
+    }
+
+
 
 
