@@ -2,7 +2,8 @@ package hcmuaf.fit.mombabyecommerce.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-public class ResponseWrapper<T>  {
+
+public class ResponseWrapper<T> {
     private int statusCode;
     private String status;
     private String message;
@@ -13,14 +14,6 @@ public class ResponseWrapper<T>  {
         this.status = status;
         this.message = message;
         this.data = data;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
     }
 
     public String getStatus() {
@@ -46,6 +39,15 @@ public class ResponseWrapper<T>  {
     public void setData(T data) {
         this.data = data;
     }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String toJson() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -56,4 +58,3 @@ public class ResponseWrapper<T>  {
         }
     }
 }
-
