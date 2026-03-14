@@ -16,7 +16,7 @@ public class ProductService {
 
     public ProductService(Jdbi jdbi) {
         this.jdbi = jdbi;
-        this.productDao = jdbi.onDemand(ProductDao.class);
+            this.productDao = jdbi.onDemand(ProductDao.class);
     }
 
     public Product getProductById(int productId) {
