@@ -297,29 +297,4 @@ public interface ProductDao {
                                  @Bind("minPrice") @Nullable Integer minPrice,
                                  @Bind("maxPrice") @Nullable Integer maxPrice);
 
-    @SqlUpdate("""
-            UPDATE products 
-            SET name = :name,
-                description = :description,
-                sku = :sku,
-                categoryId = :categoryId,
-                brandId = :brandId,
-                primaryImage = COALESCE(:primaryImage, primaryImage),
-                height = :height,
-                length = :length,
-                width = :width,
-                weight = :weight
-            WHERE id = :id
-            """)
-    boolean updateProduct(@Bind("id") Integer id,
-                          @Bind("name") String name,
-                          @Bind("description") String description,
-                          @Bind("sku") String sku,
-                          @Bind("categoryId") Integer categoryId,
-                          @Bind("brandId") Integer brandId,
-                          @Bind("primaryImage") Integer primaryImage,
-                          @Bind("height") Integer height,
-                          @Bind("length") Integer length,
-                          @Bind("width") Integer width,
-                          @Bind("weight") Integer weight);
 }

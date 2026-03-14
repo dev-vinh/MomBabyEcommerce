@@ -8,53 +8,52 @@ import java.beans.ConstructorProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
-    Integer id;
-    String name;
-    String sku;
-    String description;
-    Boolean isActive;
-    Integer categoryId;
-    Integer brandId;
-    Integer noOfViews;
-    Integer noOfSold;
-    Integer imageId;
-    Integer price; // option
-    Integer stock; // option
-    Integer optionId;
-    String categoryName;
-    String imageUrl;
+        Integer id;
+        String name;
+        String sku;
+        String description;
+        Boolean isActive;
+        Integer categoryId;
+        Integer brandId;
+        Integer noOfViews;
+        Integer noOfSold;
+        Integer imageId;
+        Integer price; // option
+        Integer stock; // option
+        Integer optionId;
+        String categoryName;
+        String imageUrl;
 
-    Integer height;
-    Integer length;
-    Integer width;
-    Integer weight;
+        Integer height;
+        Integer length;
+        Integer width;
+        Integer weight;
+@ConstructorProperties({ "id", "name", "sku", "description", "isActive", "categoryId", "brandId", "noOfViews",
+        "noOfSold", "imageId", "price", "stock", "optionId", "categoryName", "imageUrl", "height", "length",
+        "width", "weight"
+})
+public Product(
+        @ColumnName("id") Integer id,
+        @ColumnName("name") @Nullable String name,
+        @ColumnName("sku") @Nullable String sku,
+        @ColumnName("description") @Nullable String description,
+        @ColumnName("isActive") @Nullable Boolean isActive,
+        @ColumnName("categoryId") @Nullable Integer categoryId,
+        @ColumnName("brandId") @Nullable Integer brandId,
+        @ColumnName("noOfViews") @Nullable Integer noOfViews,
+        @ColumnName("noOfSold") @Nullable Integer noOfSold,
+        @ColumnName("imageId") @Nullable Integer imageId,
+        @ColumnName("price") @Nullable Integer price,
+        @ColumnName("stock") @Nullable Integer stock,
+        @ColumnName("optionId") @Nullable Integer optionId,
+        @ColumnName("categoryName") @Nullable String categoryName,
+        @ColumnName("imageUrl") @Nullable String imageUrl,
+        @ColumnName("height") @Nullable Integer height,
+        @ColumnName("length") @Nullable Integer length,
+        @ColumnName("width") @Nullable Integer width,
+        @ColumnName("weight") @Nullable Integer weight
 
-    @ConstructorProperties({ "id", "name", "sku", "description", "isActive", "categoryId", "brandId", "noOfViews",
-            "noOfSold", "imageId", "price", "stock", "optionId", "categoryName", "imageUrl", "height", "length",
-            "width", "weight"
-    })
-    public Product(
-            @ColumnName("id") Integer id,
-            @ColumnName("name") @Nullable String name,
-            @ColumnName("sku") @Nullable String sku,
-            @ColumnName("description") @Nullable String description,
-            @ColumnName("isActive") @Nullable Boolean isActive,
-            @ColumnName("categoryId") @Nullable Integer categoryId,
-            @ColumnName("brandId") @Nullable Integer brandId,
-            @ColumnName("noOfViews") @Nullable Integer noOfViews,
-            @ColumnName("noOfSold") @Nullable Integer noOfSold,
-            @ColumnName("imageId") @Nullable Integer imageId,
-            @ColumnName("price") @Nullable Integer price,
-            @ColumnName("stock") @Nullable Integer stock,
-            @ColumnName("optionId") @Nullable Integer optionId,
-            @ColumnName("categoryName") @Nullable String categoryName,
-            @ColumnName("imageUrl") @Nullable String imageUrl,
-            @ColumnName("height") @Nullable Integer height,
-            @ColumnName("length") @Nullable Integer length,
-            @ColumnName("width") @Nullable Integer width,
-            @ColumnName("weight") @Nullable Integer weight
-
-    ) {
+) {
         this.id = id;
         this.name = name;
         this.sku = sku;
@@ -74,44 +73,6 @@ public class Product {
         this.length = length;
         this.width = width;
         this.weight = weight;
-    }
-
-    public Product(
-            Integer id,
-            @Nullable String name,
-            @Nullable String sku,
-            @Nullable String description,
-            @Nullable Boolean isActive,
-            @Nullable Integer categoryId,
-            @Nullable Integer brandId,
-            @Nullable Integer noOfViews,
-            @Nullable Integer noOfSold,
-            @Nullable Integer imageId,
-            @Nullable Integer price,
-            @Nullable Integer stock,
-            @Nullable Integer optionId,
-            @Nullable String categoryName,
-            @Nullable String imageUrl
-
-    ) {
-        this.id = id;
-        this.name = name;
-        this.sku = sku;
-        this.description = description;
-        this.isActive = isActive;
-        this.categoryId = categoryId;
-        this.brandId = brandId;
-        this.noOfViews = noOfViews;
-        this.noOfSold = noOfSold;
-        this.imageId = imageId;
-        this.price = price;
-        this.stock = stock;
-        this.optionId = optionId;
-        this.categoryName = categoryName;
-        this.imageUrl = imageUrl;
-    }
-
-    public Product() {
     }
 
     public Integer getId() {
@@ -265,7 +226,40 @@ public class Product {
     public void setWeight(Integer weight) {
         this.weight = weight;
     }
+    public Product(
+            Integer id,
+            @Nullable String name,
+            @Nullable String sku,
+            @Nullable String description,
+            @Nullable Boolean isActive,
+            @Nullable Integer categoryId,
+            @Nullable Integer brandId,
+            @Nullable Integer noOfViews,
+            @Nullable Integer noOfSold,
+            @Nullable Integer imageId,
+            @Nullable Integer price,
+            @Nullable Integer stock,
+            @Nullable Integer optionId,
+            @Nullable String categoryName,
+            @Nullable String imageUrl
 
+    ) {
+        this.id = id;
+        this.name = name;
+        this.sku = sku;
+        this.description = description;
+        this.isActive = isActive;
+        this.categoryId = categoryId;
+        this.brandId = brandId;
+        this.noOfViews = noOfViews;
+        this.noOfSold = noOfSold;
+        this.imageId = imageId;
+        this.price = price;
+        this.stock = stock;
+        this.optionId = optionId;
+        this.categoryName = categoryName;
+        this.imageUrl = imageUrl;
+    }
     @Override
     public String toString() {
         return "Product{" +
