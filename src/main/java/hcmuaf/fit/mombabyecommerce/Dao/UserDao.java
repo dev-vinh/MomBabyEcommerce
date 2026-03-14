@@ -26,4 +26,12 @@ public interface UserDao {
 
     @SqlQuery("SELECT id, roleType, name, description, isActive FROM role WHERE roleType = 'USER' LIMIT 1")
     Role getDefaultUserRole();
+
+    @SqlUpdate(value = """
+            UPDATE users
+            set needRefresh = :needRefresh
+            where id = :userId
+            """)
+    Boolean updateNeedRefresh(@Bind("userId") Integer userId, @Bind("needRefresh") Boolean needRefresh);
+
 }
