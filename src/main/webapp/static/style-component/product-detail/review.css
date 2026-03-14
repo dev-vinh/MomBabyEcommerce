@@ -1,0 +1,492 @@
+body {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    margin: 0 auto;
+    padding: 0;
+    background-color: #FFFFFF;
+    /*width: 90%;*/
+
+}
+
+.rating-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border-bottom: 1px solid #ddd;
+
+}
+.stars span {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.stars span:hover,
+.stars span.selected {
+    color: gold;
+}
+
+.write-review-section {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.write-review-section h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.input-group input[type="file"] {
+    padding: 0;
+}
+
+#user-rating .stars span {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+#user-rating .stars span.selected,
+#user-rating .stars span:hover,
+#user-rating .stars span:hover ~ span {
+    color: #FFD700;
+}
+
+button[type="submit"] {
+    background-color: #FFFFFF;
+    border: 1px solid #0a7cff;
+    color: #0a7cff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0a7cff;
+    border: 1px solid #0a7cff;
+    color: #FFFFFF;
+}
+.photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.photo-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.photo-preview .remove-photo {
+    position: relative;
+    cursor: pointer;
+}
+
+.photo-preview .remove-photo::after {
+    content: '×';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.custom-file-upload {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.file-label {
+    display: inline-block;
+    color: #0a7cff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+input[type="file"] {
+    display: none;
+}
+
+.photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+.rating-summary {
+    width: 30%;
+    padding-top: 50px;
+}
+
+.rating-summary .overall-rating {
+    font-size: 16px;
+}
+
+.rating-summary .stars {
+    color: orange;
+    font-size: 32px;
+    margin: 5px 0;
+}
+
+.rating-summary a {
+    color: #007bff;
+    text-decoration: none;
+    display: block;
+    margin-top: 5px;
+}
+
+.rating-summary a:hover {
+    text-decoration: underline;
+}
+
+.rating-details {
+    width: 40%;
+}
+
+.rating-details h1 {
+    margin-top: 0;
+}
+
+.rating-bar {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    gap: 5px;
+}
+
+.rating-bar div {
+    width: 80%;
+    height: 10px;
+    background-color: lightgray;
+    margin-left: 10px;
+    position: relative;
+    border-radius: 5px;
+}
+
+.rating-bar div span {
+    display: block;
+    height: 100%;
+    background-color: orange;
+    border-radius: 5px;
+}
+
+.rating-input {
+    width: 25%;
+    padding-top: 40px;
+}
+
+.rating-input h2 {
+    margin-top: 0;
+}
+
+.rating-input .stars {
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.rating-input .stars span {
+    cursor: pointer;
+    font-size: 24px;
+    color: orange;
+    padding: 5px 10px;
+    border: 1px solid orange;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+}
+.rating-input .stars span:hover {
+    background-color: #ffedcc;
+}
+.detailed-rating-section {
+    border-bottom: 1px solid #ddd;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+.criteria {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+}
+body > div.detailed-rating-section > div > div > span{
+    padding-bottom: 10px;
+}
+
+body > div.detailed-rating-section > h2{
+    font-size: 17px;
+    text-align: center;
+}
+body > h2{
+    font-size: 17px;
+    text-align: center;
+}
+body > div.filter-section > h2{
+    font-size: 17px;
+
+}
+.criteria-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20%;
+    text-align: center;
+}
+
+.criteria-bar {
+    width: 100%;
+    height: 10px;
+    background-color: lightgray;
+    position: relative;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.criteria-bar span {
+    display: block;
+    height: 100%;
+    background-color: orange;
+    border-radius: 5px;
+}
+
+.rating {
+    font-weight: bold;
+}
+
+
+.customer-images {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.customer-images img {
+    width: 18%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 50px;
+}
+
+.filter-section input[type="text"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 30%;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-controls select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100px;
+}
+
+.filter-section p {
+    margin: 0;
+}
+
+.filter-section button {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-section button:hover {
+    background-color: #0056b3;
+}
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 65%;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding-left: 50px;
+    padding-top: 40px;
+    border-bottom: 1px solid #ddd;
+
+}
+
+.review-header p {
+    margin-bottom: 15px;
+}
+
+.sort-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-section span {
+    color: #0073e6;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.sort-section select {
+    padding: 5px;
+    font-size: 14px;
+}
+.review-container {
+    font-family: Arial, sans-serif;
+    margin-top: 20px;
+    padding-left: 40px;
+}
+
+.review-container h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.review-item {
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+
+}
+.review {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.star-rating {
+    color: orange;
+}
+
+.review-item p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+
+.review-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.review-footer button {
+    background-color: transparent;
+    border: none;
+    color: #0073e6;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.brand-response {
+    background-color: #F1F1F1;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.response-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.response-content p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 5px 0;
+}
+
+.response-content ul {
+    margin: 5px 0;
+    padding-left: 15px;
+}
+
+.response-content a {
+    color: #0073e6;
+    text-decoration: none;
+}
+
+.image{
+    display: flex;
+    gap: 5px;
+}
+body > div.review-container > div > div.image > img {
+    width: 30%;
+    height: 50%;
+}

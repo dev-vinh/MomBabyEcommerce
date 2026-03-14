@@ -1,0 +1,87 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container styling */
+.carousel-container {
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+    position: relative;
+}
+
+/* Image styling */
+.carousel-image {
+    width: 100%;
+    height: auto;
+}
+
+.product-img {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+}
+
+
+/* Thumbnails styling */
+.thumbnails {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.thumbnail img{
+    width: 60px;
+    height: 60px;
+    margin: 0 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.thumbnail {
+    display: contents;
+    width: 60px;
+    height: 60px;
+    margin: 0 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.image {
+
+}
+
+.thumbnail.active {
+    opacity: 1;
+    border: 2px solid #000;
+}
+
+/* Navigation arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.nav-arrow.left {
+    left: -20px;
+}
+
+.nav-arrow.right {
+    right: -20px;
+}
