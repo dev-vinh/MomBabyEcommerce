@@ -1,0 +1,131 @@
+/* search.css */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*background-color: rgba(0, 0, 0, 0.8);*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.search-container {
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+.search-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    font-size: 16px;
+    padding-left: 40px;
+}
+.search-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #333;
+}
+
+.search-bar .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 18px;
+}
+
+.popular-keywords {
+    display: none;
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.popular-keywords p {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.popular-keywords ul {
+    list-style: none;
+}
+
+.popular-keywords li {
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.popular-keywords li:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestions {
+    margin-top: 30px;
+    color: white;
+}
+
+.suggestions h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.product-suggestions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.product {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    width: 120px;
+    color: black;
+}
+.product:hover{
+    cursor: pointer;
+}
+.product img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.product p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.product span {
+    font-size: 13px;
+    font-weight: bold;
+    color: black;
+}

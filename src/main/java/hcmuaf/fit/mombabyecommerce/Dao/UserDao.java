@@ -14,7 +14,7 @@ public interface UserDao {
     User getUserByEmail(@Bind("email") String email);
 
     @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName,status,confirmationToken, salt,facebookId) " +
-            "VALUES (:fullName, :displayName, :email, :passwordUserName,'PENDING',:confirmationToken,:salt,:facebookId))")
+            "VALUES (:fullName, :displayName, :email, :passwordUserName,'PENDING',:confirmationToken,:salt,:facebookId)")
     @GetGeneratedKeys("id")
     Integer createUser(@Bind("fullName") String fullName,
                       @Bind("displayName") String displayName,
@@ -26,4 +26,41 @@ public interface UserDao {
 
     @SqlQuery("SELECT id, roleType, name, description, isActive FROM role WHERE roleType = 'USER' LIMIT 1")
     Role getDefaultUserRole();
+
+    @SqlUpdate(value = """
+            UPDATE users
+            set needRefresh = :needRefresh
+            where id = :userId
+            """)
+    Boolean updateNeedRefresh(@Bind("userId") Integer userId, @Bind("needRefresh") Boolean needRefresh);
+// check lại dưới db
+    @SqlQuery(value = "SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,\n" +
+            "        i.url as avatarUrl, u.status, u.confirmationToken, u.passwordUserName, u.salt, u.facebookId , u.needRefresh , \n" +
+            "        r.id as role_id, r.roleType as role_roleType, r.name as role_name, r.description as role_description, r.isActive as role_isActive\n" +
+            "FROM users as u\n" +
+            "    left join image as i on u.avatarId = i.id\n" +
+            "    left join user_role as ur on u.id = ur.userId\n" +
+            "    left join role as r on ur.roleId = r.id\n" +
+            "WHERE u.confirmationToken = :token")
+    User getUserByConfirmationToken(@Bind("token") String token);
+
+    @SqlUpdate("UPDATE users SET status = :status WHERE confirmationToken = :token")
+    void updateUserStatusByToken(@Bind("token") String token, @Bind("status") String status);
+
+    @SqlQuery(value = "select u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,\n" +
+            "        i.url as avatarUrl, u.status, u.confirmationToken, u.passwordUserName, u.salt, u.facebookId,  u.needRefresh ,\n" +
+            "        r.id as role_id, r.roleType as role_roleType, r.name as role_name, r.description as role_description, r.isActive as role_isActive\n" +
+            "from users as u\n" +
+            "    left join image as i on u.avatarId = i.id\n" +
+            "    left join user_role as ur on u.id = ur.userId\n" +
+            "    left join role as r on ur.roleId = r.id\n" +
+            "where u.id  = :id")
+    User getUserById(@Bind("id") Integer id);
+
+    @SqlQuery("SELECT * FROM users WHERE id = :id")
+    User getPasswordByUserId(@Bind("id") Integer userId);
+
+    @SqlUpdate("UPDATE users SET passwordUserName = :passwordUserName, salt = :salt WHERE id = :id")
+    int updatePassword(@Bind("id") Integer id, @Bind("passwordUserName") String passwordUserName,
+                       @Bind("salt") String salt);
 }
