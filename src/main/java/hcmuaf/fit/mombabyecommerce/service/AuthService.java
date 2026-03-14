@@ -100,6 +100,9 @@ public class AuthService {
         }
         return false;
     }
+    public User getUserById(Integer userId) {
+        return userDao.getUserById(userId);
+    }
     }
 
 
