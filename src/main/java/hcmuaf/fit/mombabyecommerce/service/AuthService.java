@@ -8,6 +8,8 @@ import hcmuaf.fit.mombabyecommerce.model.Permission;
 import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.util.HashUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
@@ -82,6 +84,21 @@ public class AuthService {
     }
     public List<Permission> getPermissionsByRoleId(Integer roleId) {
         return permissionDao.getPermissionsByRoleId(roleId);
+    }
+
+    public void saveSessionId(HttpServletRequest request, String email, String sessionId) {
+        HttpSession session = request.getSession();
+        session.setAttribute("sessionId", sessionId);
+        session.setAttribute("email", email);
+    }
+
+    public boolean confirmAccount(String token) {
+        User user = userDao.getUserByConfirmationToken(token);
+        if (user != null && "PENDING".equals(user.getStatus())) {
+            userDao.updateUserStatusByToken(token, "ACTIVE");
+            return true;
+        }
+        return false;
     }
     }
 

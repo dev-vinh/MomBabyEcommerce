@@ -33,5 +33,17 @@ public interface UserDao {
             where id = :userId
             """)
     Boolean updateNeedRefresh(@Bind("userId") Integer userId, @Bind("needRefresh") Boolean needRefresh);
+// check lại dưới db
+    @SqlQuery(value = "SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,\n" +
+            "        i.url as avatarUrl, u.status, u.confirmationToken, u.passwordUserName, u.salt, u.facebookId , u.needRefresh , \n" +
+            "        r.id as role_id, r.roleType as role_roleType, r.name as role_name, r.description as role_description, r.isActive as role_isActive\n" +
+            "FROM users as u\n" +
+            "    left join image as i on u.avatarId = i.id\n" +
+            "    left join user_role as ur on u.id = ur.userId\n" +
+            "    left join role as r on ur.roleId = r.id\n" +
+            "WHERE u.confirmationToken = :token")
+    User getUserByConfirmationToken(@Bind("token") String token);
 
+    @SqlUpdate("UPDATE users SET status = :status WHERE confirmationToken = :token")
+    void updateUserStatusByToken(@Bind("token") String token, @Bind("status") String status);
 }
