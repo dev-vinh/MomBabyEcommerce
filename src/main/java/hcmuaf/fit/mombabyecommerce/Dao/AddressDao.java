@@ -8,6 +8,8 @@ import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.List;
+
 @RegisterConstructorMapper(Address.class)
 public interface AddressDao {
     @SqlQuery(value = "SELECT *" +
@@ -19,4 +21,11 @@ public interface AddressDao {
             "VALUES (:userId, :addressType, :fullName, :phoneNumber, :street, :city, :state, :country, :isDefault)")
     @GetGeneratedKeys("id")
     int addAddress(  @BindBean Address address);
+
+    @SqlQuery(value = "SELECT * " +
+            "FROM address as a " +
+            "WHERE a.userId = :userId " )
+    List<Address> getAddressByUserId(@Bind("userId") Integer userId);
+
+
 }

@@ -5,6 +5,8 @@ import hcmuaf.fit.mombabyecommerce.model.Address;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 
+import java.util.List;
+
 @RegisterBeanMapper(Address.class)
 public class AddressService {
     public AddressService(Jdbi jdbi) {
@@ -22,5 +24,8 @@ public class AddressService {
             address.setIsDefault(false);
         }
         return addressDao.addAddress(address);
+    }
+    public List<Address> findByUserId(Integer userId) {
+        return addressDao.getAddressByUserId(userId);
     }
 }
