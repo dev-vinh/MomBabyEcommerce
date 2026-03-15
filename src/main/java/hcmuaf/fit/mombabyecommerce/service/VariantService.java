@@ -20,6 +20,11 @@ public class VariantService {
         int id = variantDao.createVariant(name, categoryId);
         return variantDao.getVariantById(id);
     }
+    public int addOptionVariantValue(Integer optionId, Integer variantId) {
+        return variantDao.addOptionVariantValue(optionId, variantId);
+    }
+
+
 
 }
 
