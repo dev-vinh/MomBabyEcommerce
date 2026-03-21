@@ -1,11 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
+import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
+import hcmuaf.fit.mombabyecommerce.contant.PaymentStatus;
 import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
-import vn.edu.hcmuaf.fit.trang_web_ban_hang_san_pham_cho_me_va_be.contant.OrderStatus;
-import vn.edu.hcmuaf.fit.trang_web_ban_hang_san_pham_cho_me_va_be.contant.PaymentStatus;
-
 import java.time.LocalDate;
 
 public class Order {
@@ -18,19 +17,15 @@ public class Order {
     Integer addressId;
     Boolean isCOD;
 
-
-    // Su dung cho đại diẹn order
     Integer quantity;
     Integer total;
     String productName;
     String productImage;
     String userName;
 
-    //    Vận chuyển
     Integer shippingFee;
     String shippingId;
 
-    //    Review
     Boolean isReviewed;
 
 
