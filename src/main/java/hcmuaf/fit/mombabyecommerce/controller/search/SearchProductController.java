@@ -1,5 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.controller.search;
 
+import hcmuaf.fit.mombabyecommerce.util.ResponseWrapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
-import vn.edu.hcmuaf.fit.trang_web_ban_hang_san_pham_cho_me_va_be.util.ResponseWrapper;
+
 
 import java.io.IOException;
 import java.util.List;
