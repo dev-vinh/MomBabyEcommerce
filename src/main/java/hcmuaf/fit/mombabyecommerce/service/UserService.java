@@ -18,4 +18,20 @@ public class UserService {
         User user = userDao.getUserById(id);
         return user;
     }
+
+    public Boolean updateAvatar(Integer userId, Integer avatarId) {
+        return userDao.updateAvatar(userId, avatarId);
+    }
+
+    public Boolean updateUser(User user) {
+        return userDao.updateUser(
+                user.getId(),
+                user.getFullName(),
+                user.getDisplayName(),
+                user.getdOB(),
+                user.getGender(),
+                user.getPhoneNumber()
+        );
+    }
+
 }

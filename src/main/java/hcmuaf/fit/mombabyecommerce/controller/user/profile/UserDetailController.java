@@ -1,9 +1,7 @@
-package hcmuaf.fit.mombabyecommerce.controller.user.address;
+package hcmuaf.fit.mombabyecommerce.controller.user.profile;
 
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
-import hcmuaf.fit.mombabyecommerce.model.Address;
 import hcmuaf.fit.mombabyecommerce.model.User;
-import hcmuaf.fit.mombabyecommerce.service.AddressService;
 import hcmuaf.fit.mombabyecommerce.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,12 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.List;
 
-@WebServlet(name = "UserAddressController", value = "/user-address")
-public class UserAddressController extends HttpServlet {
+@WebServlet(name = "UserDetailController", value = "/user-profile")
+public class UserDetailController extends HttpServlet {
     UserService userService = new UserService(DBConnection.getJdbi());
-    AddressService addressService = new AddressService(DBConnection.getJdbi());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,13 +22,13 @@ public class UserAddressController extends HttpServlet {
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
 
+        User user= null;
         if (userId != null) {
-            User user = userService.getUserById(userId);
-            List<Address> addresses = addressService.findByUserId(userId);
+            user = userService.getUserById(userId);
             request.setAttribute("user", user);
-            request.setAttribute("addresses", addresses);
-        }
-        request.getRequestDispatcher("user/user-address.jsp").forward(request, response);
 
+            System.out.println(user.toString());
+        }
+        request.getRequestDispatcher("user/user-profile.jsp").forward(request, response);
     }
 }

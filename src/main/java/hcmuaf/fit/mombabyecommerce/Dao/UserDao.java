@@ -8,6 +8,8 @@ import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.time.LocalDate;
+
 @RegisterConstructorMapper(User.class)
 public interface UserDao {
     @SqlQuery("SELECT * FROM users WHERE email = :email")
@@ -75,5 +77,25 @@ public interface UserDao {
                                        @Bind("confirmationToken") String confirmationToken,
                                        @Bind("facebookId") String facebookId);
 
+    @SqlUpdate(value ="UPDATE users\n" +
+            "SET avatarId = :avatarId " +
+            "where id = :userId")
+    Boolean updateAvatar(@Bind("userId") Integer userId, @Bind("avatarId") Integer avatarId);
 
+    @SqlUpdate(value = "UPDATE users\n" +
+            "SET\n" +
+            "    fullName = :fullName ,\n" +
+            "    displayName = :displayName,\n" +
+            "    dOB = :dOB, " +
+            "    gender = :gender,\n" +
+            "    phoneNumber = :phoneNumber " +
+            "where id = :userId")
+    Boolean updateUser(
+            @Bind("userId") Integer userId,
+            @Bind("fullName") String fullName,
+            @Bind("displayName") String displayName,
+            @Bind("dOB") LocalDate dOB,
+            @Bind("gender") String gender,
+            @Bind("phoneNumber") String phoneNumber
+    );
 }
