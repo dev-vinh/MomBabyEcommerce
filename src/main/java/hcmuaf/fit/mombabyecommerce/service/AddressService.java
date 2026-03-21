@@ -36,4 +36,8 @@ public class AddressService {
     public Boolean updateStatus(Integer id, String status) {
         return addressDao.updateStatus(id, status);
     }
+
+    public Boolean updateDefautlById(Integer id, boolean defaultStatus) {
+        return addressDao.updateDefaultById(id, defaultStatus);
+    }
 }

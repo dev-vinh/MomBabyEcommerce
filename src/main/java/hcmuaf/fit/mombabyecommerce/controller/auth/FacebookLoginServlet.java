@@ -4,6 +4,7 @@ import hcmuaf.fit.mombabyecommerce.config.ConfigLoader;
 import hcmuaf.fit.mombabyecommerce.config.EnvConfig;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.UUID;
-
+@WebServlet("/login-facebook")
 public class FacebookLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final String FACEBOOK_APP_ID = EnvConfig.get("FACEBOOK_APP_ID");

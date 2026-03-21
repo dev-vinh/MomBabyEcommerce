@@ -34,6 +34,5 @@ public class UserAddressController extends HttpServlet {
         }
         request.getRequestDispatcher("user/user-address.jsp").forward(request, response);
 
-
     }
 }

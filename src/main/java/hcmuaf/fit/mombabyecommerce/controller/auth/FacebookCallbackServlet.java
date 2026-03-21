@@ -9,6 +9,7 @@ import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.service.AuthService;
 import hcmuaf.fit.mombabyecommerce.util.FacebookUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+@WebServlet("/facebook-callback")
 public class FacebookCallbackServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final String FACEBOOK_APP_ID = EnvConfig.get("FACEBOOK_APP_ID");
