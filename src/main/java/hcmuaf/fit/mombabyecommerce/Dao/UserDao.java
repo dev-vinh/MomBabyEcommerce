@@ -63,4 +63,17 @@ public interface UserDao {
     @SqlUpdate("UPDATE users SET passwordUserName = :passwordUserName, salt = :salt WHERE id = :id")
     int updatePassword(@Bind("id") Integer id, @Bind("passwordUserName") String passwordUserName,
                        @Bind("salt") String salt);
+
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, salt, status, confirmationToken, facebookId) " +
+            "VALUES (:fullName, :displayName, :email, :password, :salt, 'ACTIVE', :confirmationToken, :facebookId)")
+    @GetGeneratedKeys("id")
+    Integer createUserWithActiveStatus(@Bind("fullName") String fullName,
+                                       @Bind("displayName") String displayName,
+                                       @Bind("email") String email,
+                                       @Bind("passwordUserName") String passwordUserName,
+                                       @Bind("salt") String salt,
+                                       @Bind("confirmationToken") String confirmationToken,
+                                       @Bind("facebookId") String facebookId);
+
+
 }

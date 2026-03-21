@@ -28,4 +28,12 @@ public class AddressService {
     public List<Address> findByUserId(Integer userId) {
         return addressDao.getAddressByUserId(userId);
     }
+
+    public Address findById(Integer id) {
+        return addressDao.getAddressById(id);
+    }
+
+    public Boolean updateStatus(Integer id, String status) {
+        return addressDao.updateStatus(id, status);
+    }
 }

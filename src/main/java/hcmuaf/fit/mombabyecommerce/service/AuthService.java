@@ -126,6 +126,25 @@ public class AuthService {
 
         return userDao.updatePassword(userId, hashedNewPassword, newSalt) > 0;
     }
+    public boolean registerWithFacebookActive(String fullName, String displayName, String email, String password, String facebookId) {
+        if (userDao.getUserByEmail(email) != null) {
+            return false; // Email đã tồn tại
+        }
+        String salt = HashUtils.generateSalt();
+        String hashedPassword = HashUtils.hashWithSalt(password, salt);
+        String confirmationToken = UUID.randomUUID().toString();
+
+        Integer userId = userDao.createUserWithActiveStatus(fullName, displayName, email, hashedPassword, salt, confirmationToken, facebookId);
+
+        if (userId != null) {
+            Role defaultRole = userDao.getDefaultUserRole();
+            if (defaultRole != null) {
+                userRoleDao.addUserRole(userId, defaultRole.getId());
+            }
+            return true;
+        }
+        return false;
+    }
     }
 
 

@@ -27,5 +27,13 @@ public interface AddressDao {
             "WHERE a.userId = :userId " )
     List<Address> getAddressByUserId(@Bind("userId") Integer userId);
 
+    @SqlQuery(value = "SELECT *" +
+            " FROM address" +
+            " WHERE id = :addressId;")
+    Address getAddressById(@Bind("addressId") Integer addressId);
 
+    @SqlUpdate("UPDATE address " +
+            " SET status=:status " +
+            "WHERE id =:id ")
+    Boolean updateStatus(@Bind("id") Integer id,@Bind("status") String status);
 }
