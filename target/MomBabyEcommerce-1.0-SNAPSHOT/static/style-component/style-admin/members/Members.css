@@ -1,0 +1,435 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+
+
+html, body{
+    width: 100%;
+    height: 100%;
+
+}
+
+
+
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.left {
+    width: 270px;
+}
+
+.center{
+    width: 100%;
+}
+
+.side_bar {
+    width: 270px;
+}
+
+
+.content {
+    margin-top: 60px;
+    padding: 20px;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.content_header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#invite{
+    background-color: white;
+    color: #0a7cff;
+    padding: 8px 15px;
+    border: 1px solid #007bff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.fa-user-plus{
+    color: #0a7cff;
+}
+
+#invite:hover{
+    background-color: #5b49c3;
+}
+
+.member_list{
+
+}
+
+
+.operation{
+    display: flex;
+    flex-direction: row;
+
+}
+
+.search{
+
+}
+
+#serch_member{
+    height: 35px;
+    border: 1px solid rgba(128, 128, 128, 0.631);
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+
+.search {
+    position: relative;
+    display: inline-block;
+}
+
+.search input[type="search"] {
+    width: 200px;
+    padding: 10px 35px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.search i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.search i:active {
+    transform: translateY(-50%) scale(0.9);
+    color: black;
+}
+
+#menu{
+    height: 100%;
+    width: 200px;
+    margin-left: 50px;
+    border: 1px solid  #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none
+
+}
+
+
+#member_table {
+    width: 100%;
+    margin-top: 30px;
+    text-align: left;
+    border-collapse: separate;
+    border-spacing: 0;
+    /* border-bottom: 1px solid #ddd;  */
+
+}
+
+#member_table tr{
+    height: 50px;
+}
+
+#member_table th{
+    background-color: rgb(226, 226, 226);
+    padding-left: 10px;
+
+}
+
+#member_table thead tr th:first-child {
+    border-top-left-radius: 10px;
+}
+
+#member_table thead tr th:last-child {
+    border-top-right-radius: 10px;
+}
+
+
+#member_table tbody td{
+    padding: 15px;
+    border-bottom: 2px solid #ddd;
+    /* box-shadow: 0px 3px 0px 0px #dbdbdb45; */
+    padding-left: 5px;;
+}
+#member_table tbody td:first-child {
+    border-left: 1px solid #ddd;
+}
+
+#member_table tbody td:last-child {
+    border-right: 1px solid #ddd;
+}
+
+
+.user{
+    display: flex;
+    flex-direction: row;
+}
+
+.user .avatar{
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border-radius:50%;
+    margin-right:5px;
+}
+
+.user .infor{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    justify-content: center;
+}
+
+.infor .name{
+    font-size: 16px;
+
+}
+
+.infor .mail{
+    font-size: 12px;
+    color: #666;
+}
+
+.role .role_list{
+    width: 200px;
+    height: 35px;
+    font-size: 16px;
+    border: 1px solid #e4e4e499;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+
+.active p{
+    background-color: #D6FDE1;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #096f2b;
+}
+
+.inactive p{
+    background-color: #f7d4d2;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #b54a48;
+}
+
+.pending p{
+    background-color: #fbffbd;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #737127;
+}
+
+.more_action{
+    cursor: pointer;
+}
+
+.more_action {
+    position: relative; /* Để định vị popup con tuyệt đối so với td */
+}
+
+/* Popup menu */
+.more_action_menu {
+    position: absolute;
+    top: 25px; /* chỉnh tuỳ ý */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    min-width: 115px;
+    z-index: 999;
+}
+.hidden {
+    display: none;
+}
+
+/* Nút Deactivate trong popup */
+.btn_deactivate {
+    background-color: #ffefef;
+    border: 1px solid #ffcccc;
+    border-radius: 4px;
+    color: #e00;
+    cursor: pointer;
+    padding: 5px 8px;
+    width: 100%;
+    text-align: left;
+}
+.btn_deactivate:hover {
+    background-color: #ffe0e0;
+}
+
+/* Màu Pending */
+.status.deactive {
+    background-color: #fef9c3;
+    color: #92400e;
+    border-radius: 4px;
+    padding: 3px 6px;
+}
+
+/* Cài đặt chung cho status_label */
+.status_label {
+    display: inline-block;       /* cho phép hiển thị inline, có thể áp dụng padding, margin */
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9em;
+    text-transform: uppercase;   /* chuyển chữ thành in hoa */
+}
+
+/* Cài đặt riêng cho từng trạng thái */
+.status_label.active {
+    background-color: #e9f7ef;
+    color: #2ecc71;
+    border-radius: 4px;
+    padding: 6px;
+    font-weight: 500;
+}
+.status_label.pending {
+    background-color: #fce7f3;
+    color: #c026d3;
+    border-radius: 4px;
+    padding: 6px;
+}
+.status_label.banned {
+    background-color: #fde2e2;
+    color: #e74c3c;
+    border-radius: 4px;
+    padding: 6px;
+}
+.status_label.deactive {
+    background-color: #fef9c3;
+    color: #da8c5c;
+    border-radius: 4px;
+    padding: 6px;
+}
+.status_label.unknown {
+    background-color: #d1d5db;
+    color: #1f2937;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+
+/* Nút Invite */
+.btn_invite {
+    padding: 8px 14px;
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn_invite:hover {
+    background-color: #1e4fbf;
+}
+
+/* Modal: Overlay toàn màn hình */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* Modal content: Hộp chứa nội dung popup */
+.modal_content {
+    background-color: #fff;
+    padding: 20px 24px;
+    border-radius: 6px;
+    width: 400px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Nút đóng của modal */
+.close_btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Form các nhóm */
+.form_group {
+    margin-bottom: 16px;
+}
+.form_group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.form_group input[type="text"],
+.form_group input[type="email"],
+.form_group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* Phần hành động của form (Cancel, Submit) */
+.form_action {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.btn_cancel {
+    background-color: #e5e7eb;
+    color: #111827;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+.btn_cancel:hover {
+    background-color: #cbd5e1;
+}
+.btn_submit {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+.btn_submit:hover {
+    background-color: #1e4fbf;
+}
+.modal.hidden {
+    display: none !important;
+}
+
+.modal_content h2{
+    padding-bottom: 10px;
+}
