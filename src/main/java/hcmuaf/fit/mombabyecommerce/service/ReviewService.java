@@ -1,28 +1,28 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
-import hcmuaf.fit.mombabyecommerce.Dao.ReviewDao;
+import hcmuaf.fit.mombabyecommerce.Dao.ProductReviewDao;
 import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
-import hcmuaf.fit.mombabyecommerce.model.Review;
+import hcmuaf.fit.mombabyecommerce.model.ProductReview;
 import org.jdbi.v3.core.Jdbi;
 
 public class ReviewService {
     Jdbi jdbi;
-    ReviewDao reviewDao;
+    ProductReviewDao reviewDao;
 
     public ReviewService(Jdbi jdbi) {
         this.jdbi = jdbi;
-        this.reviewDao = jdbi.onDemand(ReviewDao.class);
+        this.reviewDao = jdbi.onDemand(ProductReviewDao.class);
     }
     public boolean isOrderDelivered(int orderId, int userId) {
         OrderStatus orderStatus = reviewDao.getOrderStatus(orderId, userId);
-        return orderStatus != null && orderStatus == OrderStatus.DELIVERED;
+        return orderStatus != null && orderStatus == OrderStatus.DELIVERY;
     }
 
-    public Review getReview(int userId, int orderId, int productId) {
+    public ProductReview getReview(int userId, int orderId, int productId) {
         return reviewDao.getReview(userId, orderId, productId);
     }
 
-    public Boolean addReview(Review review) {
+    public Boolean addReview(ProductReview review) {
         int existing = reviewDao.countExistingReview(
                 review.getUserId(),
                 review.getOrderId(),
@@ -30,7 +30,7 @@ public class ReviewService {
         );
 
         if (existing > 0) {
-            System.out.println(" Review đã tồn tại");
+            System.out.println(" ProductReview đã tồn tại");
             return false;
         }
 
