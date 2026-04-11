@@ -7,6 +7,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 @RegisterConstructorMapper(UserRole.class)
 public interface UserRoleDao {
+
     @SqlUpdate(value = """
             INSERT INTO user_role(userId, roleId)
             VALUES (:userId, :roleId)

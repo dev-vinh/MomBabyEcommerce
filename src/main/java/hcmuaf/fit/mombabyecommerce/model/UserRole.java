@@ -47,6 +47,6 @@ public class UserRole {
                 "id=" + id +
                 ", userId=" + userId +
                 ", roleId=" + roleId +
-                '}' +"\n";
+                '}';
     }
 }

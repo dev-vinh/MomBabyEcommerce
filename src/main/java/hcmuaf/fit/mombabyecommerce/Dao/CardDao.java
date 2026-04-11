@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import javax.smartcardio.Card;
 import java.time.LocalDate;
 import java.util.List;
+
 @RegisterConstructorMapper(Card.class)
 public interface CardDao {
     @SqlQuery(value = "SELECT *\n" +
@@ -15,14 +16,20 @@ public interface CardDao {
             "WHERE userId = :userId;")
     List<Card> getCardByUserId(@Bind("userId") Integer userId);
 
-    @SqlUpdate(value = "insert into card( userId, duration, type, isDefault, last4) VALUE (\n" +
-            "  :userId, :duration , :type , :isDefault , :last4 \n" +
+    @SqlQuery(value = "SELECT *\n" +
+            "FROM card\n" +
+            "WHERE id = :cardId;")
+    Card getCardById(@Bind("cardId") Integer cardId);
+
+
+
+    @SqlUpdate(value = "insert into card( userId, duration, type, isDefault) VALUE (\n" +
+            "  :userId, :duration , :type , :isDefault  \n" +
             " );")
     Boolean addCard(
             @Bind("userId") Integer userId,
             @Bind("duration") LocalDate duration,
             @Bind("type") String type,
-            @Bind("isDefault") Boolean isDefault,
-            @Bind("last4") Integer last4
+            @Bind("isDefault") Boolean isDefault
     );
 }

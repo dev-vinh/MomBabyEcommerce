@@ -9,75 +9,54 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RegisterConstructorMapper(User.class)
+
 public interface UserDao {
-    @SqlQuery("SELECT * FROM users WHERE email = :email")
-    User getUserByEmail(@Bind("email") String email);
 
-    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName,status,confirmationToken, salt,facebookId) " +
-            "VALUES (:fullName, :displayName, :email, :passwordUserName,'PENDING',:confirmationToken,:salt,:facebookId)")
-    @GetGeneratedKeys("id")
-    Integer createUser(@Bind("fullName") String fullName,
-                      @Bind("displayName") String displayName,
-                      @Bind("email") String email,
-                      @Bind("passwordUserName") String passwordUserName,
-                       @Bind("confirmationToken") String confirmationToken,
-                      @Bind("salt") String salt,
-                        @Bind("facebookId") String facebookId);
-
-    @SqlQuery("SELECT id, roleType, name, description, isActive FROM role WHERE roleType = 'USER' LIMIT 1")
-    Role getDefaultUserRole();
-
-    @SqlUpdate(value = """
-            UPDATE users
-            set needRefresh = :needRefresh
-            where id = :userId
-            """)
-    Boolean updateNeedRefresh(@Bind("userId") Integer userId, @Bind("needRefresh") Boolean needRefresh);
-// check lại dưới db
-    @SqlQuery(value = "SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,\n" +
-            "        i.url as avatarUrl, u.status, u.confirmationToken, u.passwordUserName, u.salt, u.facebookId , u.needRefresh , \n" +
-            "        r.id as role_id, r.roleType as role_roleType, r.name as role_name, r.description as role_description, r.isActive as role_isActive\n" +
-            "FROM users as u\n" +
-            "    left join image as i on u.avatarId = i.id\n" +
-            "    left join user_role as ur on u.id = ur.userId\n" +
-            "    left join role as r on ur.roleId = r.id\n" +
-            "WHERE u.confirmationToken = :token")
-    User getUserByConfirmationToken(@Bind("token") String token);
-
-    @SqlUpdate("UPDATE users SET status = :status WHERE confirmationToken = :token")
-    void updateUserStatusByToken(@Bind("token") String token, @Bind("status") String status);
+    @SqlQuery("SELECT * FROM users")
+    List<User> getAllUsers();
 
     @SqlQuery(value = "select u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,\n" +
-            "        i.url as avatarUrl, u.status, u.confirmationToken, u.passwordUserName, u.salt, u.facebookId,  u.needRefresh ,\n" +
-            "        r.id as role_id, r.roleType as role_roleType, r.name as role_name, r.description as role_description, r.isActive as role_isActive\n" +
+            "        i.url as avatar_url " +
             "from users as u\n" +
-            "    left join image as i on u.avatarId = i.id\n" +
-            "    left join user_role as ur on u.id = ur.userId\n" +
-            "    left join role as r on ur.roleId = r.id\n" +
+            "     left join image as i on u.avatarId = i.id\n" +
             "where u.id  = :id")
     User getUserById(@Bind("id") Integer id);
 
-    @SqlQuery("SELECT * FROM users WHERE id = :id")
-    User getPasswordByUserId(@Bind("id") Integer userId);
+    @SqlQuery("SELECT * FROM users WHERE email = :email")
+    User getUserByEmail(@Bind("email") String email);
+
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, role, salt) " +
+            "VALUES (:fullName, :displayName, :email, :passwordUserName, 'USER', :salt)")
+    @GetGeneratedKeys("id")
+    String createUser(@Bind("fullName") String fullName,
+                      @Bind("displayName") String displayName,
+                      @Bind("email") String email,
+                      @Bind("passwordUserName") String passwordUserName,
+                      @Bind("salt") String salt);
+
+    @SqlUpdate("UPDATE users SET fullName = :fullName, email = :email, passwordUserName = :passwordUserName WHERE id = :id")
+    void updateUser(@Bind("id") Integer id,
+                    @Bind("fullName") String fullName,
+                    @Bind("email") String email,
+                    @Bind("passwordUserName") String passwordUserName);
+
+    @SqlUpdate("DELETE FROM users WHERE id = :id")
+    void deleteUser(@Bind("id") Integer id);
 
     @SqlUpdate("UPDATE users SET passwordUserName = :passwordUserName, salt = :salt WHERE id = :id")
     int updatePassword(@Bind("id") Integer id, @Bind("passwordUserName") String passwordUserName,
                        @Bind("salt") String salt);
 
-    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, salt, status, confirmationToken, facebookId) " +
-            "VALUES (:fullName, :displayName, :email, :password, :salt, 'ACTIVE', :confirmationToken, :facebookId)")
-    @GetGeneratedKeys("id")
-    Integer createUserWithActiveStatus(@Bind("fullName") String fullName,
-                                       @Bind("displayName") String displayName,
-                                       @Bind("email") String email,
-                                       @Bind("passwordUserName") String passwordUserName,
-                                       @Bind("salt") String salt,
-                                       @Bind("confirmationToken") String confirmationToken,
-                                       @Bind("facebookId") String facebookId);
+    @SqlQuery("SELECT * FROM users WHERE id = :id")
+    User getPasswordByUserId(@Bind("id") Integer userId);
 
-    @SqlUpdate(value ="UPDATE users\n" +
+    @SqlQuery("SELECT url FROM image WHERE id = :avatarId")
+    String getAvatarUrlById(@Bind("avatarId") Integer avatarId);
+
+    @SqlUpdate(value = "UPDATE users\n" +
             "SET avatarId = :avatarId " +
             "where id = :userId")
     Boolean updateAvatar(@Bind("userId") Integer userId, @Bind("avatarId") Integer avatarId);
@@ -96,6 +75,9 @@ public interface UserDao {
             @Bind("displayName") String displayName,
             @Bind("dOB") LocalDate dOB,
             @Bind("gender") String gender,
-            @Bind("phoneNumber") String phoneNumber
-    );
+            @Bind("phoneNumber") String phoneNumber);
+
+    @SqlUpdate("UPDATE users SET status = :status WHERE email = :email")
+    int updateStatusByEmail(@Bind("email") String email, @Bind("status") String status);
+
 }
