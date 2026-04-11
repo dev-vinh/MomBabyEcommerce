@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.card-form {
+    width: 400px;
+    padding: 20px;
+    border-radius: 8px;
+}
+.card-form h2 {
+    font-size: 24px;
+    margin-bottom: 40px;
+}
+.card-form label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.card-form input[type="text"],
+.card-form input[type="number"],
+.card-form input[type="password"] {
+    width: calc(100% - 10px);
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+#name {
+    font-size: 12px;
+}
+#card-number{
+    font-size: 12px;
+}
+#cvv{
+    font-size: 12px;
+}
+#expiry{
+    font-size: 12px;
+}
+.input-group{
+    justify-content: space-between;
+}
+.card-form .input-group {
+    display: flex;
+    gap: 10px;
+}
+.card-form .checkbox-group {
+    display: flex;
+    font-size: 14px;
+    margin: 10px 0;
+    color: #6c757d;
+    gap: 10px;
+}
+body > div > div.checkbox-group > label{
+    padding-top: 7px;
+}
+.card-form .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.card-form button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid rgba(231,234,243,.7);
+}
+.save-btn {
+    background-color: #377dff;
+    color: white;
+}
+.save-btn:hover {
+    background-color: #377dff;
+}
+.close-btn {
+    background-color: #fff;
+
+}
+.close-btn:hover {
+    color: #377dff;
+}

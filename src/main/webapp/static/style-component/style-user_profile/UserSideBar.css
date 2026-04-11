@@ -1,0 +1,196 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+html{
+    overflow: hidden;
+}
+/*Reuse*/
+
+
+
+.mid_align{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rec_horizontal{
+    width: 70%;
+    height: 1px;
+    background-color: #cfcfcf;
+}
+
+i{
+    color: #616060;
+}
+
+a{
+    text-decoration: none;
+    color: #323232;
+}
+
+/**/
+
+
+.container{
+    width: 100%;
+    display: flex;
+    height: 100%;
+    padding: 10px 20px;
+}
+
+.warp_content{
+    width: 100%;
+    padding-top: 80px;
+}
+
+
+
+
+
+#side_bar{
+    width: 300px;
+    height: 100%;
+    background: #F5F5F5;
+    align-items: center;
+    padding-top: 80px;
+
+}
+
+
+.infor{
+    width: 100%;
+    min-height: 70px;
+    font-weight: 500;
+}
+
+
+
+.profile_avatar{
+    height: 48px;
+    width: 48px;
+    margin: 10px;
+}
+.profile_avatar img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+
+.rec_horizontal{
+    margin-bottom: 10px;
+}
+
+
+
+.edit_profile span , .order span , .sub_items a  {
+    margin-left: 10px;
+}
+
+#side_bar .item  {
+    padding: 10px 20px;
+    width: 100%;
+    height: 35px;
+    font-weight: 400;
+    cursor: pointer;
+    color: #323232;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#side_bar .item  span{
+    margin-left: 10px;
+}
+
+.wrap_item{
+    width: 100%;
+}
+
+.icon_down{
+    margin-left: auto;
+}
+
+.menu_sub_item {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.75s ease-in-out;
+}
+
+.wrap{
+    padding-bottom: 5px;
+}
+
+.open {
+
+    max-height: 500px;
+}
+
+
+
+
+.menu_sub_item .sub_items {
+    margin-left: 30px;
+    padding: 10px 10px 10px 20px; ;
+    cursor: pointer;
+    list-style-type: none;
+    border: 1px solid #F5F5F5;
+    height: 35px;
+    text-align:start;
+}
+
+
+.sub_items i {
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+}
+
+
+
+.sub_items a{
+    text-decoration: none;
+    color: #323232;
+}
+
+.sub_items:hover{
+    background-color: rgba(213, 210, 210, 0.65);
+    border-radius: 10px;
+}
+
+
+.selected {
+    background-color: #eaeaea;
+    border-radius: 10px;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

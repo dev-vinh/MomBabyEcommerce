@@ -1,0 +1,138 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fafafa;
+    display: flex;
+    justify-content: center;
+    color: #333;
+    border-radius: 10px;
+    overflow-y: scroll;
+}
+
+
+
+.search-container {
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+}
+
+
+.search-container-title{
+    padding: 20px;
+}
+.search-bar {
+    position: relative;
+    display: flex;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+
+
+
+.search-bar .search-icon {
+    margin-left: -50px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.suggestion-box {
+    background-color: #fafafa;
+    color: black;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    text-align: left;
+}
+
+.suggestion-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.suggestion-box li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestion-box li:hover {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+}
+
+#suggestion-list{
+
+}
+
+
+.suggestion-title{
+    padding: 10px;
+}
+
+
+.product{
+    display: flex;
+    background-color: #ffffff;
+    transition: all 0.3s ease-in-out;
+    margin: 5px;
+}
+.product:hover{
+    cursor: pointer;
+    scale: 1.035;
+    border-radius: 10px;
+}
+
+
+.product img {
+    padding: 10px;
+    width: 150px;
+    height: 120px;
+    object-fit: contain;
+
+}
+
+
+.product .product-content{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.product-content .product-name{
+    padding-top: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.product-content .product-price{
+    padding-top: 10px;
+}

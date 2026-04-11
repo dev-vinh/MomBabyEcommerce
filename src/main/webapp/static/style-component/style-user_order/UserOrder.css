@@ -1,0 +1,154 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+
+/*Reuse*/
+.mid_align {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rec_horizontal {
+    width: 70%;
+    height: 1px;
+    background-color: #cfcfcf;
+}
+
+.rec_vertical {
+    height: 80%;
+    width: 1px;
+    background-color: #5a5a5a;
+    margin: 0 10px;
+    min-height: 20px;
+}
+
+
+i {
+    color: #616060;
+}
+
+.f16 {
+    font-size: 16px;
+}
+
+.f22 {
+    font-size: 22px;
+}
+
+
+
+
+
+
+
+.content{
+    width: 100%;
+    padding-left: 20px;
+    padding-top: 80px;
+}
+
+
+
+
+
+.container{
+    overflow: scroll;
+}
+
+
+
+
+
+/*Header*/
+#order_header {
+    width: 100%;
+    height: 150px;
+    padding: 20px 20px;
+    justify-content: center;
+}
+
+.no_of_order, .total {
+    width: 250px;
+    height: 100%;
+    background-color: white;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #cfcfcf;
+    font-size: 14px;
+}
+
+.num {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.rec_vertical {
+    margin: 0 50px;
+}
+
+
+
+
+/*Menu*/
+#order_menu{
+    width: 100%;
+    height: 40px;
+    justify-content: space-evenly;
+}
+
+#order_menu .menu_item{
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    height: 100%;
+    padding: 0 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+/*Body*/
+#order_body{
+    width: 100%;
+    height: 100%;
+    padding-top: 10px;
+}
+
+#order_body #order_container{
+    width: 100%;
+    height: 180px;
+    margin :10px 0 ;
+    background-color: #EDF9FB;
+    border-radius: 10px;
+}
+
+.description{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
