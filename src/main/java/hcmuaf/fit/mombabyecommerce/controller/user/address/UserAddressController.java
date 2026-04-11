@@ -18,7 +18,7 @@ import java.util.List;
 @WebServlet(name = "UserAddressController", value = "/user-address")
 public class UserAddressController extends HttpServlet {
     UserService userService = new UserService(DBConnection.getJdbi());
-    AddressService addressService = new AddressService(DBConnection.getJdbi());
+    AddressService addressSevice = new AddressService(DBConnection.getJdbi());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -28,11 +28,12 @@ public class UserAddressController extends HttpServlet {
 
         if (userId != null) {
             User user = userService.getUserById(userId);
-            List<Address> addresses = addressService.findByUserId(userId);
+            List<Address> addresses = addressSevice.findByUserId(userId);
+
             request.setAttribute("user", user);
             request.setAttribute("addresses", addresses);
         }
-        request.getRequestDispatcher("user/user-address.jsp").forward(request, response);
 
+        request.getRequestDispatcher("user/user-address.jsp").forward(request, response);
     }
 }

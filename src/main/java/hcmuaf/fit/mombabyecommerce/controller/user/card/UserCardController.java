@@ -6,6 +6,7 @@ import hcmuaf.fit.mombabyecommerce.model.Card;
 import hcmuaf.fit.mombabyecommerce.service.CardService;
 import hcmuaf.fit.mombabyecommerce.service.UserService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-public class UserCardController extends HttpServlet {
+@WebServlet(name = "UserCardController", value = "/user-card")
+public class UserCardController extends  HttpServlet {
     CardService cardService = new CardService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
     @Override
@@ -32,4 +34,9 @@ public class UserCardController extends HttpServlet {
 
     }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Xử lý yêu cầu POST ở đây
+    }
 }

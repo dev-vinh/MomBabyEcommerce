@@ -9,126 +9,92 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class EmailService {
-    private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String SMTP_PORT = "587";
-    private static final String USERNAME = "Vinhphanngoc61@gmail.com";
-    private static final String PASSWORD = "sfqi fzci hkrv iqsp";
-    private static final Properties properties = new Properties();
-    private static Session session;
+    String host = "smtp.gmail.com";
+    String fromEmail = "tuanghiencuu@gmail.com";
+    String password = "trgm jemx lzxr dmyw";
 
-    public EmailService() {
-        try {
-            InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties");
-            if (input != null) {
-                properties.load(input);
-            }
-            Properties mailProps = new Properties();
-            mailProps.put("mail.smtp.auth", "true");
-            mailProps.put("mail.smtp.starttls.enable", "true");
-            mailProps.put("mail.smtp.host", properties.getProperty("mail.smtp.host", "smtp.gmail.com"));
-            mailProps.put("mail.smtp.port", properties.getProperty("mail.smtp.port", "587"));
+    // Server URL - có thể set qua System property khi deploy
+    // VD: -Dserver.url=https://domain.com
+    private static String serverUrl = System.getProperty("server.url", "http://localhost:8080");
 
-            session = Session.getInstance(mailProps, new jakarta.mail.Authenticator() {
-                @Override
-                protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
-                    return new jakarta.mail.PasswordAuthentication(USERNAME, PASSWORD);
-                }
-            });
+    // Hàm gửi email chứa mã OTP
+    // Hàm gửi email chứa mã OTP
+    public void sendEmailWithOTP(String toEmail, String otp) throws MessagingException {
+        // Cấu hình thông tin kết nối với SMTP server
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void sendEmail(String to, String subject, String content) {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
-            @Override
-            protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new jakarta.mail.PasswordAuthentication(USERNAME, PASSWORD);
-            }
-        });
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(USERNAME));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subject);
-            message.setText(content);
-
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Không thể gửi email: " + e.getMessage());
-        }
-    }
-    public String generateOTP() {
-        int otp = (int) (Math.random() * 90000) + 10000;
-        return String.valueOf(otp);
-    }
-    public void sendEmailWithOTP(String toEmail, String otp) {
+        // Cấu hình các thuộc tính SMTP
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", SMTP_HOST);
-        properties.put("mail.smtp.port", SMTP_PORT);
-
-        Session session = Session.getInstance(properties, new jakarta.mail.Authenticator() {
-            @Override
-            protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new jakarta.mail.PasswordAuthentication(USERNAME, PASSWORD);
-            }
-        });
-
-        try {
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(USERNAME));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            message.setSubject("Mã OTP xác thực");
-
-            String emailContent = "<h3>Toi da gui ma OTP cho ban. Ma OTP cua ban la: " + otp + "</h3>"
-                    + "<p>Vui lòng không chia sẻ mã OTP này voi bat ki ai.</p>";
-            message.setContent(emailContent, "text/html");
-            Transport.send(message);
-            System.out.println("Email đã được gửi thành công đến " + toEmail);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            System.out.println("Có lỗi xảy ra khi gửi email");
-        }
-    }
-    public void sendConfirmationEmail(String toEmail, String sessionId) throws MessagingException {
-        Properties properties = new Properties();
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", "587");
 
+        // Tạo một session email
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(USERNAME, PASSWORD);
+                return new PasswordAuthentication(fromEmail, password);
             }
         });
 
         // Tạo đối tượng MimeMessage
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(USERNAME)); // Địa chỉ người gửi
+        message.setFrom(new InternetAddress(fromEmail)); // Địa chỉ người gửi
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); // Địa chỉ người nhận
-        message.setSubject("Xác nhận đăng ký tài khoản");
+        message.setSubject("Mã OTP xác thực"); // Tiêu đề email
 
-        // Nội dung email chứa liên kết xác nhận
-        String confirmLink = "http://localhost:8080/confirm?sessionId=" + sessionId;
-        String emailContent = "<h3>Xin Chào!,</h3>"
-                + "<p>Vui lòng nhap vào liên ket duoi dây de xac nhan tai khoan cua ban:</p>"
-                + "<a href=\"" + confirmLink + "\">Xác nhận</a>";
-
+        // Nội dung email
+        String emailContent = "<h3>Toi da gui ma OTP cho ban. Ma OTP cua ban la: " + otp + "</h3>"
+                + "<p>Vui lòng không chia sẻ mã OTP này voi bat ki ai.</p>";
         message.setContent(emailContent, "text/html");
 
         // Gửi email
         Transport.send(message);
+        System.out.println("Email đã được gửi thành công đến " + toEmail);
+    }
+
+    public void sendConfirmationEmail(String toEmail, String sessionId) throws MessagingException {
+        sendConfirmationEmail(toEmail, sessionId, "");
+    }
+
+    public void sendConfirmationEmail(String toEmail, String sessionId, String contextPath) throws MessagingException {
+
+        // Cấu hình các thuộc tính SMTP
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "587");
+
+        // Tạo một session email
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        });
+
+        // Tạo đối tượng MimeMessage
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(fromEmail)); // Địa chỉ người gửi
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); // Địa chỉ người nhận
+        message.setSubject("Xác nhận đăng ký tài khoản");
+
+        // Nội dung email chứa liên kết xác nhận
+        String confirmLink = "http://localhost:8080/Trang_Web_ban_hang_san_pham_cho_me_va_be_war/confirm?sessionId=" + sessionId;
+        String emailContent = "<h3>Xin Chào!,</h3>"
+                + "<p>Vui lòng nhập vào liên kết duoi dây de xac nhan tai khoan cua ban:</p>"
+                + "<a href=\"" + confirmLink + "\">Xác nhận</a>";
+
+        message.setContent(emailContent, "text/html; charset=UTF-8");
+
+        // Gửi email
+        Transport.send(message);
         System.out.println("Email xác nhận đã được gửi đến " + toEmail);
+    }
+
+    public String generateOTP() {
+        int otp = (int) (Math.random() * 900000) + 100000; // Tạo OTP 6 chữ số
+        return String.valueOf(otp);
     }
 }

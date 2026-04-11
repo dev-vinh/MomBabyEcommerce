@@ -7,20 +7,27 @@ import java.util.List;
 
 public class CardService {
     CardDao cardDao;
+
     public CardService(Jdbi jdbi) {
         this.cardDao = jdbi.onDemand(CardDao.class);
     }
 
-    public List<Card> getCartByUserId(Integer userId) {
-        return cardDao.getCardByUserId(userId);
+    public List<Card> getCartByUserId(Integer user_id) {
+        return cardDao.getCardByUserId(user_id);
     }
+
+    public Card getCardById(Integer card_id) {
+        return cardDao.getCardById(card_id);
+    }
+
     public Boolean addCard(Card card) {
         return cardDao.addCard(
                 card.getUserId(),
                 card.getDuration(),
                 card.getType(),
-                card.getIsDefault(),
-                card.getLast4()
+                card.getDefault()
+
         );
     }
+
 }

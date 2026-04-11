@@ -19,6 +19,12 @@ import java.util.Map;
 public class UpdateAvatarController extends HttpServlet {
     UserService userService = new UserService(DBConnection.getJdbi());
     @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Xử lý yêu cầu GET ở đây
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

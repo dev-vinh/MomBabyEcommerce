@@ -3,6 +3,7 @@ package hcmuaf.fit.mombabyecommerce.controller.auth;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.service.AuthService;
+import hcmuaf.fit.mombabyecommerce.service.EmailService;
 import hcmuaf.fit.mombabyecommerce.service.OtpService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
