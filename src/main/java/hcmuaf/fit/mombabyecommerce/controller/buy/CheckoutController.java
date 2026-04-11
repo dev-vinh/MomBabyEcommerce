@@ -1,8 +1,5 @@
 package hcmuaf.fit.mombabyecommerce.controller.buy;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Address;
 import hcmuaf.fit.mombabyecommerce.model.Card;
@@ -15,18 +12,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "Checkout", value = "/checkout")
 public class CheckoutController extends HttpServlet {
-    OrderSerivce orderSerivce = new OrderSerivce(DBConnection.getJdbi());
+    OrderService orderService = new OrderService(DBConnection.getJdbi());
     OrderDetailService orderDetailService = new OrderDetailService(DBConnection.getJdbi());
     CardService cardService = new CardService(DBConnection.getJdbi());
     AddressService addressService = new AddressService(DBConnection.getJdbi());

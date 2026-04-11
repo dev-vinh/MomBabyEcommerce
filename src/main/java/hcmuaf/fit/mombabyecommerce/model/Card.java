@@ -9,32 +9,29 @@ import java.time.LocalDate;
 public class Card {
     Integer id;
     Integer userId;
-    Integer last4;
     LocalDate duration;
+    Integer last4;
     String type;
     Boolean isDefault;
-
 
     @JdbiConstructor
     public Card(
             @ColumnName("id") @Nullable Integer id,
+            @ColumnName("userId") @Nullable Integer userId,
+            @ColumnName("duration") @Nullable LocalDate duration,
             @ColumnName("last4") @Nullable Integer last4,
-            @ColumnName("userId")  @Nullable Integer userId,
-            @ColumnName("duration")  @Nullable LocalDate duration,
-            @ColumnName("type")  @Nullable String type,
-            @ColumnName("isDefault")  @Nullable Boolean isDefault) {
+            @ColumnName("type") @Nullable String type,
+            @ColumnName("isDefault") @Nullable Boolean isDefault) {
 
         this.id = id;
         this.userId = userId;
         this.duration = duration;
+        this.last4 = last4;
         this.type = type;
         this.isDefault = isDefault;
-        this.last4 = last4;
     }
 
-
-    public Card( ) {
-
+    public Card() {
     }
 
     public Integer getId() {
@@ -53,20 +50,20 @@ public class Card {
         this.userId = userId;
     }
 
-    public Integer getLast4() {
-        return last4;
-    }
-
-    public void setLast4(Integer last4) {
-        this.last4 = last4;
-    }
-
     public LocalDate getDuration() {
         return duration;
     }
 
     public void setDuration(LocalDate duration) {
         this.duration = duration;
+    }
+
+    public Integer getLast4() {
+        return last4;
+    }
+
+    public void setLast4(Integer last4) {
+        this.last4 = last4;
     }
 
     public String getType() {
@@ -78,6 +75,14 @@ public class Card {
     }
 
     public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public Boolean getDefault() {
         return isDefault;
     }
 

@@ -16,10 +16,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 @WebServlet(name = "AddCard", value = "/add-card")
-public class AddCard extends HttpServlet {
+public class AddCard extends HttpServlet{
     CardService cardService = new CardService(DBConnection.getJdbi());
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,9 +35,13 @@ public class AddCard extends HttpServlet {
         while ((line = reader.readLine()) != null) {
             sb.append(line);
         }
+
+        // Parse JSON
         Gson gson = new Gson();
         JsonObject json = gson.fromJson(sb.toString(), JsonObject.class);
 
+        // Lấy dữ liệu
+        // xem lại join mấy bảng
         String name = json.get("name").getAsString();
         String cardNumber = json.get("cardNumber").getAsString();
         String last4Digits = cardNumber.substring(cardNumber.length() - 4);
@@ -67,6 +71,10 @@ public class AddCard extends HttpServlet {
         card.setLast4(last4);
 
         cardService.addCard(card);
+
+
+
+        // Trả về JSON phản hồi
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
@@ -76,6 +84,5 @@ public class AddCard extends HttpServlet {
 
         response.getWriter().write(responseJson.toString());
     }
-
 
 }

@@ -13,8 +13,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet(name = "UserDetailController", value = "/user-profile")
-public class UserDetailController extends HttpServlet {
+public class UserDetailController extends HttpServlet{
     UserService userService = new UserService(DBConnection.getJdbi());
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,6 +30,15 @@ public class UserDetailController extends HttpServlet {
 
             System.out.println(user.toString());
         }
+
         request.getRequestDispatcher("user/user-profile.jsp").forward(request, response);
+
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Xử lý yêu cầu POST ở đây
+    }
+
 }

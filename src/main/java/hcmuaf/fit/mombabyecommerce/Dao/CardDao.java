@@ -1,11 +1,12 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
+import hcmuaf.fit.mombabyecommerce.model.Card;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
-import javax.smartcardio.Card;
+
 import java.time.LocalDate;
 import java.util.List;
 

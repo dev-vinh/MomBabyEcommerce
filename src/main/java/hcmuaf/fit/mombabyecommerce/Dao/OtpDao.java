@@ -1,7 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
-import hcmuaf.fit.mombabyecommerce.model.UserOtp;
-import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import hcmuaf.fit.mombabyecommerce.model.UserOTP;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
