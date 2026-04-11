@@ -4,7 +4,7 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class Review {
+public class ProductReview {
     Integer id;
     Integer userId;
     Integer productId;
@@ -14,12 +14,12 @@ public class Review {
 
 
     @JdbiConstructor
-    public Review(@ColumnName("id") @Nullable Integer id,
-                  @ColumnName("userId") @Nullable Integer userId,
-                  @ColumnName("productId") @Nullable Integer productId,
-                  @ColumnName("rating")@Nullable Integer rating,
-                  @ColumnName("description") @Nullable String description,
-                  @ColumnName("orderId") @Nullable Integer orderId)
+    public ProductReview(@ColumnName("id") @Nullable Integer id,
+                         @ColumnName("userId") @Nullable Integer userId,
+                         @ColumnName("productId") @Nullable Integer productId,
+                         @ColumnName("rating")@Nullable Integer rating,
+                         @ColumnName("description") @Nullable String description,
+                         @ColumnName("orderId") @Nullable Integer orderId)
     {
         this.id = id;
         this.userId = userId;
@@ -30,7 +30,7 @@ public class Review {
     }
 
 
-    public Review() {
+    public ProductReview() {
     }
 
     public Integer getId() {
@@ -83,7 +83,7 @@ public class Review {
 
     @Override
     public String toString() {
-        return "Review{" +
+        return "ProductReview{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", productId=" + productId +

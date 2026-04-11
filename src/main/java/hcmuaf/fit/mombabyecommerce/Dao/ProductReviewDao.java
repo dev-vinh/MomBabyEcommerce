@@ -1,13 +1,13 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
-import hcmuaf.fit.mombabyecommerce.model.Review;
+import hcmuaf.fit.mombabyecommerce.model.ProductReview;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
-@RegisterConstructorMapper(Review.class)
-public interface ReviewDao {
+@RegisterConstructorMapper(ProductReview.class)
+public interface ProductReviewDao {
     @SqlUpdate(value =
             "INSERT INTO review (userId, productId, orderid, rating, description) " +
                     "VALUES (:userId, :productId, :orderId, :rating, :description)")
@@ -31,9 +31,9 @@ public interface ReviewDao {
 
 
     @SqlQuery("SELECT * FROM review WHERE userId = :userId AND orderId = :orderId AND productId = :productId LIMIT 1")
-    Review getReview(@Bind("userId") int userId,
-                     @Bind("orderId") int orderId,
-                     @Bind("productId") int productId);
+    ProductReview getReview(@Bind("userId") int userId,
+                            @Bind("orderId") int orderId,
+                            @Bind("productId") int productId);
 
 
     @SqlQuery("SELECT COUNT(*) FROM review WHERE userId = :userId AND orderId = :orderId AND productId = :productId")
