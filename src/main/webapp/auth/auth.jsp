@@ -44,9 +44,9 @@
             <div class="infield">
                 <input type="email" id="emails" placeholder=" " name="email" required />
                 <label for="emails">Email <span class="required">*</span> </label>
+                <small class="error" id="email-error"></small>
             </div>
-
-
+            
             <div class="infield password">
                 <input type="password" id="passwordd" placeholder=" " required>
                 <label for="passwordd">Mật khẩu <span class="required">*</span> </label>

@@ -41,7 +41,7 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
     const confirmPassword = document.getElementById("conf").value;
     const fullNameError = document.getElementById("fullNameError");
     const displayNameError = document.getElementById("displayNameError");
-
+    const emailError = document.getElementById("email-error");
 
 
     // reset lỗi
@@ -103,11 +103,9 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
         } else {
             const errorData = await response.json();
             console.log("Error response:", errorData);
-
             // Hiển thị lỗi dưới input email
-            const emailError = document.getElementById("email-error");
             if (emailError) {
-                emailError.textContent = errorData.message;
+                emailError.textContent = "Email đã tồn tại";
                 emailError.style.display = "block";
             }
         }
