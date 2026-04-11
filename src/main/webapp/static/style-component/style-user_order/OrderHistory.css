@@ -1,0 +1,327 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+
+/*Reuse*/
+.mid_align {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rec_horizontal {
+    width: 70%;
+    height: 1px;
+    background-color: #cfcfcf;
+}
+
+.rec_vertical {
+    height: 80%;
+    width: 1px;
+    background-color: #5a5a5a;
+    margin: 0 10px;
+    min-height: 20px;
+}
+
+
+i {
+    color: #616060;
+}
+
+.f16 {
+    font-size: 16px;
+}
+
+.f22 {
+    font-size: 22px;
+}
+
+
+/*Header*/
+
+.body {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 20px;
+    height: 100%;
+}
+
+.body > .content {
+    width: 100%;
+    padding: 0 20px 100px 20px;
+    overflow: scroll;
+}
+
+
+#order_header {
+    width: 100%;
+    min-height: 80px;
+    border-bottom: 1px solid #cfcfcf;
+    font-size: 22px;
+}
+
+#order_header .title {
+    margin-left: 20px;
+}
+
+#order_header .back_btn {
+    cursor: pointer;
+}
+
+
+/*Body*/
+#order_body {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+/*Order Information */
+#order_infor .wrap, #body .date {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 10px 0;
+
+}
+
+#order_infor .order_id {
+    font-size: 14px;
+}
+
+#order_infor .order_id span {
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+
+#order_infor .order_status {
+    justify-content: center;
+    width: 120px;
+    margin-left: 20px;
+    border-radius: 5px;
+    background-color: #EFF8F1;
+    font-size: 14px;
+    color: #007B55;
+    border: 1px solid #cfcfcf;
+
+}
+
+#order_infor .date {
+    font-size: 14px;
+}
+
+
+/*Order Item*/
+#wrap_order_item {
+    width: 100%;
+    /*height: 180px;*/
+}
+
+#wrap_order_item .order_item {
+    width: 100%;
+    height: 180px;
+    margin: 10px 0;
+    background-color: #EDF9FB;
+    border-radius: 10px;
+}
+
+
+/*Status Detail*/
+#status_detail {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px 0;
+    color: #007B55;
+}
+
+#status_detail > span {
+    font-size: 20px !important;
+}
+
+#status_detail .item_status {
+    width: 100px;
+}
+
+#status_detail i {
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    color: #007B55;
+}
+
+#status_detail span {
+    padding-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: center;
+}
+
+#status_detail .status_date {
+    font-size: 10px;
+    color: #666666;
+}
+
+#status_detail .line {
+    margin-top: 25px;
+    width: 150px;
+    height: 1px;
+    border: 1px dashed #007B55;
+}
+
+
+/*Payment Information*/
+#payment_infor, #customer {
+    margin-bottom: 30px;
+    height: 200px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.title {
+    font-size: 18px;
+    padding-bottom: 10px;
+}
+
+#payment_infor .content {
+}
+
+
+#payment_infor .content .content_item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 5px 0;
+}
+
+.content .content_item .desc {
+    color: #666666;
+}
+
+.content .content_item .value {
+    color: #333333;
+    font-weight: 500;
+}
+
+.rec_horizontal {
+    width: 100%;
+    margin: 5px;
+}
+
+
+/*Customer*/
+#customer {
+
+}
+
+#customer .content {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+#customer .content .content_item {
+    font-size: 14px;
+    padding: 5px;
+}
+
+
+#customer .content .content_item i {
+    margin-right: 10px;
+}
+
+
+.section_right {
+    margin-right: 90px;
+}
+
+.section_right .title {
+    font-size: 14px;
+    color: #000000;
+}
+
+.section_right .content {
+    padding-left: 20px;
+    font-size: 14px;
+    color: #000000;
+}
+
+.section_right .content span {
+    padding: 5px 0;
+}
+
+
+/* Rating*/
+
+#user-rating {
+    height: 30px;
+    font-size: 30px;
+    gap: 30px;
+    display: flex;
+    margin: 20px;
+}
+
+#user-rating .star {
+    cursor: pointer;
+    transition: 0.4s;
+
+}
+#user-rating .star:hover i{
+    color: #fdeb80;
+}
+
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+#review-text{
+    height: 160px;
+    padding: 10px;
+}
+
+
+
+
+
+.send{
+    width: 100%;
+    margin-top: 20px;
+}
+.send  button{
+    height: 40px;
+    width: 100px;
+    background-color: #eaeaea;
+    border-radius: 5px;
+    border: 1px solid;
+}
+
+.star.disabled {
+    pointer-events: none;
+    color: #f3e6b8;
+}

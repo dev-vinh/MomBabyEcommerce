@@ -1,0 +1,309 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+html{
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+body{
+    width: 100%;
+    height: 100%;
+}
+
+/*Reuse*/
+.mid_align{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rec_horizontal{
+    width: 70%;
+    height: 1px;
+    background-color: #cfcfcf;
+}
+
+.rec_vertical{
+    height: 90%;
+    width: 1px;
+    background-color: #cfcfcf;
+    margin:  0 10px;
+    min-height: 20px;
+}
+
+
+
+
+
+i{
+    color: #616060;
+}
+
+a{
+    text-decoration: none;
+    color: #000000;
+}
+
+
+.f12{
+    font-size: 12px;
+}
+
+
+.f16{
+    font-size: 16px;
+}
+.f18{
+    font-size: 18px;
+}
+
+.f22{
+    font-size: 22px;
+
+}
+
+.bold{
+    font-weight: 500;
+}
+.normal{
+    font-weight: normal;
+}
+
+
+
+
+/*Wrap*/
+
+.wrap{
+    width: 100%;
+    /*width: 1000px;*/
+    height: 400px;
+    background-color: #ffffff;
+    border-radius: 15px;
+}
+
+
+.img_section{
+    width: 30%;
+    height: 100%;
+    padding: 30px;
+
+
+}
+
+.img_section img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+}
+
+
+.infor_section{
+    width: 35%;
+    height: 100%;
+    padding: 30px 0;
+
+}
+.infor_name{
+    cursor: pointer;
+    font-weight: 500;
+}
+.infor_name, .infor_color{
+    display: flex;
+    text-align: left;
+    padding: 10px 0;
+}
+
+.choose_color{
+    padding: 10px 0;
+}
+
+.col_item{
+    margin: 0 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #575757;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.col_item:hover{
+    scale: 1.1;
+}
+
+
+#pink{
+    background-color: #E9D2C6;
+}
+
+#gray{
+    background-color: #C0C0C0;
+}
+
+#yellow{
+    background-color: #EEE29B;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.rating{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 30px;
+    align-items: center;
+}
+
+#noOfRatting{
+    margin:0;
+}
+
+
+
+
+
+
+#description{
+    display: flex;
+    width: 100%;
+    justify-content:flex-start;
+    padding: 10px 10px;
+}
+
+#description .desc_item{
+    padding: 3px 0;
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+}
+
+
+#description .list_descriptions {
+    list-style-type: none; /* Loại bỏ dấu chấm mặc định */
+    padding-left: 0; /* Loại bỏ padding mặc định của ul */
+}
+
+
+#description .desc_item::before {
+    content: '•';
+    color: black;
+    font-size: 1.2em;
+    position: absolute;
+    left: -10px;
+    top: 2px;
+}
+
+
+
+/*section_right*/
+.section_right{
+    padding: 30px 20px;
+    width: 35%;
+    height: 100%;
+    display: flex;
+
+}
+.price{
+    padding-top: 30px;
+}
+
+
+.service{
+    padding-top:30px ;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    text-align: left;
+    font-size: 12px;
+    color: #605e5e;
+}
+.service i{
+    font-size: 12px;
+    padding-right: 10px;
+}
+.service_item{
+    padding: 5px;
+}
+
+.wrap_btn{
+    padding-top: 30px;
+}
+.btn{
+    height: 40px;
+    margin: 5px;
+    border: 1px solid #000000;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+
+.btn:hover{
+    transform: scale(1.05);
+}
+
+.wrap_btn .buy{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+}
+.notification {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -200%);
+    background-color: #28a745;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.notification i {
+    font-size: 20px;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.notification.hidden {
+    opacity: 0;
+    transform: translate(-50%, -70%);
+}

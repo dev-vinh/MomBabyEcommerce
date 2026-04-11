@@ -1,0 +1,127 @@
+/* Reset cơ bản */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body1 {
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+/* Văn bản */
+p {
+    font-size: 16px;
+    color: #4E4E52;
+}
+
+h2 {
+    font-size: 48px;
+}
+
+h3 {
+    font-size: 30px;
+    margin: 20px 0 30px;
+}
+
+/* Feature Benefits */
+.feature-benefit1, .feature-benefit3, .two-column {
+    display: flex;
+    align-items: stretch;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.feature-benefit2 {
+    /*width: 1000px;*/
+    /*display: flex;*/
+    display: flex;
+    align-items: stretch;
+    max-width: 1200px;
+    margin: auto;
+    border-radius: 8px;
+}
+
+.feature-benefit1__text,  .feature-benefit3__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+    width: 50%;
+}
+
+.feature-benefit2__text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.feature-benefit1__img, .feature-benefit3__img {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+    width: 50%;
+}
+.feature-benefit2__img{
+    align-items: center;
+    justify-content: flex-end;
+    width: 50%;
+}
+
+.imgFeature, .column-img {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Two-column layout */
+.two-column {
+    justify-content: space-between;
+    padding: 60px 20px;
+    /*width: 80%;*/
+}
+
+.column {
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 49%;
+}
+
+.column h2 {
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.column h3 {
+    font-size: 18px;
+    color: #555555;
+    margin-bottom: 15px;
+}
+
+.column p {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.6;
+}
+
+.note {
+    margin-top: 45px;
+    font-size: 12px;
+}
+
+.imgFeature1 {
+    border-radius: 20px;
+    width: 595px;
+}
+.imgFeature2{
+    border-radius: 20px;
+    width: 600px;
+}
