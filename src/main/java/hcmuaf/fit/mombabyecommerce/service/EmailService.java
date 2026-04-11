@@ -1,9 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
+import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
@@ -101,5 +98,37 @@ public class EmailService {
             e.printStackTrace();
             System.out.println("Có lỗi xảy ra khi gửi email");
         }
+    }
+    public void sendConfirmationEmail(String toEmail, String sessionId) throws MessagingException {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(USERNAME, PASSWORD);
+            }
+        });
+
+        // Tạo đối tượng MimeMessage
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(USERNAME)); // Địa chỉ người gửi
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail)); // Địa chỉ người nhận
+        message.setSubject("Xác nhận đăng ký tài khoản");
+
+        // Nội dung email chứa liên kết xác nhận
+        String confirmLink = "http://localhost:8080/confirm?sessionId=" + sessionId;
+        String emailContent = "<h3>Xin Chào!,</h3>"
+                + "<p>Vui lòng nhap vào liên ket duoi dây de xac nhan tai khoan cua ban:</p>"
+                + "<a href=\"" + confirmLink + "\">Xác nhận</a>";
+
+        message.setContent(emailContent, "text/html");
+
+        // Gửi email
+        Transport.send(message);
+        System.out.println("Email xác nhận đã được gửi đến " + toEmail);
     }
 }

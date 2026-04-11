@@ -5,13 +5,14 @@ import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
 import java.sql.Timestamp;
 
-public class UserOtp {
+public class UserOTP {
     private String email;
     private String otpCode;
     private Timestamp createdAt;
     private Timestamp expiresAt;
+
     @JdbiConstructor
-    public UserOtp(
+    public UserOTP(
             @ColumnName("email") String email,
             @ColumnName("otpCode") String otpCode,
             @ColumnName("createdAt") Timestamp createdAt,
@@ -27,28 +28,28 @@ public class UserOtp {
         return email;
     }
 
-    public String getOtpCode() {
-        return otpCode;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public Timestamp getExpiresAt() {
-        return expiresAt;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOtpCode() {
+        return otpCode;
     }
 
     public void setOtpCode(String otpCode) {
         this.otpCode = otpCode;
     }
 
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Timestamp getExpiresAt() {
+        return expiresAt;
     }
 
     public void setExpiresAt(Timestamp expiresAt) {
@@ -57,7 +58,7 @@ public class UserOtp {
 
     @Override
     public String toString() {
-        return "UserOtp{" +
+        return "UserOTP{" +
                 "email='" + email + '\'' +
                 ", otpCode='" + otpCode + '\'' +
                 ", createdAt=" + createdAt +

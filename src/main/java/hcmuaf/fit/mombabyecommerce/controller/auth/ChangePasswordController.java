@@ -17,8 +17,9 @@ import java.io.IOException;
 import java.util.Map;
 
 @WebServlet("/change-password")
-public class ChangePasswordController extends HttpServlet {
+public class ChangePasswordController extends  HttpServlet {
     private final AuthService authService = new AuthService(DBConnection.getJdbi());
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -34,7 +35,8 @@ public class ChangePasswordController extends HttpServlet {
                 }
             }
             String jsonString = jsonBuilder.toString();
-            Map<String, String> jsonData = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {});
+            Map<String, String> jsonData = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+            });
 
             String currentPassword = jsonData.get("currentPassword");
             String newPassword = jsonData.get("newPassword");

@@ -11,43 +11,55 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-
-@WebServlet("/forgot-password")
+@WebServlet("/auth/forgot-password")
 public class ForgotPasswordController extends HttpServlet {
     private final AuthService authService = new AuthService(DBConnection.getJdbi());
-    private final OtpService otpService = new OtpService(DBConnection.getJdbi());
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         request.getRequestDispatcher("/auth/forgotpassword.jsp").forward(request, response);
     }
 
+    // Xử lý quên mật khẩu
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
+        String email = request.getParameter("email");
 
+        // Kiểm tra email có tồn tại trong hệ thống hay không
         User user = authService.getUserByEmail(email);
         if (user == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("Email không tồn tại trong hệ thống");
-            return;
-        }
+        } else {
+            String otp = generateOTP();
+            sendEmailWithOTP(user.getEmail(), otp);
 
-        try {
-            boolean success = otpService.generateAndSendOTP(email);
+            // Lưu OTP vào session để xác minh sau
+            request.getSession().setAttribute("otp", otp);
+            request.getSession().setAttribute("userEmail", user.getEmail());
 
-            if (success) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("OTP đã được gửi đến email của bạn");
-            } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Đã xảy ra lỗi khi gửi OTP");
-            }
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Đã xảy ra lỗi khi gửi OTP");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("success");
+
         }
     }
+
+    private String generateOTP() {
+        EmailService emailService = new EmailService();
+        return emailService.generateOTP();
+    }
+
+    private void sendEmailWithOTP(String email, String otp) {
+        EmailService emailService = new EmailService();
+        try {
+            emailService.sendEmailWithOTP(email, otp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

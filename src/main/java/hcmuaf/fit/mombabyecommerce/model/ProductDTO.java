@@ -1,7 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import java.util.List;
-
 public class ProductDTO {
     private Integer id;
     private  String name;
@@ -168,4 +167,3 @@ public class ProductDTO {
         this.variants = variants;
     }
 }
-

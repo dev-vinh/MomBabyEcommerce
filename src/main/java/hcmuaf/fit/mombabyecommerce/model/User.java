@@ -17,9 +17,12 @@ public class User {
     String passwordUsername;
     Integer avatarId;
     String status;
-    Role role;
+    // String role;
+    String role;
     String salt;
     String avatarUrl;
+
+    // xem
     String confirmationToken;
     String facebookId;
     Boolean needRefresh;
@@ -35,7 +38,8 @@ public class User {
                 @ColumnName("passwordUserName") @Nullable String passwordUsername,
                 @ColumnName("avatarId") @Nullable Integer avatarId,
                 @ColumnName("status") @Nullable String status,
-                @ColumnName("role") @Nullable Role role,
+                // pbha sửa
+                @ColumnName("role") @Nullable String role,
                 @ColumnName("salt") @Nullable String salt,
                 @ColumnName("avatarUrl") @Nullable String avatarUrl,
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
@@ -53,6 +57,7 @@ public class User {
         this.passwordUsername = passwordUsername;
         this.avatarId = avatarId;
         this.status = status;
+        // pbha sửa
         this.role = role;
         this.salt = salt;
         this.avatarUrl = avatarUrl;
@@ -60,6 +65,7 @@ public class User {
         this.facebookId = facebookId;
         this.needRefresh = needRefresh;
     }
+
     public User() {
     }
 
@@ -143,11 +149,11 @@ public class User {
         this.status = status;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
