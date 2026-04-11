@@ -2,6 +2,7 @@ package hcmuaf.fit.mombabyecommerce.controller.review;
 
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.ProductReview;
+import hcmuaf.fit.mombabyecommerce.service.ProductReviewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
