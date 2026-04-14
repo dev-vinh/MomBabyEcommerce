@@ -49,7 +49,7 @@
         <div class="card-body">
 
 
-            <div class="screen" id="screen1" style="display: <%= screen1Style %>;">
+            <div class="screen" id="resetBox" style="display: <%= screen1Style %>;">
                 <div class="field-group">
                     <label for="emailInput">Địa chỉ email</label>
                     <input type="email" id="emailInput" placeholder="example@email.com" autocomplete="email"/>
@@ -58,7 +58,7 @@
                 <button class="primary-btn" onclick="validateEmail()">Tiếp theo</button>
             </div>
 
-            <div class="screen" id="screen2" style="display: <%= screen2Style %>;">
+            <div class="screen" id="otpBox" style="display: <%= screen2Style %>;">
                 <button class="back-btn" onclick="goStep(1)">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -112,10 +112,6 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="pw-strength">
-                        <div class="pw-strength-fill" id="strFill"></div>
-                    </div>
-                    <div class="hint" id="strLabel">Độ mạnh mật khẩu</div>
                 </div>
 
                 <div class="field-group">

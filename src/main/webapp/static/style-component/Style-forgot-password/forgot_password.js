@@ -1,33 +1,3 @@
-// chưa chỉnh lại vĩnh
-// // Hàm kiểm tra email và hiển thị hộp nhập OTP
-function validateEmail() {
-    const emailInput = document.getElementById("emailInput").value.trim();
-    const errorMessage = document.getElementById("emailErr");
-    const resetBox = document.getElementById("resetBox");
-    const otpBox = document.getElementById("otpBox");
-
-
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-    // Nếu ô email trống
-    if (emailInput === "") {
-        errorMessage.textContent = "Vui lòng nhập email của bạn.";
-        errorMessage.style.display = "block";
-        return;
-    }
-
-    // Nếu email không hợp lệ
-    if (!emailRegex.test(emailInput)) {
-        errorMessage.textContent = "Vui lòng nhập một email hợp lệ.";
-        errorMessage.style.display = "block";
-    } else {
-        errorMessage.style.display = "none";
-        resetBox.style.display = "none";
-        otpBox.style.display = "block";
-        startTimer();
-    }
-}
-
 
 // Điều hướng quay lại
 function goBackToReset() {
@@ -50,7 +20,7 @@ function goBackToHome() {
 let timeLeft = 60;
 
 function startTimer() {
-    const timerElement = document.getElementById("timer");
+    const timerElement = document.getElementById("timerNum");
     const timerInterval = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
@@ -130,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function confirmOTP() {
         const otpInput = document.getElementById("otpInput");
         const otp = (otpInput && otpInput.value ? otpInput.value : "").trim();
-        const otpErrorMessage = document.getElementById("otpErrorMessage");
+        const otpErrorMessage = document.getElementById("otpErr");
         if (otpErrorMessage) otpErrorMessage.style.display = "none";
         console.log("Submitting OTP:", otp);
 
@@ -311,5 +281,25 @@ function onBack() {
     // Step đầu → back browser
     else {
         window.history.back();
+    }
+}
+
+function goStep(step) {
+    const s1 = document.getElementById("screen1");
+    const s2 = document.getElementById("screen2");
+    const s3 = document.getElementById("screen3");
+
+    if (step === 1) {
+        s1.style.display = "block";
+        s2.style.display = "none";
+        s3.style.display = "none";
+    } else if (step === 2) {
+        s1.style.display = "none";
+        s2.style.display = "block";
+        s3.style.display = "none";
+    } else if (step === 3) {
+        s1.style.display = "none";
+        s2.style.display = "none";
+        s3.style.display = "block";
     }
 }
