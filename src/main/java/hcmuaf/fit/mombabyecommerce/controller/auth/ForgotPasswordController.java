@@ -28,7 +28,6 @@ public class ForgotPasswordController extends HttpServlet {
             request.getSession().removeAttribute("userEmail");
             request.getSession().removeAttribute("otp");
             request.getSession().removeAttribute("otpExpiry");
-            request.getSession().removeAttribute("otpSentAt");
             request.getSession().removeAttribute("otpVerified");
         } else if ("backToOtp".equals(action)) {
             request.getSession().removeAttribute("otpVerified");
@@ -75,7 +74,6 @@ public class ForgotPasswordController extends HttpServlet {
         } else {
             try{
                 String otp = generateOTP();
-                sendEmailWithOTP(user.getEmail(), otp);
                 long now = System.currentTimeMillis();
                 emailService.sendEmailWithOTP(user.getEmail(), otp);
 
@@ -102,14 +100,4 @@ public class ForgotPasswordController extends HttpServlet {
         EmailService emailService = new EmailService();
         return emailService.generateOTP();
     }
-
-    private void sendEmailWithOTP(String email, String otp) {
-        EmailService emailService = new EmailService();
-        try {
-            emailService.sendEmailWithOTP(email, otp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

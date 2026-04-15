@@ -23,16 +23,18 @@ public class OTPVerificationController extends HttpServlet {
         Long   otpExpiry = (Long)   session.getAttribute("otpExpiry");
 
 
+        if (session == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Session hết hạn.");
+            return;
+        }
 
         if (storedOtp == null || otpExpiry == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Không tìm thấy OTP trong session");
+            response.getWriter().write("OTP đã hết hạn.");
             return;
         }
         if (System.currentTimeMillis() > otpExpiry) {
-            session.removeAttribute("otp");
-            session.removeAttribute("otpExpiry");
-            session.removeAttribute("otpSentAt");
             response.setStatus(410);
             response.getWriter().write("OTP đã hết hạn.");
             return;
@@ -48,6 +50,7 @@ public class OTPVerificationController extends HttpServlet {
         session.removeAttribute("otp");
         session.removeAttribute("otpExpiry");
         session.removeAttribute("otpSentAt");
+        session.removeAttribute("fpEmail");
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("success");

@@ -36,10 +36,10 @@ function startTimer() {
 
 
     timerInterval = setInterval(() => {
-        if (timeLeft > 0) {
+
             timeLeft--;
             document.getElementById("timerNum").textContent  = timeLeft;
-        } else {
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
             resendBtn.disabled = false;
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetBox = document.getElementById("resetBox");
     const otpBox = document.getElementById("otpBox");
     const passwordBox = document.getElementById("passwordBox");
-    const errorMessage = document.getElementById("errorMessage");
+    const errorMessage = document.getElementById("emailErr");
     const passwordErrorMessage = document.getElementById("passwordErrorMessage");
 
     // Chỉ cho phép nhập số trong ô OTP
@@ -97,8 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then((response) => {
                 return response.text().then(text => {
-                    console.log("Validate email response:", response.status, text);
                     if (response.ok && text === "success") {
+                        sessionStorage.setItem("fpEmail", email);
                         resetBox.style.display = "none";
                         otpBox.style.display = "block";
                         startTimer();
@@ -117,13 +117,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function confirmOTP() {
         const otpInput = document.getElementById("otpInput");
         const otp = (otpInput && otpInput.value ? otpInput.value : "").trim();
-        const otpErrorMessage = document.getElementById("otpErr");
-        if (otpErrorMessage) otpErrorMessage.style.display = "none";
+        const otpErr = document.getElementById("otpErr");
+        if (otpErr) otpErr.style.display = "none";
         console.log("Submitting OTP:", otp);
 
         if (!/^\d{6}$/.test(otp)) {
-                otpErrorMessage.textContent = "Mã OTP phải có đúng 6 chữ số.";
-                otpErrorMessage.style.display = "block";
+            otpErr.textContent = "Mã OTP phải có đúng 6 chữ số.";
+            otpErr.style.display = "block";
                 return;
         }
 
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then(res => res.text().then(text => ({ status: res.status, text })))
             .then(({ status, text }) => {
-                    console.log("Verify OTP response:", response.status, text);
+                    console.log("Verify OTP response:", status, text);
                     if (status === 200 && text === "success") {
                         if (timerInterval) clearInterval(timerInterval);
                         document.getElementById("otpBox").style.display = "none";
