@@ -18,16 +18,32 @@ function goBackToHome() {
 
 // Hàm đếm ngược thời gian cho OTP
 let timeLeft = 60;
+let timerInterval = null;
 
 function startTimer() {
+    //xóa time cũ nếu đang chạy
+    if (timerInterval) clearInterval(timerInterval);
+
+    const resendBtn = document.getElementById("resendBtn");
+    const timerText = document.querySelector(".timer-text");
+    resendBtn.disabled = true;
+    timerText.style.display = "inline";
+
+    timeLeft = 60;
+
     const timerElement = document.getElementById("timerNum");
-    const timerInterval = setInterval(() => {
-        if (timeLeft > 0) {
+    timerElement.textContent = timeLeft;
+
+
+    timerInterval = setInterval(() => {
+
             timeLeft--;
-            timerElement.textContent = timeLeft;
-        } else {
+            document.getElementById("timerNum").textContent  = timeLeft;
+        if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            timerElement.textContent = "0";
+            timerInterval = null;
+            resendBtn.disabled = false;
+            timerText.style.display = "none";
         }
     }, 1000);
 }
@@ -35,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resetBox = document.getElementById("resetBox");
     const otpBox = document.getElementById("otpBox");
     const passwordBox = document.getElementById("passwordBox");
-    const errorMessage = document.getElementById("errorMessage");
+    const errorMessage = document.getElementById("emailErr");
     const passwordErrorMessage = document.getElementById("passwordErrorMessage");
 
     // Chỉ cho phép nhập số trong ô OTP
@@ -68,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateEmail() {
         const email = document.getElementById("emailInput").value.trim();
+        const emailErr   = document.getElementById("emailErr");
         if (!email) {
             errorMessage.textContent = "Vui lòng nhập email.";
             errorMessage.style.display = "block";
@@ -80,8 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then((response) => {
                 return response.text().then(text => {
-                    console.log("Validate email response:", response.status, text);
                     if (response.ok && text === "success") {
+                        sessionStorage.setItem("fpEmail", email);
                         resetBox.style.display = "none";
                         otpBox.style.display = "block";
                         startTimer();
@@ -100,105 +117,88 @@ document.addEventListener("DOMContentLoaded", () => {
     function confirmOTP() {
         const otpInput = document.getElementById("otpInput");
         const otp = (otpInput && otpInput.value ? otpInput.value : "").trim();
-        const otpErrorMessage = document.getElementById("otpErr");
-        if (otpErrorMessage) otpErrorMessage.style.display = "none";
+        const otpErr = document.getElementById("otpErr");
+        if (otpErr) otpErr.style.display = "none";
         console.log("Submitting OTP:", otp);
 
-        if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
-            if (otpErrorMessage) {
-                otpErrorMessage.textContent = "Mã OTP phải có đúng 6 chữ số.";
-                otpErrorMessage.style.display = "block";
-            } else {
-                errorMessage.textContent = "Mã OTP phải có đúng 6 chữ số.";
-                errorMessage.style.display = "block";
-            }
-            return;
+        if (!/^\d{6}$/.test(otp)) {
+            otpErr.textContent = "Mã OTP phải có đúng 6 chữ số.";
+            otpErr.style.display = "block";
+                return;
         }
+
+
         fetch("verify-otp", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `otp=${encodeURIComponent(otp)}`,
         })
-            .then((response) => {
-                return response.text().then(text => {
-                    console.log("Verify OTP response:", response.status, text);
-                    if (response.ok && text === "success") {
-                        console.log("OTP verified! Switching to password box");
-                        otpBox.style.display = "none";
-                        passwordBox.style.display = "block";
-                    } else {
-                        console.log("OTP failed, showing error");
-                        const otpErrEl = document.getElementById("otpErrorMessage");
-                        if (otpErrEl) {
-                            otpErrEl.textContent = text || "Mã OTP không chính xác.";
-                            otpErrEl.style.display = "block";
-                        } else {
-                            errorMessage.textContent = text || "Mã OTP không chính xác.";
-                            errorMessage.style.display = "block";
-                        }
+            .then(res => res.text().then(text => ({ status: res.status, text })))
+            .then(({ status, text }) => {
+                    console.log("Verify OTP response:", status, text);
+                    if (status === 200 && text === "success") {
+                        if (timerInterval) clearInterval(timerInterval);
+                        document.getElementById("otpBox").style.display = "none";
+                        document.getElementById("screen3").style.display = "block";
+                        document.getElementById("cardTitle").textContent = "Mật khẩu mới";
+                    } else if (status === 410)  {
+                        otpErr.textContent = text;
+                        if (timerInterval) clearInterval(timerInterval);
+                        timerInterval = null;
+                        timeLeft = 0;
+                        document.getElementById("timerNum").textContent = "0";
+                        document.getElementById("resendBtn").disabled = false;
+                        document.querySelector(".timer-text").style.display = "none";
+                    }else{
+                        otpErr.textContent = text || "Mã OTP không chính xác.";
+                        otpErr.style.display = "block";
                     }
-                });
-            })
+                })
             .catch((err) => {
-                console.error("Fetch error:", err);
-                const otpErrEl = document.getElementById("otpErrorMessage");
-                if (otpErrEl) {
-                    otpErrEl.textContent = "Đã xảy ra lỗi, vui lòng thử lại.";
-                    otpErrEl.style.display = "block";
-                } else {
-                    errorMessage.textContent = "Đã xảy ra lỗi, vui lòng thử lại.";
-                    errorMessage.style.display = "block";
-                }
+                otpErr.textContent = "Đã xảy ra lỗi, vui lòng thử lại.";
+                otpErr.style.display = "block";
             });
     }
 
-    // Hàm hiển thị thông báo lỗi OTP
-    function showOtpError(message) {
-        const otpErrorMessage = document.getElementById("otpErrorMessage");
-        otpErrorMessage.textContent = message;
-        otpErrorMessage.style.display = "block";
-        otpErrorMessage.style.color = "#d32f2f";
-        otpErrorMessage.style.backgroundColor = "#ffebee";
-        otpErrorMessage.style.padding = "10px 15px";
-        otpErrorMessage.style.borderRadius = "4px";
-        otpErrorMessage.style.marginTop = "10px";
-        otpErrorMessage.style.marginBottom = "10px";
-        otpErrorMessage.style.border = "1px solid #ffcdd2";
-    }
+    function resendOtp() {
+        const email  = sessionStorage.getItem("fpEmail") || document.getElementById("emailInput").value.trim();
+        const otpErr = document.getElementById("otpErr");
+        otpErr.style.display = "none";
 
-    // Hàm hiển thị thông báo OTP với trạng thái khác nhau
-    function showOtpMessage(message, type) {
-        const otpErrorMessage = document.getElementById("otpErrorMessage");
-        otpErrorMessage.textContent = message;
-        otpErrorMessage.style.display = "block";
-        otpErrorMessage.style.padding = "10px 15px";
-        otpErrorMessage.style.borderRadius = "4px";
-        otpErrorMessage.style.marginTop = "10px";
-        otpErrorMessage.style.marginBottom = "10px";
-
-        switch(type) {
-            case "success":
-                otpErrorMessage.style.color = "#2e7d32";
-                otpErrorMessage.style.backgroundColor = "#e8f5e9";
-                otpErrorMessage.style.border = "1px solid #c8e6c9";
-                break;
-            case "info":
-                otpErrorMessage.style.color = "#1565c0";
-                otpErrorMessage.style.backgroundColor = "#e3f2fd";
-                otpErrorMessage.style.border = "1px solid #bbdefb";
-                break;
-            default:
-                otpErrorMessage.style.color = "#d32f2f";
-                otpErrorMessage.style.backgroundColor = "#ffebee";
-                otpErrorMessage.style.border = "1px solid #ffcdd2";
+        if (!email) {
+            otpErr.textContent = "Không tìm thấy email. Vui lòng quay lại bước đầu.";
+            otpErr.style.display = "block";
+            return;
         }
+        fetch("forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `email=${encodeURIComponent(email)}`
+        })
+            .then(res => res.text().then(text => ({ status: res.status, text })))
+            .then(({ status, text }) => {
+                if (status === 200 && text === "success") {
+                    document.getElementById("otpInput").value = "";
+                    startTimer();
+                } else if (status === 429) {
+                    otpErr.textContent = text;
+                    otpErr.style.display = "block";
+                } else {
+                    otpErr.textContent = text || "Không thể gửi lại OTP.";
+                    otpErr.style.display = "block";
+                }
+            })
+            .catch(() => {
+                otpErr.textContent = "Đã xảy ra lỗi, vui lòng thử lại.";
+                otpErr.style.display = "block";
+            });
     }
+
     function goBack() {
         window.history.back();
     }
     // Hàm validate
     function validateStrongPassword(password) {
-        // Ít nhất 8 ký tự, 1 ký tự viết hoa, 1 số, 1 ký tự đặc biệt
         const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return strongPasswordRegex.test(password);
     }
@@ -256,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.goBackToHome = goBackToHome;
     window.goBackToReset = goBackToReset;
     window.goBackToOTP = goBackToOTP;
+    window.goStep         = goStep;
+    window.resendOtp      = resendOtp;
 });
 
 
@@ -285,10 +287,9 @@ function onBack() {
 }
 
 function goStep(step) {
-    const s1 = document.getElementById("screen1");
-    const s2 = document.getElementById("screen2");
+    const s1 = document.getElementById("resetBox");
+    const s2 = document.getElementById("otpBox");
     const s3 = document.getElementById("screen3");
-
     if (step === 1) {
         s1.style.display = "block";
         s2.style.display = "none";

@@ -71,14 +71,13 @@
                     <div class="field-group">
                         <input type="text"
                                id="otpInput"
+                               name="otp"
                                placeholder="Nhập 6 số OTP"
                                maxlength="6"
                                inputmode="numeric"
                                autocomplete="one-time-code" />
-
-                        <div class="error-message" id="otpErr">Mã OTP không hợp lệ.</div>
                     </div>
-                    <div class="error-message" id="otpErr">Mã OTP không hợp lệ. Vui lòng thử lại.</div>
+                    <div class="error-message" id="otpErr">Mã OTP không hợp lệ.</div>
                 </div>
 
                 <div class="resend-row">
@@ -89,7 +88,7 @@
                 <button class="primary-btn" onclick="confirmOTP()" style="margin-top:20px;">Xác nhận →</button>
             </div>
 
-            <!-- Screen 3: New password -->
+
             <div class="screen" id="screen3" style="display: <%= screen3Style %>;">
                 <button class="back-btn" onclick="goStep(2)">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"

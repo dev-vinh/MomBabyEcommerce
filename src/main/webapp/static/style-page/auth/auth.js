@@ -5,7 +5,7 @@ const togglePasswords = document.querySelectorAll(".toggle-password");
 
 // Chuyển đổi giao diện giữa đăng ký và đăng nhập
 registerButton.addEventListener("click", () => {
-    container.classList.add("");
+    container.classList.add("right-panel-active");
 });
 loginButton.addEventListener("click", () => {
     container.classList.remove("right-panel-active");

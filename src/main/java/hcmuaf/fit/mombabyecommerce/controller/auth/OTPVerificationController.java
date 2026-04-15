@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -16,19 +17,42 @@ public class OTPVerificationController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-
+        HttpSession session = request.getSession(false);
         String enteredOtp = request.getParameter("otp");
-        String sessionOtp = (String) request.getSession().getAttribute("otp");
+        String storedOtp = (String) session.getAttribute("otp");
+        Long   otpExpiry = (Long)   session.getAttribute("otpExpiry");
 
-        if (enteredOtp != null && enteredOtp.equals(sessionOtp)) {
-            request.getSession().setAttribute("otpVerified", true);
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("success");
 
-        } else {
+        if (session == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Mã OTP không chính xác");
-
+            response.getWriter().write("Session hết hạn.");
+            return;
         }
+
+        if (storedOtp == null || otpExpiry == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("OTP đã hết hạn.");
+            return;
+        }
+        if (System.currentTimeMillis() > otpExpiry) {
+            response.setStatus(410);
+            response.getWriter().write("OTP đã hết hạn.");
+            return;
+        }
+
+        if (!storedOtp.equals(enteredOtp)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Mã OTP không chính xác.");
+            return;
+        }
+
+        session.setAttribute("otpVerified", true);
+        session.removeAttribute("otp");
+        session.removeAttribute("otpExpiry");
+        session.removeAttribute("otpSentAt");
+        session.removeAttribute("fpEmail");
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("success");
     }
 }
