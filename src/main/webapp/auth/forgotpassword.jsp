@@ -3,6 +3,12 @@
     Boolean otpVerified = (Boolean) session.getAttribute("otpVerified");
     String userEmail    = (String)  session.getAttribute("userEmail");
 
+    long remainingSeconds = 0;
+    Long otpExpiry = (Long) session.getAttribute("otpExpiry");
+    if (otpExpiry != null) {
+        long now = System.currentTimeMillis();
+        remainingSeconds = (otpExpiry - now) / 1000;
+    }
     String screen1Style  = "block";
     String screen2Style  = "none";
     String screen3Style  = "none";
@@ -38,7 +44,10 @@
 
 </head>
 <body>
-
+<script>
+    window.remainingSecondsOnLoad = <%= remainingSeconds > 0 ? remainingSeconds : 0 %>;
+    window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <div class="container">
     <div class="reset-box">
 
@@ -89,7 +98,7 @@
             </div>
 
 
-            <div class="screen" id="screen3" style="display: <%= screen3Style %>;">
+            <div class="screen" id="passwordBox" style="display: <%= screen3Style %>;">
                 <button class="back-btn" onclick="backToOtp()">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -152,6 +161,7 @@
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/static/style-component/Style-forgot-password/forgot_password.js"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/Style-forgot-password/forgot_password.js">
+</script>
 </body>
 </html>
