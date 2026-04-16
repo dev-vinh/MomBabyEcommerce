@@ -36,7 +36,6 @@ function startTimer() {
 
 
     timerInterval = setInterval(() => {
-
             timeLeft--;
             document.getElementById("timerNum").textContent  = timeLeft;
         if (timeLeft <= 0) {
@@ -113,7 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 errorMessage.style.display = "block";
             });
     }
-
+    function backToEmail() {
+        fetch("forgot-password?action=backToEmail")
+            .then(() => {
+                location.reload();
+            });
+    }
+    function backToOtp() {
+        fetch("forgot-password?action=backToOtp")
+            .then(() => location.reload());
+    }
     function confirmOTP() {
         const otpInput = document.getElementById("otpInput");
         const otp = (otpInput && otpInput.value ? otpInput.value : "").trim();
@@ -256,51 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.goBackToHome = goBackToHome;
     window.goBackToReset = goBackToReset;
     window.goBackToOTP = goBackToOTP;
-    window.goStep         = goStep;
     window.resendOtp      = resendOtp;
+    window.backToEmail      = backToEmail;
+    window.backToOtp      = backToOtp;
+
 });
 
-
-function onBack() {
-    const screen1 = document.getElementById("screen1");
-    const screen2 = document.getElementById("screen2");
-    const screen3 = document.getElementById("screen3");
-
-    const isVisible = (el) => el && window.getComputedStyle(el).display !== "none";
-
-    // Password → OTP
-    if (isVisible(screen3)) {
-        fetch(contextPath + "/forgot-password?action=backToOtp")
-            .then(() => location.reload());
-    }
-
-    // OTP → Email
-    else if (isVisible(screen2)) {
-        fetch(contextPath + "/forgot-password?action=backToEmail")
-            .then(() => location.reload());
-    }
-
-    // Step đầu → back browser
-    else {
-        window.history.back();
-    }
-}
-
-function goStep(step) {
-    const s1 = document.getElementById("resetBox");
-    const s2 = document.getElementById("otpBox");
-    const s3 = document.getElementById("screen3");
-    if (step === 1) {
-        s1.style.display = "block";
-        s2.style.display = "none";
-        s3.style.display = "none";
-    } else if (step === 2) {
-        s1.style.display = "none";
-        s2.style.display = "block";
-        s3.style.display = "none";
-    } else if (step === 3) {
-        s1.style.display = "none";
-        s2.style.display = "none";
-        s3.style.display = "block";
-    }
-}

@@ -59,7 +59,7 @@
             </div>
 
             <div class="screen" id="otpBox" style="display: <%= screen2Style %>;">
-                <button class="back-btn" onclick="goStep(1)">
+                <button class="back-btn"  onclick="backToEmail()" >
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10 3L5 8l5 5"/>
@@ -90,7 +90,7 @@
 
 
             <div class="screen" id="screen3" style="display: <%= screen3Style %>;">
-                <button class="back-btn" onclick="goStep(2)">
+                <button class="back-btn" onclick="backToOtp()">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10 3L5 8l5 5"/>
