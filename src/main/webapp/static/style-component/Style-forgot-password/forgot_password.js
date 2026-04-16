@@ -20,25 +20,32 @@ function goBackToHome() {
 let timeLeft = 60;
 let timerInterval = null;
 
-function startTimer() {
+function startTimer(seconds) {
     //xóa time cũ nếu đang chạy
     if (timerInterval) clearInterval(timerInterval);
 
     const resendBtn = document.getElementById("resendBtn");
     const timerText = document.querySelector(".timer-text");
+    const timerElement = document.getElementById("timerNum");
+    timeLeft = seconds;
+
+    if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        resendBtn.disabled = false;
+        timerText.style.display = "none";
+        timerElement.textContent = "0";
+        return;
+    }
+
     resendBtn.disabled = true;
     timerText.style.display = "inline";
-
-    timeLeft = 60;
-
-    const timerElement = document.getElementById("timerNum");
     timerElement.textContent = timeLeft;
 
 
     timerInterval = setInterval(() => {
-
             timeLeft--;
-            document.getElementById("timerNum").textContent  = timeLeft;
+            timerElement.textContent  = timeLeft;
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -101,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         sessionStorage.setItem("fpEmail", email);
                         resetBox.style.display = "none";
                         otpBox.style.display = "block";
-                        startTimer();
+                        startTimer(60);
                     } else {
                         errorMessage.textContent = text || "Email không tồn tại trong hệ thống.";
                         errorMessage.style.display = "block";
@@ -112,6 +119,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 errorMessage.textContent = "Đã xảy ra lỗi, vui lòng thử lại.";
                 errorMessage.style.display = "block";
             });
+    }
+    function backToEmail() {
+        fetch("forgot-password?action=backToEmail")
+            .then(() => {
+                location.reload();
+            });
+    }
+    function backToOtp() {
+        fetch("forgot-password?action=backToOtp")
+            .then(() => location.reload());
+    }
+    const isOtpVisible = window.getComputedStyle(otpBox).display !== "none";
+
+    if (otpBox && isOtpVisible) {
+        const remaining = window.remainingSecondsOnLoad || 0;
+
+        if (remaining > 0) {
+            startTimer(remaining);
+        } else {
+            document.getElementById("resendBtn").disabled = false;
+            document.querySelector(".timer-text").style.display = "none";
+        }
     }
 
     function confirmOTP() {
@@ -139,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (status === 200 && text === "success") {
                         if (timerInterval) clearInterval(timerInterval);
                         document.getElementById("otpBox").style.display = "none";
-                        document.getElementById("screen3").style.display = "block";
+                        document.getElementById("passwordBox").style.display = "block";
                         document.getElementById("cardTitle").textContent = "Mật khẩu mới";
                     } else if (status === 410)  {
                         otpErr.textContent = text;
@@ -179,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(({ status, text }) => {
                 if (status === 200 && text === "success") {
                     document.getElementById("otpInput").value = "";
-                    startTimer();
+                    startTimer(60);
                 } else if (status === 429) {
                     otpErr.textContent = text;
                     otpErr.style.display = "block";
@@ -199,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     // Hàm validate
     function validateStrongPassword(password) {
-        const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
         return strongPasswordRegex.test(password);
     }
 
@@ -256,51 +285,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.goBackToHome = goBackToHome;
     window.goBackToReset = goBackToReset;
     window.goBackToOTP = goBackToOTP;
-    window.goStep         = goStep;
     window.resendOtp      = resendOtp;
+    window.backToEmail      = backToEmail;
+    window.backToOtp      = backToOtp;
+
 });
 
-
-function onBack() {
-    const screen1 = document.getElementById("screen1");
-    const screen2 = document.getElementById("screen2");
-    const screen3 = document.getElementById("screen3");
-
-    const isVisible = (el) => el && window.getComputedStyle(el).display !== "none";
-
-    // Password → OTP
-    if (isVisible(screen3)) {
-        fetch(contextPath + "/forgot-password?action=backToOtp")
-            .then(() => location.reload());
-    }
-
-    // OTP → Email
-    else if (isVisible(screen2)) {
-        fetch(contextPath + "/forgot-password?action=backToEmail")
-            .then(() => location.reload());
-    }
-
-    // Step đầu → back browser
-    else {
-        window.history.back();
-    }
-}
-
-function goStep(step) {
-    const s1 = document.getElementById("resetBox");
-    const s2 = document.getElementById("otpBox");
-    const s3 = document.getElementById("screen3");
-    if (step === 1) {
-        s1.style.display = "block";
-        s2.style.display = "none";
-        s3.style.display = "none";
-    } else if (step === 2) {
-        s1.style.display = "none";
-        s2.style.display = "block";
-        s3.style.display = "none";
-    } else if (step === 3) {
-        s1.style.display = "none";
-        s2.style.display = "none";
-        s3.style.display = "block";
-    }
-}

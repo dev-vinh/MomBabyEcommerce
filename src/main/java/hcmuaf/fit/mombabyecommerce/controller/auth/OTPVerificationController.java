@@ -19,8 +19,9 @@ public class OTPVerificationController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         String enteredOtp = request.getParameter("otp");
-        String storedOtp = (String) session.getAttribute("otp");
-        Long   otpExpiry = (Long)   session.getAttribute("otpExpiry");
+        String sessionEmail = (String) session.getAttribute("userEmail");
+
+
 
 
         if (session == null) {
@@ -28,6 +29,16 @@ public class OTPVerificationController extends HttpServlet {
             response.getWriter().write("Session hết hạn.");
             return;
         }
+
+        if (sessionEmail == null) {
+            response.setStatus(400);
+            response.getWriter().write("Session không hợp lệ.");
+            return;
+        }
+
+        String storedOtp = (String) session.getAttribute("otp");
+        Long   otpExpiry = (Long)   session.getAttribute("otpExpiry");
+
 
         if (storedOtp == null || otpExpiry == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
