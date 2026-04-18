@@ -4,10 +4,16 @@ import hcmuaf.fit.mombabyecommerce.contant.EPermission;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class Permission {
-    Integer id;
-    EPermission type;
-    String name;
+import java.io.Serializable;
+
+public class Permission implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private EPermission type;
+    private String name;
+
+    public Permission() {
+    }
 
     @JdbiConstructor
     public Permission(

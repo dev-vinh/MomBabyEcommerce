@@ -4,12 +4,18 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class Variant {
-    Integer id;
-    Integer categoryId;
-    String name;
-    String value;
-    Integer optionId;
+import java.io.Serializable;
+
+public class Variant implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private Integer categoryId;
+    private String name;
+    private String value;
+    private Integer optionId;
+
+    public Variant() {
+    }
 
     @JdbiConstructor
     public Variant(@ColumnName("id") @Nullable Integer id,

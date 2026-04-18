@@ -7,16 +7,16 @@ import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Address {
-    Integer id;
-    Integer userId;
-    String addressType; // shipping | billing
-    String fullName;
-    String phoneNumber;
-    String street;
-    String city;
-    String state;
-    String country;
-    Boolean isDefault;
+    private Integer id;
+    private Integer userId;
+    private String addressType; // shipping | billing
+    private String fullName;
+    private String phoneNumber;
+    private String street;
+    private String city;
+    private String state;
+    private String country;
+    private Boolean isDefault;
 
     @JdbiConstructor
     public Address(@ColumnName("id") Integer id,

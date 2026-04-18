@@ -1,12 +1,20 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class UserRole {
-    Integer id;
-    Integer userId;
-    Integer roleId;
+import java.io.Serializable;
 
+public class UserRole implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private Integer userId;
+    private Integer roleId;
+
+    public UserRole() {
+    }
+
+    @JdbiConstructor
     public UserRole(
             @ColumnName("id") Integer id,
             @ColumnName("userId") Integer userId,

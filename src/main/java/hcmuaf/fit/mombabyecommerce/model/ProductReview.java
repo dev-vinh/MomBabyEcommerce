@@ -4,13 +4,16 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class ProductReview {
-    Integer id;
-    Integer userId;
-    Integer productId;
-    Integer rating;
-    String description;
-    Integer orderId;
+import java.io.Serializable;
+
+public class ProductReview implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private Integer userId;
+    private Integer productId;
+    private Integer rating;
+    private String description;
+    private Integer orderId;
 
 
     @JdbiConstructor

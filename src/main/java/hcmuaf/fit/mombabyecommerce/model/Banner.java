@@ -1,16 +1,19 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
 import java.time.LocalDate;
 
 public class Banner {
-    Integer id;
-    String imageId;
-    LocalDate startDate;
-    LocalDate endDate;
-    String status;
+    private Integer id;
+    private String imageId;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String status;
 
+    public Banner() {}
+    @JdbiConstructor
     public Banner(@ColumnName("id") Integer id,
                   @ColumnName("imageId") String imageId,
                   @ColumnName("startDate") LocalDate startDate,

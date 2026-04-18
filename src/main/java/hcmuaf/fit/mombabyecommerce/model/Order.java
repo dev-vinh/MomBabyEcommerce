@@ -5,28 +5,31 @@ import hcmuaf.fit.mombabyecommerce.contant.PaymentStatus;
 import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Order {
-    Integer id;
-    LocalDate createAt;
-    PaymentStatus paymentStatus;
-    OrderStatus orderStatus;
-    Integer userId;
-    Integer cardId;
-    Integer addressId;
-    Boolean isCOD;
+public class Order implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private LocalDate createAt;
+    private PaymentStatus paymentStatus;
+    private OrderStatus orderStatus;
+    private Integer userId;
+    private Integer cardId;
+    private Integer addressId;
+    private Boolean isCOD;
 
-    Integer quantity;
-    Integer total;
-    String productName;
-    String productImage;
-    String userName;
+    private Integer quantity;
+    private Integer total;
+    private String productName;
+    private String productImage;
+    private String userName;
 
-    Integer shippingFee;
-    String shippingId;
+    private Integer shippingFee;
+    private String shippingId;
 
-    Boolean isReviewed;
+    private Boolean isReviewed;
 
 
     @JdbiConstructor

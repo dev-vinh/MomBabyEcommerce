@@ -4,27 +4,29 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class User {
-    Integer id;
-    String fullName;
-    String displayName;
-    LocalDate dOB;
-    String gender;
-    String phoneNumber;
-    String email;
-    String passwordUsername;
-    Integer avatarId;
-    String status;
-    Role role;
-    String salt;
-    String avatarUrl;
-    String googleId;
-    String provider;
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private String fullName;
+    private String displayName;
+    private LocalDate dOB;
+    private String gender;
+    private String phoneNumber;
+    private String email;
+    private String passwordUsername;
+    private Integer avatarId;
+    private String status;
+    private Role role;
+    private String salt;
+    private String avatarUrl;
+    private String googleId;
+    private String provider;
     // xem
-    String confirmationToken;
-    Boolean needRefresh;
+    private String confirmationToken;
+    private Boolean needRefresh;
 
     @JdbiConstructor
     public User(@ColumnName("id") Integer id,

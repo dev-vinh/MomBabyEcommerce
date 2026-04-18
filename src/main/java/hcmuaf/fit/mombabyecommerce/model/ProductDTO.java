@@ -1,7 +1,9 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
+import java.io.Serializable;
 import java.util.List;
-public class ProductDTO {
+public class ProductDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer id;
     private  String name;
     private String sku;
@@ -18,6 +20,9 @@ public class ProductDTO {
     private  String categoryName;
     private  String imageUrl;
     private List<Variant> variants;
+
+    public ProductDTO() {
+    }
 
     public ProductDTO(Product product, List<Variant> variants) {
         this.id = product.getId();

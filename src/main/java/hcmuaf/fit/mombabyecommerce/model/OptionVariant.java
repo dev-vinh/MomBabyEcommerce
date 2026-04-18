@@ -4,14 +4,20 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class OptionVariant {
-    Integer id;
-    Integer productId;
-    Integer price;
-    Integer stock;
-    Integer variantId;
-    String variantName;
-    String variantValue;
+import java.io.Serializable;
+
+public class OptionVariant implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Integer id;
+    private Integer productId;
+    private Integer price;
+    private Integer stock;
+    private Integer variantId;
+    private String variantName;
+    private String variantValue;
+
+    public OptionVariant() {}
 
     @JdbiConstructor
     public OptionVariant(@ColumnName("id") @Nullable Integer id,
@@ -29,9 +35,6 @@ public class OptionVariant {
         this.variantName = variantName;
         this.variantValue = variantValue;
 
-    }
-
-    public OptionVariant() {
     }
 
     public String getVariantValue() {
