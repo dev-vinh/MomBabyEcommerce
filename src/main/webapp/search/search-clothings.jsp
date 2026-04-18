@@ -142,13 +142,6 @@
                                                             <button onclick="addToCart(${pro.id},${pro.optionId})"
                                                                 class="btn add">Thêm vào giỏ hàng</button>
                                                         </div>
-
-                                                        <div id="top_cart-notification" class="notification hidden">
-                                                            <i class="fa-solid fa-circle-check"></i>
-                                                            <span>Thêm vào giỏ hàng thành công</span>
-                                                        </div>
-
-
                                                     </div>
 
                                                 </c:forEach>
@@ -250,11 +243,6 @@
                                                                     Thêm vào giỏ hàng
                                                                 </button>
 
-                                                            </div>
-
-                                                            <div id="cart-notification" class="notification hidden">
-                                                                <i class="fa-solid fa-circle-check"></i>
-                                                                <span>Thêm vào giỏ hàng thành công</span>
                                                             </div>
 
                                                         </div>

@@ -110,3 +110,7 @@ function performSearch() {
         alert("Vui lòng nhập từ khóa tìm kiếm!");
     }
 }
+function searchKeyword(keyword) {
+    document.getElementById("search-input").value = keyword;
+    document.getElementById("search-input").focus(); // focus vào ô input
+}

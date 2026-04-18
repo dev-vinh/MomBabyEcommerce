@@ -205,10 +205,12 @@
         </div>
         <div class="keyword-suggestions">
           <span class="keyword-label">Gợi ý:</span>
-          <button class="keyword-tag" onclick="searchKeyword('Sữa bột')">Sữa bột</button>
+
           <button class="keyword-tag" onclick="searchKeyword('Bỉm tã')">Bỉm tã</button>
-          <button class="keyword-tag" onclick="searchKeyword('Quần áo sơ sinh')">Quần áo sơ sinh</button>
+
           <button class="keyword-tag" onclick="searchKeyword('Máy hâm sữa')">Máy hâm sữa</button>
+          <button class="keyword-tag" onclick="searchKeyword('Sữa bột')">Sữa bột</button>
+          <button class="keyword-tag" onclick="searchKeyword('Quần áo')">Quần áo</button>
           <button class="keyword-tag" onclick="searchKeyword('Bình sữa')">Bình sữa</button>
           <button class="keyword-tag" onclick="searchKeyword('Khăn ướt')">Khăn ướt</button>
         </div>
