@@ -223,8 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    function goBack() {
-        window.history.back();
+    function backToHome() {
+        window.location.href = "/login";
     }
     // Hàm validate
     function validateStrongPassword(password) {
@@ -288,6 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.resendOtp      = resendOtp;
     window.backToEmail      = backToEmail;
     window.backToOtp      = backToOtp;
+    window.backToHome      = backToHome;
+
 
 });
 

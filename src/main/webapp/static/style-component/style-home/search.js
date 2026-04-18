@@ -20,11 +20,11 @@ let debounceTimeout;
 
 document.getElementById('search-input').addEventListener('input', () => {
     const searchInput = document.getElementById('search-input').value.trim();
-    const searchIcon = document.querySelector('.search-icon i');
+    const searchIconEl = document.querySelector('.search-bar-icon');
 
     // Thay đổi icon thành loader khi người dùng nhập từ khóa
-    searchIcon.classList.remove('fa-magnifying-glass');
-    searchIcon.classList.add('fa-spinner', 'fa-spin');
+    searchIconEl.classList.remove('fa-magnifying-glass');
+    searchIconEl.classList.add('fa-spinner', 'fa-spin');
 
     // Xóa timeout cũ nếu người dùng tiếp tục nhập
     clearTimeout(debounceTimeout);
@@ -46,14 +46,14 @@ document.getElementById('search-input').addEventListener('input', () => {
                 })
                 .finally(() => {
                     // Khôi phục lại icon tìm kiếm sau khi hoàn thành
-                    searchIcon.classList.remove('fa-spinner', 'fa-spin');
-                    searchIcon.classList.add('fa-magnifying-glass');
+                    searchIconEl.classList.remove('fa-spinner', 'fa-spin'); // ✅
+                    searchIconEl.classList.add('fa-magnifying-glass');
                 });
         } else {
             clearSuggestions();
             // Khôi phục lại icon nếu input rỗng
-            searchIcon.classList.remove('fa-spinner', 'fa-spin');
-            searchIcon.classList.add('fa-magnifying-glass');
+            searchIconEl.classList.remove('fa-spinner', 'fa-spin'); // ✅
+            searchIconEl.classList.add('fa-magnifying-glass');
         }
     }, 500); // 500ms debounce
 });
@@ -62,44 +62,69 @@ document.getElementById('search-input').addEventListener('input', () => {
 
 
 function updateSuggestions(products) {
-    const suggestionsContainer = document.querySelector('.product-suggestions');
-    suggestionsContainer.innerHTML = ''; // Xóa kết quả cũ
+    const suggestionBox  = document.getElementById("suggestion-box");
+    const suggestionList = document.getElementById("suggestion-list");
 
-    if (products && products.length > 0) {
-        products.forEach(product => {
-            const productDiv = document.createElement('div');
-            productDiv.classList.add('product');
-
-            // Hiển thị giá sản phẩm nếu có, nếu không thì hiển thị "Đang cập nhật"
-            const price = product.price ? product.price.toLocaleString() : 'Đang cập nhật';
-
-            // Cập nhật nội dung của productDiv để hiển thị giá, tên và ảnh
-            productDiv.innerHTML = `
-                <img class="" src="${product.imageUrl}">
-                <div class="product-content"> 
-                    <a href="product-detail?id=${encodeURIComponent(product.id)}" class="product-name" >
-                        ${product.name || 'Sản phẩm chưa có tên'}
-                     </a>
-                    <span class="product-price" >${price} VND</span>
-                </div>
-            `;
-
-            // productDiv.addEventListener('click', () => {
-            //     const url = `${window.location.origin}/backend_war/product-detail?id=${encodeURIComponent(product.id)}`;
-            //     console.log("Đang mở URL:", url); // Kiểm tra URL xem có đúng không
-            //     window.open(url, '_blank');
-            // });
-            // Thêm vào danh sách kết quả
-            suggestionsContainer.appendChild(productDiv);
-        });
-    } else {
-        suggestionsContainer.innerHTML = '<p>Không tìm thấy sản phẩm nào phù hợp.</p>';
+    // ✅ Kiểm tra tồn tại trước khi dùng
+    if (!suggestionBox || !suggestionList) {
+        console.error("Không tìm thấy suggestion-box hoặc suggestion-list trong DOM");
+        return;
     }
+
+    suggestionList.innerHTML = "";
+
+    if (!products || products.length === 0) {
+        suggestionBox.style.display = "none";
+        return;
+    }
+
+    const displayed = products.slice(0, 5);
+
+    displayed.forEach(product => {
+        const price = product.price
+            ? product.price.toLocaleString("vi-VN") + "đ"
+            : "Đang cập nhật";
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <a href="${contextPath}/product-detail?id=${encodeURIComponent(product.id)}"
+               class="suggestion-item">
+                <div class="suggestion-info">
+                    <span class="suggestion-name">
+                        ${product.name || "Sản phẩm chưa có tên"}
+                    </span>
+                    <span class="suggestion-price">${price}</span>
+                </div>
+                <img class="suggestion-img"
+                     src="${product.imageUrl}"
+                     alt="${product.name}"
+                     onerror="this.src='${contextPath}/static/image/placeholder.png'"/>
+            </a>
+        `;
+        suggestionList.appendChild(li);
+    });
+
+    // Xem thêm nếu có nhiều hơn 5
+    if (products.length > 5) {
+        const keyword = document.getElementById("search-input").value.trim();
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <a class="suggestion-view-more"
+               href="${contextPath}/search-results?name=${encodeURIComponent(keyword)}">
+                Xem thêm ${products.length - 5} sản phẩm →
+            </a>
+        `;
+        suggestionList.appendChild(li);
+    }
+
+    suggestionBox.style.display = "block";
 }
 
 function clearSuggestions() {
-    const suggestionsContainer = document.querySelector('.product-suggestions');
-    suggestionsContainer.innerHTML = ''; // Xóa kết quả hiển thị
+    const suggestionList = document.getElementById("suggestion-list");
+    const suggestionBox  = document.getElementById("suggestion-box");
+    if (suggestionList) suggestionList.innerHTML = "";
+    if (suggestionBox)  suggestionBox.style.display = "none";
 }
 function performSearch() {
     const searchInput = document.getElementById('search-input').value.trim();
@@ -109,4 +134,8 @@ function performSearch() {
     } else {
         alert("Vui lòng nhập từ khóa tìm kiếm!");
     }
+}
+function searchKeyword(keyword) {
+    document.getElementById("search-input").value = keyword;
+    document.getElementById("search-input").focus(); // focus vào ô input
 }

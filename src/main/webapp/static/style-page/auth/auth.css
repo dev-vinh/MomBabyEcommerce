@@ -226,6 +226,20 @@ button.ghost {
     border: 2px solid #ffffff;
 }
 
+
+.back-home-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #666;
+    text-decoration: none;
+}
+
+.back-home-link:hover {
+    color: #1a2e4a;
+    text-decoration: underline;
+}
 .overlay-container {
     position: absolute;
     top: 0;

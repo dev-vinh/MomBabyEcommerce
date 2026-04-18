@@ -54,11 +54,16 @@
         <div class="card-header">
             <h2 id="cardTitle"><%= headerTitle %></h2>
         </div>
-
         <div class="card-body">
 
-
             <div class="screen" id="resetBox" style="display: <%= screen1Style %>;">
+                <button class="back-btn" onclick="backToHome()">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 3L5 8l5 5"/>
+                    </svg>
+                    Quay lại
+                </button>
                 <div class="field-group">
                     <label for="emailInput">Địa chỉ email</label>
                     <input type="email" id="emailInput" placeholder="example@email.com" autocomplete="email"/>
@@ -139,7 +144,7 @@
                 </div>
 
                 <button class="primary-btn" onclick="submitPassword()">Đặt lại mật khẩu</button>
-            </div>
+        </div>
 
             <!-- Screen 4: Success -->
             <div class="screen" id="screen4" style="display: <%= screen4Style %>;">

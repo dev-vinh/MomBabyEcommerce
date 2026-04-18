@@ -188,36 +188,39 @@
 
 
 
-    <div id="search-overlay" class="layer">
-
+    <div id="search-overlay">
+      <button id="close-search-overlay" class="close-btn">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
 
       <div class="search-container">
-        <h2 class="search-container-title">Chúng tôi có thể giúp bạn tìm kiếm?</h2>
+
         <div class="search-bar">
-          <input type="text" id="search-input" placeholder="Nhập từ khoá ..." />
-          <button class="search-icon" onclick="performSearch()">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
+          <i class="fa-solid fa-magnifying-glass search-bar-icon"></i>
+          <input type="text"
+                 id="search-input"
+                 placeholder="Nhập tên sản phẩm..."
+                 autocomplete="off" />
+          <button class="search-submit-btn" onclick="performSearch()">Tìm kiếm</button>
+        </div>
+        <div class="keyword-suggestions">
+          <span class="keyword-label">Gợi ý:</span>
+
+          <button class="keyword-tag" onclick="searchKeyword('Bỉm tã')">Bỉm tã</button>
+
+          <button class="keyword-tag" onclick="searchKeyword('Máy hâm sữa')">Máy hâm sữa</button>
+          <button class="keyword-tag" onclick="searchKeyword('Sữa bột')">Sữa bột</button>
+          <button class="keyword-tag" onclick="searchKeyword('Quần áo')">Quần áo</button>
+          <button class="keyword-tag" onclick="searchKeyword('Bình sữa')">Bình sữa</button>
+          <button class="keyword-tag" onclick="searchKeyword('Khăn ướt')">Khăn ướt</button>
         </div>
 
-        <!-- Dropdown gợi ý -->
-        <div class="suggestion-box" id="suggestion-box">
+        <div id="suggestion-box">
           <ul id="suggestion-list"></ul>
-
-
-          <%-- <h3 class="suggestion-title">Gợi ý dành cho bạn</h3>--%>
-          <div class="product-suggestions">
-          </div>
         </div>
-
 
         <div id="search-content"></div>
 
-
-        <button id="close-search-overlay" class="close-btn">
-          <%-- <i class="fas fa-times"></i>--%>
-          <i class="fa-solid fa-xmark"></i>
-        </button>
       </div>
     </div>
 

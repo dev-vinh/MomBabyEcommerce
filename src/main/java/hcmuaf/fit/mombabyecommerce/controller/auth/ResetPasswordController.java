@@ -3,6 +3,7 @@ package hcmuaf.fit.mombabyecommerce.controller.auth;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.service.AuthService;
+import hcmuaf.fit.mombabyecommerce.util.HashUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -34,6 +35,8 @@ public class ResetPasswordController extends HttpServlet {
             return;
         }
 
+
+
         if (newPassword == null || newPassword.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Vui lòng nhập mật khẩu mới.");
@@ -44,6 +47,8 @@ public class ResetPasswordController extends HttpServlet {
             response.getWriter().write("Mật khẩu không khớp.");
             return;
         }
+
+
         // Validate mật khẩu mạnh
         if (!newPassword.matches(PASSWORD_PATTERN)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -53,23 +58,38 @@ public class ResetPasswordController extends HttpServlet {
 
 
         User user = authService.getUserByEmail(email);
-        if (user != null) {
-            try {
-                authService.changePassword(user.getId(), null, newPassword, false);
-                // Xóa session sau khi đổi mật khẩu thành công
-                request.getSession().removeAttribute("otp");
-                request.getSession().removeAttribute("userEmail");
-                request.getSession().removeAttribute("otpVerified");
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("success");
-            } catch (IllegalArgumentException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write(e.getMessage());
-            }
-        } else {
+        if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("Không tìm thấy người dùng.");
+            return;
         }
+
+        String storedSalt     = user.getSalt();
+        String storedPassword = user.getPasswordUsername();
+        String hashedNew      = HashUtils.hashWithSalt(newPassword, storedSalt);
+
+        if (hashedNew.equals(storedPassword)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Mật khẩu mới không được trùng mật khẩu cũ.");
+            return;
+        }
+
+
+        try {
+            authService.changePassword(user.getId(), null, newPassword, false);
+            request.getSession().removeAttribute("otp");
+            request.getSession().removeAttribute("otpSentAt");
+            request.getSession().removeAttribute("otpExpiry");
+            request.getSession().removeAttribute("userEmail");
+            request.getSession().removeAttribute("otpVerified");
+            request.getSession().removeAttribute("currentScreen");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("success");
+        } catch (IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write(e.getMessage());
+        }
+
     }
 
 }
