@@ -215,7 +215,7 @@
           <button class="keyword-tag" onclick="searchKeyword('Khăn ướt')">Khăn ướt</button>
         </div>
 
-        <div class="suggestion-box" id="suggestion-box">
+        <div id="suggestion-box">
           <ul id="suggestion-list"></ul>
         </div>
 
