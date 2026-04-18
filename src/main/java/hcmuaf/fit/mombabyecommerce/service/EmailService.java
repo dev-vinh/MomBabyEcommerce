@@ -81,7 +81,7 @@ public class EmailService {
         message.setSubject("Xác nhận đăng ký tài khoản");
 
         // Nội dung email chứa liên kết xác nhận
-        String confirmLink = "http://localhost:8080/Trang_Web_ban_hang_san_pham_cho_me_va_be_war/confirm?sessionId=" + sessionId;
+        String confirmLink = serverUrl + contextPath + "/confirm?sessionId=" + sessionId;
         String emailContent = "<h3>Xin Chào!,</h3>"
                 + "<p>Vui lòng nhập vào liên kết duoi dây de xac nhan tai khoan cua ban:</p>"
                 + "<a href=\"" + confirmLink + "\">Xác nhận</a>";

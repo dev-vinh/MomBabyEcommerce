@@ -35,15 +35,48 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
     e.preventDefault(); // Ngăn gửi form truyền thống
 
     const fullName = document.getElementById("fullName").value;
-    const displayName = document.getElementById("displayname").value;
+    const displayName = document.getElementById("displayName").value;
     const email = document.getElementById("emails").value;
     const password = document.getElementById("passwordd").value;
     const confirmPassword = document.getElementById("conf").value;
+    const fullNameError = document.getElementById("fullNameError");
+    const displayNameError = document.getElementById("displayNameError");
+    const emailError = document.getElementById("email-error");
 
+
+    // reset lỗi
+    fullNameError.innerText = "";
+    displayNameError.innerText = "";
+
+
+
+    let isValid = true;
+
+
+    if (!fullName.trim()) {
+        fullNameError.innerText = "Không được để trống";
+        isValid = false;
+    } else if (fullName.length > 50) {
+        fullNameError.innerText = "Tối đa 50 ký tự";
+        isValid = false;
+    }
+
+
+    if (!displayName.trim()) {
+        displayNameError.innerText = "Không được để trống";
+        isValid = false;
+    } else if (displayName.length > 20) {
+        displayNameError.innerText = "Tối đa 20 ký tự";
+        isValid = false;
+    }
+
+    if (!isValid) return;
     if (password !== confirmPassword) {
         alert("Mật khẩu và xác nhận mật khẩu không khớp!");
         return;
     }
+
+
 
     try {
         const response = await fetch("register", {
@@ -70,11 +103,9 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
         } else {
             const errorData = await response.json();
             console.log("Error response:", errorData);
-
             // Hiển thị lỗi dưới input email
-            const emailError = document.getElementById("email-error");
             if (emailError) {
-                emailError.textContent = errorData.message;
+                emailError.textContent = "Email đã tồn tại";
                 emailError.style.display = "block";
             }
         }
