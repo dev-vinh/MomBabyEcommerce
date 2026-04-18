@@ -107,6 +107,9 @@
 
             <button type="submit" id="signInButton"
             >Đăng nhập</button>
+
+            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ
+            </a>
         </form>
     </div>
 
