@@ -1,7 +1,9 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.PermissionDao;
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
 import hcmuaf.fit.mombabyecommerce.contant.ERole;
+import hcmuaf.fit.mombabyecommerce.model.Permission;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.util.HashUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +15,11 @@ import java.util.UUID;
 
 public class AuthService {
     private UserDao userDAO;
-
+    private PermissionDao permissionDAO;
     public AuthService(Jdbi jdbi) {
+
         this.userDAO = jdbi.onDemand(UserDao.class);
+        this.permissionDAO = jdbi.onDemand(PermissionDao.class);
     }
 
     public boolean register(String fullName, String displayName, String email, String password) {
@@ -84,23 +88,36 @@ public class AuthService {
     }
 
 
-    public void activateUserAccount(HttpServletRequest request, String sessionId) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            String storedSessionId = (String) session.getAttribute("sessionId");
-            if (storedSessionId != null && storedSessionId.equals(sessionId)) {
-                String email = (String) session.getAttribute("email");
-
-                if (email != null) {
-                    userDAO.updateStatusByEmail(email, "ACTIVE");
-                }
-
-                System.out.println("Tài khoản với email " + email + " đã được xác nhận và kích hoạt.");
-
-                session.removeAttribute("sessionId");
-                session.removeAttribute("email");
-            }
+//    public void activateUserAccount(HttpServletRequest request, String sessionId) {
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            String storedSessionId = (String) session.getAttribute("sessionId");
+//            if (storedSessionId != null && storedSessionId.equals(sessionId)) {
+//                String email = (String) session.getAttribute("email");
+//
+//                if (email != null) {
+//                    userDAO.updateStatusByEmail(email, "ACTIVE");
+//                }
+//
+//                System.out.println("Tài khoản với email " + email + " đã được xác nhận và kích hoạt.");
+//
+//                session.removeAttribute("sessionId");
+//                session.removeAttribute("email");
+//            }
+//        }
+//    }
+    public void activateUserAccount(Integer userId) {
+        userDAO.updateUserStatus(userId, "ACTIVE");
         }
+
+
+    public boolean confirmAccount(String token) {
+        User user = userDAO.getUserByConfirmationToken(token);
+        if (user != null && "PENDING".equals(user.getStatus())) {
+            userDAO.updateUserStatusByToken(token, "ACTIVE");
+            return true;
+        }
+        return false;
     }
 
 
@@ -120,5 +137,8 @@ public class AuthService {
         String defaultRole = ERole.USER.name();
         int userId = userDAO.createUserGoogle(fullName, displayName, email, googleId);
         return userId > 0;
+    }
+    public List<Permission> getPermissionsByRoleId(Integer roleId) {
+        return permissionDAO.getPermissionsByRoleId(roleId);
     }
 }
