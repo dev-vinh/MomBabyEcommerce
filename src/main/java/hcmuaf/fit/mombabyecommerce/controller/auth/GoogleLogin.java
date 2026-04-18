@@ -14,8 +14,8 @@ import java.util.UUID;
 
 @WebServlet("/login-google")
 public class GoogleLogin extends HttpServlet {
-    String clientId = EnvConfig.get("GOOGLE_CLIENT_ID");
-    String clientSecret = EnvConfig.get("GOOGLE_CLIENT_SECRET");
+    private String clientId ;
+    private String clientSecret;
     private String redirectUri;
     private static final String SCOPE = "email profile";
     private static final String AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -23,8 +23,10 @@ public class GoogleLogin extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
+            this.clientId = EnvConfig.get("GOOGLE_CLIENT_ID");
+            this.clientSecret = EnvConfig.get("GOOGLE_CLIENT_SECRET");
             String hostProduct = ConfigLoader.get("host.dev");
-            this.redirectUri = hostProduct + "/MomBabyEcommerce_war/google-callback";
+            this.redirectUri = hostProduct + "/google-callback";
             if (clientId == null || clientId.trim().isEmpty()) {
                 throw new ServletException("Google Client ID is not configured properly");
             }

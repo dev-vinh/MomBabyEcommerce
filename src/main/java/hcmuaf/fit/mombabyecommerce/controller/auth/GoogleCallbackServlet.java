@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 
 @WebServlet("/google-callback")
 public class GoogleCallbackServlet extends HttpServlet {
-    String clientId = EnvConfig.get("GOOGLE_CLIENT_ID");
-    String clientSecret = EnvConfig.get("GOOGLE_CLIENT_SECRET");
+    private String clientId ;
+    private String clientSecret ;
     private String redirectUri;
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
@@ -46,8 +46,10 @@ public class GoogleCallbackServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        this.clientId = EnvConfig.get("GOOGLE_CLIENT_ID");
+        this.clientSecret = EnvConfig.get("GOOGLE_CLIENT_SECRET");
         String hostProduct = ConfigLoader.get("host.dev");
-        this.redirectUri = hostProduct + "/MomBabyEcommerce_war/google-callback";
+        this.redirectUri = hostProduct + "/google-callback";
         if (clientId == null || clientSecret == null) {
             throw new ServletException("Google OAuth credentials not found in application.properties");
         }
@@ -257,5 +259,10 @@ public class GoogleCallbackServlet extends HttpServlet {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/login?error=Google login failed");
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doPost(request, response);
     }
 }

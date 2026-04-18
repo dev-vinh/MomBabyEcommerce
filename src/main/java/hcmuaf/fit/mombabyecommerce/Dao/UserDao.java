@@ -123,4 +123,11 @@ public interface UserDao {
     @SqlUpdate("UPDATE users SET status = :status WHERE confirmationToken = :token")
     void updateUserStatusByToken(@Bind("token") String token, @Bind("status") String status);
 
+    @SqlUpdate(value = """
+            UPDATE users
+            set needRefresh = :needRefresh
+            where id = :userId
+            """)
+    Boolean updateNeedRefresh(@Bind("userId") Integer userId, @Bind("needRefresh") Boolean needRefresh);
+
 }
