@@ -129,15 +129,26 @@ public class AuthService {
     }
 
 // new code
-    public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
-        if (userDAO.getUserByEmail(email) != null) {
-            userDAO.linkGoogleAccount(email, googleId);
+public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
+    User existingUser = userDAO.getUserByEmail(email);
+    if (existingUser != null) {
+        userDAO.linkGoogleAccount(email, googleId);
+        return true;
+    }
+    try {
+        String dummyPass = "GOOGLE_USER_" + UUID.randomUUID().toString().substring(0, 10);
+        int newUserId = userDAO.createUserGoogle(fullName, displayName, email, googleId, dummyPass);
+
+        if (newUserId > 0) {
+            int defaultRoleId = 2;
+            userDAO.addRoleToUser(newUserId, defaultRoleId);
             return true;
         }
-        String defaultRole = ERole.USER.name();
-        int userId = userDAO.createUserGoogle(fullName, displayName, email, googleId);
-        return userId > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
     public List<Permission> getPermissionsByRoleId(Integer roleId) {
         return permissionDAO.getPermissionsByRoleId(roleId);
     }

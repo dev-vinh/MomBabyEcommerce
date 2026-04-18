@@ -44,7 +44,6 @@ public class GoogleLogin extends HttpServlet {
         }
         String state = UUID.randomUUID().toString();
         request.getSession().setAttribute("google_state", state);
-        request.getSession().setAttribute("google_action", "login");
 
         String authUrl = AUTH_ENDPOINT +
                 "?client_id=" + java.net.URLEncoder.encode(clientId, "UTF-8") +

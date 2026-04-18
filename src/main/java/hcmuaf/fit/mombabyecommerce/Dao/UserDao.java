@@ -2,7 +2,7 @@ package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
-import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -25,7 +25,17 @@ public interface UserDao {
             "where u.id  = :id")
     User getUserById(@Bind("id") Integer id);
 
-    @SqlQuery("SELECT * FROM users WHERE email = :email")
+    @SqlQuery("SELECT u.*, " +
+          "r.id AS r_id, " +
+          "r.roleType AS r_roleType, " +
+          "r.name AS r_name, " +
+          "r.description AS r_description " +
+          "FROM users u " +
+          "LEFT JOIN user_role ur ON u.id = ur.userId " +
+          "LEFT JOIN roles r ON ur.roleId = r.id " +
+          "WHERE u.email = :email")
+    @RegisterBeanMapper(value = User.class)
+    @RegisterBeanMapper(value = Role.class, prefix = "r")
     User getUserByEmail(@Bind("email") String email);
 
     @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, salt,provider) " +
@@ -86,13 +96,16 @@ public interface UserDao {
     @SqlQuery("SELECT * FROM users WHERE google_id = :googleId")
     User getUserByGoogleId(@Bind("googleId") String googleId);
 // tao user với gg
-    @SqlUpdate("INSERT INTO users (fullName, displayName, email, google_id, provider, status) " +
-            "VALUES (:fullName, :displayName, :email, :googleId, 'google', 'ACTIVE')")
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, google_id, provider, status,passwordUserName) " +
+            "VALUES (:fullName, :displayName, :email, :googleId, 'google', 'ACTIVE',:dummyPass)")
     @GetGeneratedKeys("id")
     int createUserGoogle(@Bind("fullName") String fullName,
                          @Bind("displayName") String displayName,
                          @Bind("email") String email,
-                         @Bind("googleId") String googleId);
+                         @Bind("googleId") String googleId,
+                         @Bind("dummyPass") String dummyPass);
+    @SqlUpdate("INSERT INTO user_role (userId, roleId) VALUES (:userId, :roleId)")
+    void addRoleToUser(@Bind("userId") int userId, @Bind("roleId") int roleId);
 // lien ket tk local len gg
     @SqlUpdate("UPDATE users SET google_id = :googleId, provider = 'google' WHERE email = :email")
     void linkGoogleAccount(@Bind("email") String email, @Bind("googleId") String googleId);
