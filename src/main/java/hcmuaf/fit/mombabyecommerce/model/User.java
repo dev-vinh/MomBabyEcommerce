@@ -17,8 +17,7 @@ public class User {
     String passwordUsername;
     Integer avatarId;
     String status;
-    // String role;
-    String role;
+    Role role;
     String salt;
     String avatarUrl;
     String googleId;
@@ -38,9 +37,9 @@ public class User {
                 @ColumnName("passwordUserName") @Nullable String passwordUsername,
                 @ColumnName("avatarId") @Nullable Integer avatarId,
                 @ColumnName("status") @Nullable String status,
-                @ColumnName("role") @Nullable String role,
+                @ColumnName("role") @Nullable Role role,
                 @ColumnName("salt") @Nullable String salt,
-                @ColumnName("avatar_url") @Nullable String avatarUrl, // Lưu ý khớp với alias trong SQL UserDao
+                @ColumnName("avatar_url") @Nullable String avatarUrl,
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
                 @ColumnName("google_id") @Nullable String googleId,
                 @ColumnName("provider") @Nullable String provider,
@@ -149,11 +148,11 @@ public class User {
         this.status = status;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
