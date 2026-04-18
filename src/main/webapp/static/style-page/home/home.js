@@ -56,22 +56,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Xử lý nút tìm kiếm
-    const searchIcon = document.getElementById("search-icon");
+    const searchIcon    = document.getElementById("search-icon");
     const searchOverlay = document.getElementById("search-overlay");
-    const closeSearchOverlay = document.getElementById("close-search-overlay");
+    const closeBtn      = document.getElementById("close-search-overlay");
+
 
     if (searchIcon) {
-        searchIcon.addEventListener("click", () => {
-            searchOverlay.style.display = "flex";
+        searchIcon.addEventListener("click", (e) => {
+            e.preventDefault();
+            searchOverlay.classList.add("open");
+            document.getElementById("search-input").focus();
         });
     }
 
-    if (closeSearchOverlay) {
-        closeSearchOverlay.addEventListener("click", () => {
-            searchOverlay.style.display = "none";
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            searchOverlay.classList.remove("open");
+            document.getElementById("search-input").value = "";
+            document.getElementById("suggestion-box").style.display = "none";
         });
     }
-
+    window.showSearchOverlay = () => {
+        searchOverlay.classList.add("open");
+        document.getElementById("search-input").focus();
+    };
 
     // Xử lý nút "Trang của tôi"
     document.getElementById("my-page-link").addEventListener("click", (event) => {
@@ -84,7 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = 'user-profile';
         }
     });
-
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            searchOverlay.classList.remove("open");
+            document.getElementById("search-input").value = "";
+        }
+    })
     window.addEventListener("message", (event) => {
         if (event.data.type === "navigate") {
             iframe.src = event.data.url;
@@ -116,10 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function showSearchOverlay() {
-    // Hiển thị overlay tìm kiếm bằng cách thay đổi style
-    document.getElementById("search-overlay").style.display = "block";
-}
+
 
 // Đóng overlay tìm kiếm khi bấm vào nút đóng
 document.getElementById("close-search-overlay").addEventListener("click", function () {
