@@ -28,10 +28,10 @@ public interface UserDao {
     @SqlQuery("SELECT * FROM users WHERE email = :email")
     User getUserByEmail(@Bind("email") String email);
 
-    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, role, salt) " +
-            "VALUES (:fullName, :displayName, :email, :passwordUserName, 'USER', :salt)")
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, role, salt,provider) " +
+            "VALUES (:fullName, :displayName, :email, :passwordUserName, 'USER', :salt,'local')")
     @GetGeneratedKeys("id")
-    String createUser(@Bind("fullName") String fullName,
+    int createUser(@Bind("fullName") String fullName,
                       @Bind("displayName") String displayName,
                       @Bind("email") String email,
                       @Bind("passwordUserName") String passwordUserName,
@@ -79,5 +79,18 @@ public interface UserDao {
 
     @SqlUpdate("UPDATE users SET status = :status WHERE email = :email")
     int updateStatusByEmail(@Bind("email") String email, @Bind("status") String status);
-
+//tim user theo gg id
+    @SqlQuery("SELECT * FROM users WHERE google_id = :googleId")
+    User getUserByGoogleId(@Bind("googleId") String googleId);
+// tao user với gg
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, google_id, provider, role, status) " +
+            "VALUES (:fullName, :displayName, :email, :googleId, 'google', 'USER', 'ACTIVE')")
+    @GetGeneratedKeys("id")
+    int createUserGoogle(@Bind("fullName") String fullName,
+                         @Bind("displayName") String displayName,
+                         @Bind("email") String email,
+                         @Bind("googleId") String googleId);
+// lien ket tk local len gg
+    @SqlUpdate("UPDATE users SET google_id = :googleId, provider = 'google' WHERE email = :email")
+    void linkGoogleAccount(@Bind("email") String email, @Bind("googleId") String googleId);
 }

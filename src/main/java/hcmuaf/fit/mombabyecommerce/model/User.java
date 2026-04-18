@@ -21,10 +21,10 @@ public class User {
     String role;
     String salt;
     String avatarUrl;
-
+    String googleId;
+    String provider;
     // xem
     String confirmationToken;
-    String facebookId;
     Boolean needRefresh;
 
     @JdbiConstructor
@@ -38,12 +38,12 @@ public class User {
                 @ColumnName("passwordUserName") @Nullable String passwordUsername,
                 @ColumnName("avatarId") @Nullable Integer avatarId,
                 @ColumnName("status") @Nullable String status,
-                // pbha sửa
                 @ColumnName("role") @Nullable String role,
                 @ColumnName("salt") @Nullable String salt,
-                @ColumnName("avatarUrl") @Nullable String avatarUrl,
+                @ColumnName("avatar_url") @Nullable String avatarUrl, // Lưu ý khớp với alias trong SQL UserDao
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
-                @ColumnName("facebookId") @Nullable String facebookId,
+                @ColumnName("google_id") @Nullable String googleId,
+                @ColumnName("provider") @Nullable String provider,
                 @ColumnName("needRefresh") @Nullable Boolean needRefresh
 
     ) {
@@ -57,12 +57,12 @@ public class User {
         this.passwordUsername = passwordUsername;
         this.avatarId = avatarId;
         this.status = status;
-        // pbha sửa
         this.role = role;
         this.salt = salt;
         this.avatarUrl = avatarUrl;
         this.confirmationToken = confirmationToken;
-        this.facebookId = facebookId;
+        this.googleId = googleId;
+        this.provider = provider;
         this.needRefresh = needRefresh;
     }
 
@@ -173,20 +173,28 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
     public String getConfirmationToken() {
         return confirmationToken;
     }
 
     public void setConfirmationToken(String confirmationToken) {
         this.confirmationToken = confirmationToken;
-    }
-
-    public String getFacebookId() {
-        return facebookId;
-    }
-
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
     }
 
     public Boolean getNeedRefresh() {
@@ -213,8 +221,9 @@ public class User {
                 ", role='" + role + '\'' +
                 ", salt='" + salt + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
+                ", googleId='" + googleId + '\'' +
+                ", provider='" + provider + '\'' +
                 ", confirmationToken='" + confirmationToken + '\'' +
-                ", facebookId='" + facebookId + '\'' +
                 ", needRefresh=" + needRefresh +
                 '}';
     }

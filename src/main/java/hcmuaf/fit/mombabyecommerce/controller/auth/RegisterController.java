@@ -49,6 +49,28 @@ public class RegisterController extends HttpServlet {
             String inputPassword = jsonData.get("password");
             String confirmPassword = jsonData.get("confirmPassword");
 
+            if (fullName != null) fullName = fullName.trim();
+            if (displayName != null) displayName = displayName.trim();
+       
+            if (fullName == null || fullName.isEmpty()) {
+                returnError(response, objectMapper, "Tên đầy đủ không được để trống");
+                return;
+            }
+
+            if (fullName.length() > 50) {
+                returnError(response, objectMapper, "Tên đầy đủ tối đa 50 ký tự");
+                return;
+            }
+
+            if (displayName == null || displayName.isEmpty()) {
+                returnError(response, objectMapper, "Tên hiển thị không được để trống");
+                return;
+            }
+
+            if (displayName.length() > 20) {
+                returnError(response, objectMapper, "Tên hiển thị tối đa 20 ký tự");
+                return;
+            }
             // Kiểm tra mật khẩu
             if (inputPassword == null || inputPassword.isEmpty()) {
                 ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(400, "error",
@@ -103,5 +125,11 @@ public class RegisterController extends HttpServlet {
                     "An error occurred: " + e.getMessage(), null);
             response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
         }
+    }
+
+    private void returnError(HttpServletResponse response, ObjectMapper mapper, String message) throws IOException {
+        response.setStatus(400);
+        ResponseWrapper<Object> res = new ResponseWrapper<>(400, "error", message, null);
+        response.getWriter().write(mapper.writeValueAsString(res));
     }
 }

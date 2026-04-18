@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
+import hcmuaf.fit.mombabyecommerce.contant.ERole;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.util.HashUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +24,8 @@ public class AuthService {
         }
         String salt = HashUtils.generateSalt();
         String hashedPassword = HashUtils.hashWithSalt(password, salt);
-        String userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt);
-        return userId != null;
+        int userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt);
+        return userId > 0 ;
     }
 
 
@@ -110,4 +111,14 @@ public class AuthService {
         session.setAttribute("email", email);  // Lưu email vào session nếu cần thiết
     }
 
+// new code
+    public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
+        if (userDAO.getUserByEmail(email) != null) {
+            userDAO.linkGoogleAccount(email, googleId);
+            return true;
+        }
+        String defaultRole = ERole.USER.name();
+        int userId = userDAO.createUserGoogle(fullName, displayName, email, googleId);
+        return userId > 0;
+    }
 }

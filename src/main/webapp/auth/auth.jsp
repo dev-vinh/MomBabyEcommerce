@@ -34,16 +34,19 @@
             <div class="infield">
                 <input id="fullName" placeholder=" " required />
                 <label for="fullName">Tên đầy đủ <span class="required">*</span> </label>
+                <small class="error" id="fullNameError"></small>
             </div>
             <div class="infield">
-                <input id="displayname" placeholder=" " required />
-                <label for="displayname">Tên hiển thị <span class="required">*</span> </label>
+                <input id="displayName" placeholder=" " required />
+                <label for="displayName">Tên hiển thị <span class="required">*</span> </label>
+                <small class="error" id="displayNameError"></small>
             </div>
             <div class="infield">
                 <input type="email" id="emails" placeholder=" " name="email" required />
                 <label for="emails">Email <span class="required">*</span> </label>
+                <small class="error" id="email-error"></small>
             </div>
-
+            
             <div class="infield password">
                 <input type="password" id="passwordd" placeholder=" " required>
                 <label for="passwordd">Mật khẩu <span class="required">*</span> </label>
@@ -98,7 +101,7 @@
                     <input type="checkbox" id="remember-checkbox" />
                     <label for="remember-checkbox">Ghi nhớ đăng nhập</label>
                 </div>
-                <a href="${pageContext.request.contextPath}/auth/forgotpassword.jsp" class="forgot">Quên mật khẩu?</a>
+                <a href="${pageContext.request.contextPath}/auth/forgot-password" class="forgot">Quên mật khẩu?</a>
             </div>
 
 
