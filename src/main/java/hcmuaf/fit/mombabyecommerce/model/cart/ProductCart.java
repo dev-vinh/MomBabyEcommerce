@@ -2,23 +2,30 @@ package hcmuaf.fit.mombabyecommerce.model.cart;
 
 import hcmuaf.fit.mombabyecommerce.model.Product;
 
-public class ProductCart {
-    Integer productId;
-    Integer optionId;
-    String name;
-    String imageUrl;
-    Integer quantity;
-    Integer price;
-    Integer stock;
-    Integer height;
-    Integer length;
-    Integer width;
-    Integer weight;
+import java.io.Serializable;
+
+public class ProductCart implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Integer productId;
+    private Integer optionId;
+    private String name;
+    private String imageUrl;
+    private Integer quantity;
+    private Integer price;
+    private Integer stock;
+    private Integer height;
+    private Integer length;
+    private Integer width;
+    private Integer weight;
 
 
-
+    public ProductCart() {}
 
     public ProductCart(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
         this.productId = product.getId();
         this.optionId = product.getOptionId();
         this.name = product.getName();
