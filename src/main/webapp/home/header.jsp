@@ -181,7 +181,8 @@
         <div class="user-popup">
           <!-- cần tạo user-profile.jsp  login  -->
           <a class="nav_item" href="user-profile" id="my-page-link">Trang của tôi</a>
-          <a href="login" id="login-link">Đăng nhập/Đăng ký</a>
+<%--          <a href="login" id="login-link">Đăng nhập/Đăng ký</a>--%>
+            <a href="javascript:void(0)" id="loginTrigger">Đăng ký / Đăng nhập</a>
         </div>
       </div>
     </div>
@@ -226,7 +227,34 @@
 
 </div>
 
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <jsp:include page="../auth/auth.jsp" />
+    </div>
+</div>
+<script>
+    const modal = document.getElementById("loginModal");
+    const btn = document.getElementById("loginTrigger");
+    const span = document.querySelector(".close-btn");
 
+    // Khi nhấn vào chữ Đăng nhập trên Header
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // Khi nhấn vào dấu (x)
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Khi nhấn chuột ra ngoài vùng Popup
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 <script> const contextPath = "${pageContext.request.contextPath}"; </script>
 <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-home/search.js"></script>
