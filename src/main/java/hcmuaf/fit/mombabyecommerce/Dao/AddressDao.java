@@ -36,4 +36,14 @@ public interface AddressDao {
                    @Bind("state") String state,
                    @Bind("country") String country,
                    @Bind("isDefault") Boolean isDefault);
+
+    @SqlQuery(value = "SELECT *" +
+            " FROM address" +
+            " WHERE userId = :userId and isDefault =1;")
+    Address getAddressDefaultByUserId(@Bind("userId") Integer userId);
+
+    @SqlUpdate("UPDATE address " +
+            " SET status=:status " +
+            "WHERE id =:id ")
+    Boolean updateStatus(@Bind("id") Integer id,@Bind("status") String status);
 }

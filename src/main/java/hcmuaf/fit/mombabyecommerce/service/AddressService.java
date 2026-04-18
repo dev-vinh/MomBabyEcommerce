@@ -42,8 +42,12 @@ public class AddressService {
                 address.getDefault()
         );
     }
-
-
+    public Address findDefautlByUserId(Integer id) {
+        return addressDao.getAddressDefaultByUserId(id);
+    }
+    public Boolean updateStatus(Integer id, String status) {
+        return addressDao.updateStatus(id, status);
+    }
 
     public static void main(String[] args) {
         AddressService addressService = new AddressService(DBConnection.getJdbi());

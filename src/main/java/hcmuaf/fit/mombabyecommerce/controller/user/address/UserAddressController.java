@@ -29,7 +29,6 @@ public class UserAddressController extends HttpServlet {
         if (userId != null) {
             User user = userService.getUserById(userId);
             List<Address> addresses = addressSevice.findByUserId(userId);
-
             request.setAttribute("user", user);
             request.setAttribute("addresses", addresses);
         }
