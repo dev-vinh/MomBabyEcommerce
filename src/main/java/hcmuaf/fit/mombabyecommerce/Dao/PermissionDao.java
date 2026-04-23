@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.model.Permission;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -10,17 +11,21 @@ import java.util.List;
 public interface PermissionDao {
 
     @SqlQuery(value = """
-        select * from permission
+        select * from permissions
 """)
     public List<Permission> getAllPermissions();
 
-    @SqlQuery("SELECT p.id, p.name, p.type " +
-            "FROM permission p " +
-            "INNER JOIN role_permission rp ON p.id = rp.permissionId " +
-            "WHERE rp.roleId = :roleId")
+    @SqlQuery("""
+    SELECT p.id, p.name, p.type
+    FROM permissions p
+    JOIN role_permission rp ON p.id = rp.permissionId
+    JOIN roles r ON r.id = rp.roleId
+    WHERE r.id = :roleId
+""")
+    @RegisterBeanMapper(Permission.class)
     List<Permission> getPermissionsByRoleId(@Bind("roleId") Integer roleId);
 
-    @SqlQuery("SELECT * FROM permission WHERE id = :id")
+    @SqlQuery("SELECT * FROM permissions WHERE id = :id")
     Permission getPermissionById(Integer id);
 
 

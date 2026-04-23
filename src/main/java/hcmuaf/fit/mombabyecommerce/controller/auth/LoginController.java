@@ -47,14 +47,12 @@ public class LoginController extends HttpServlet {
             String password = jsonData.get("password");
             String recaptchaToken = jsonData.get("recaptcha");
 
-            // Kiểm tra thông tin đầu vào
             if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
                 ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(
                         400, "error", "Email và mật khẩu không được để trống", null);
                 response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
                 return;
             }
-            // Xử lý đăng nhập
             User user = authService.login(email, password);
             if (user != null) {
                 List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
@@ -62,18 +60,15 @@ public class LoginController extends HttpServlet {
                         .map(p -> p.getType().toString())
                         .collect(Collectors.toList());
 
-                // 5. Quản lý Session
                 HttpSession session = request.getSession();
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("roleType", user.getRole().getRoleType());
                 session.setAttribute("permissions", permissionTypes);
 
-                // Xử lý refresh flag
                 if (Boolean.TRUE.equals(user.getNeedRefresh())){
                     userService.updateNeedRefresh(user.getId(), false);
                 }
 
-                // 6. Trả về dữ liệu thành công
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("id", user.getId());
                 userData.put("fullName", user.getFullName());

@@ -101,12 +101,14 @@ public class GoogleCallbackServlet extends HttpServlet {
             String name = userInfo.get("name").getAsString();
 
             User user = authService.getUserByEmail(email);
+            user = authService.enrichUserWithRole(user);
 
             if (user == null) {
                 String randomPass = UUID.randomUUID().toString();
                 boolean success = authService.registerWithGoogleActive(name, name, email, randomPass);
                 if (success) {
                     user = authService.getUserByEmail(email);
+                    user = authService.enrichUserWithRole(user);
                     System.out.println("Auto-registered Google user: " + email);
                 } else {
                     throw new Exception("Không thể tự động đăng ký tài khoản Google.");
@@ -125,26 +127,18 @@ public class GoogleCallbackServlet extends HttpServlet {
             } catch (Exception e) {
                 System.err.println("Email notification failed: " + e.getMessage());
             }
+            if (user.getRole() == null) {
+                throw new RuntimeException("User chưa có role");
+            }
             List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
             List<String> permissionTypes = permissions.stream()
                     .map(p -> p.getType().toString())
                     .collect(Collectors.toList());
+            session.setAttribute("user", user);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("roleType", user.getRole().getRoleType().name());
 
-            String script = "<script>" +
-                    "sessionStorage.setItem('roleType', '" + user.getRole().getRoleType() + "');" +
-                    "sessionStorage.setItem('userId', '" + user.getId() + "');" +
-                    "sessionStorage.setItem('permission', '" + gson.toJson(permissionTypes) + "');" +
-                    "if (sessionStorage.getItem('roleType') === 'ADMIN') {" +
-                    "  window.location.href = '" + request.getContextPath() + "/admin/dashboard';" +
-                    "} else {" +
-                    "  window.location.href = '" + request.getContextPath() + "/home?success=Login%20Successful';" +
-                    "}" +
-                    "</script>";
-
-            response.getWriter().write(script);
-            request.getSession().removeAttribute("google_state");
-            request.getSession().removeAttribute("google_action");
-
+            response.sendRedirect(request.getContextPath() + "/home");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/login?error=Google%20Login%20Failed");
