@@ -219,6 +219,14 @@
           <ul id="suggestion-list"></ul>
         </div>
 
+        <div id="suggestion-footer" style="display:none">
+          <span class="footer-count"></span>
+          <a class="footer-link" href="#">
+            Xem tất cả
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
         <div id="search-content"></div>
 
       </div>

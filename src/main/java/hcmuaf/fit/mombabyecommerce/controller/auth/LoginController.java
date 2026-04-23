@@ -56,6 +56,7 @@ public class LoginController extends HttpServlet {
             }
             // Xử lý đăng nhập
             User user = authService.login(email, password);
+
             if (user != null) {
                 List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
                 List<String> permissionTypes = permissions.stream()

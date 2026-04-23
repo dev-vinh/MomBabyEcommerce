@@ -22,11 +22,11 @@ document.getElementById('search-input').addEventListener('input', () => {
     const searchInput = document.getElementById('search-input').value.trim();
     const searchIconEl = document.querySelector('.search-bar-icon');
 
-    // Thay đổi icon thành loader khi người dùng nhập từ khóa
+
     searchIconEl.classList.remove('fa-magnifying-glass');
     searchIconEl.classList.add('fa-spinner', 'fa-spin');
 
-    // Xóa timeout cũ nếu người dùng tiếp tục nhập
+
     clearTimeout(debounceTimeout);
 
     debounceTimeout = setTimeout(() => {
@@ -45,17 +45,16 @@ document.getElementById('search-input').addEventListener('input', () => {
                     console.error('Lỗi khi tìm kiếm sản phẩm:', err);
                 })
                 .finally(() => {
-                    // Khôi phục lại icon tìm kiếm sau khi hoàn thành
-                    searchIconEl.classList.remove('fa-spinner', 'fa-spin'); // ✅
+                    searchIconEl.classList.remove('fa-spinner', 'fa-spin');
                     searchIconEl.classList.add('fa-magnifying-glass');
                 });
         } else {
             clearSuggestions();
             // Khôi phục lại icon nếu input rỗng
-            searchIconEl.classList.remove('fa-spinner', 'fa-spin'); // ✅
+            searchIconEl.classList.remove('fa-spinner', 'fa-spin');
             searchIconEl.classList.add('fa-magnifying-glass');
         }
-    }, 500); // 500ms debounce
+    }, 500);
 });
 
 
@@ -64,8 +63,8 @@ document.getElementById('search-input').addEventListener('input', () => {
 function updateSuggestions(products) {
     const suggestionBox  = document.getElementById("suggestion-box");
     const suggestionList = document.getElementById("suggestion-list");
+    const suggestionFooter = document.getElementById("suggestion-footer");
 
-    // ✅ Kiểm tra tồn tại trước khi dùng
     if (!suggestionBox || !suggestionList) {
         console.error("Không tìm thấy suggestion-box hoặc suggestion-list trong DOM");
         return;
@@ -75,6 +74,7 @@ function updateSuggestions(products) {
 
     if (!products || products.length === 0) {
         suggestionBox.style.display = "none";
+        if (suggestionFooter) suggestionFooter.style.display = "none";
         return;
     }
 
@@ -117,6 +117,15 @@ function updateSuggestions(products) {
         suggestionList.appendChild(li);
     }
 
+    if (suggestionFooter) {
+        const keyword = document.getElementById("search-input").value.trim();
+        const countEl = suggestionFooter.querySelector(".footer-count");
+        const linkEl  = suggestionFooter.querySelector(".footer-link");
+        if (countEl) countEl.textContent = `${products.length} kết quả cho "${keyword}"`;
+        if (linkEl)  linkEl.href = `${contextPath}/search-results?name=${encodeURIComponent(keyword)}`;
+        suggestionFooter.style.display = "flex";
+    }
+
     suggestionBox.style.display = "block";
 }
 
@@ -136,6 +145,8 @@ function performSearch() {
     }
 }
 function searchKeyword(keyword) {
-    document.getElementById("search-input").value = keyword;
-    document.getElementById("search-input").focus(); // focus vào ô input
+    const inputEl = document.getElementById("search-input");
+    inputEl.value = keyword;
+    inputEl.focus();
+    inputEl.dispatchEvent(new Event("input"));
 }
