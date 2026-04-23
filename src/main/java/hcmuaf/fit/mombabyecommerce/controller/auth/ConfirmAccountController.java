@@ -35,6 +35,8 @@ public class ConfirmAccountController extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().write("<script>alert('Đã xảy ra lỗi: " + e.getMessage() + "'); window.location.href='login';</script>");
         }
+
+        response.sendRedirect("login?status=success");
     }
 }
 

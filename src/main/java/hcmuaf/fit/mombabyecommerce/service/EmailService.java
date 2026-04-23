@@ -51,7 +51,7 @@ public class EmailService {
 
     public void sendConfirmationEmail(String toEmail, String sessionId, String contextPath) throws MessagingException {
         String subject = "Xác nhận đăng ký tài khoản";
-        String confirmLink = serverUrl + contextPath + "/confirm?sessionId=" + sessionId;
+        String confirmLink = serverUrl + contextPath + "/confirm?token=" + sessionId;
         String content = "<h3>Xin Chào!,</h3>"
                 + "<p>Vui lòng nhấn vào liên kết dưới đây để xác nhận tài khoản của bạn:</p>"
                 + "<a href=\"" + confirmLink + "\" style='padding:10px 20px; color:white; background:#ff66a1; text-decoration:none; border-radius:5px;'>Xác nhận ngay</a>";
