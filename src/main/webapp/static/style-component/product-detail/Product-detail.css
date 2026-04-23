@@ -141,7 +141,7 @@ body {
     grid-template-columns: 1fr 1fr; /* 2 cột bằng nhau */
     gap: 20px; /* Khoảng cách giữa các cột */
     max-width: 1200px;
-    margin: 50px auto; /* Căn giữa container */
+    margin: 100px auto;
     background-color: white;
 }
 

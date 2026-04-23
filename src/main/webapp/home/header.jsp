@@ -215,8 +215,19 @@
           <button class="keyword-tag" onclick="searchKeyword('Khăn ướt')">Khăn ướt</button>
         </div>
 
-        <div id="suggestion-box">
+        <div id="suggestion-box"  style="display:none;">
           <ul id="suggestion-list"></ul>
+          <div id="no-result" style="display:none;" class="no-result">
+            <p>Không tìm thấy sản phẩm</p>
+          </div>
+        </div>
+
+        <div id="suggestion-footer" style="display:none">
+          <span class="footer-count"></span>
+          <a class="footer-link" href="#">
+            Xem tất cả
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
         </div>
 
         <div id="search-content"></div>

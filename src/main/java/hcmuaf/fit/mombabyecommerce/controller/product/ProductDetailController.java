@@ -50,7 +50,7 @@ public class ProductDetailController extends HttpServlet {
         // nếu lấy chi tieets sản phẩm ra không được xem lại chỗ này
 
         request.setAttribute("images", images);
-        request.setAttribute("primaryImageUrl", primaryImageUrl); // Add primary image URL
+        request.setAttribute("primaryImageUrl", primaryImageUrl);
         request.setAttribute("product", product);
         request.setAttribute("descriptions", descriptions);
         request.setAttribute("productPrice", productPrice);
@@ -58,8 +58,7 @@ public class ProductDetailController extends HttpServlet {
         request.setAttribute("variants", variants);
 
         productService.increaseNoOfViews(productId);
-
-        request.getRequestDispatcher("product_detail/product_detail.jsp").forward(request, response);
+        request.getRequestDispatcher("product_detail/product-detail.jsp").forward(request, response);
     }
 
     // lỗi
