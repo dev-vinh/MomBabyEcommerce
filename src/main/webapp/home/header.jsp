@@ -183,7 +183,7 @@
 
                     <c:when test="${not empty sessionScope.user}">
                         <a class="nav_item" href="user-profile">
-                            Xin chào ${sessionScope.user.fullName}
+                            Xin chào ${sessionScope.user.displayName}
                         </a>
                         <a class="nav_item" href="user-profile">Trang của tôi</a>
                         <a class="nav_item" href="logout">Đăng xuất</a>

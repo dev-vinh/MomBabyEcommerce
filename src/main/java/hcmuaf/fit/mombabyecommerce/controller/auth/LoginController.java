@@ -61,6 +61,7 @@ public class LoginController extends HttpServlet {
                         .collect(Collectors.toList());
 
                 HttpSession session = request.getSession();
+                session.setAttribute("user", user);
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("roleType", user.getRole().getRoleType());
                 session.setAttribute("permissions", permissionTypes);
