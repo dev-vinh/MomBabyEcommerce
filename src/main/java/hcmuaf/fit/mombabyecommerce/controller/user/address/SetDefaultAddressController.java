@@ -56,8 +56,6 @@ public class SetDefaultAddressController extends HttpServlet {
 
         }
 
-
-    }
     }
 
     @Override

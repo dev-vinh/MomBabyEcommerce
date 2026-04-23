@@ -11,7 +11,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import java.time.LocalDate;
 import java.util.List;
 
-@RegisterConstructorMapper(User.class)
+@RegisterBeanMapper(value = User.class)
 
 public interface UserDao {
 

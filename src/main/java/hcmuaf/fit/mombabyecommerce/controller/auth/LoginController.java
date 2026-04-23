@@ -42,17 +42,6 @@ public class LoginController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-            // Đọc nội dung JSON từ body request
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
-            try (BufferedReader reader = request.getReader()) {
-                while ((line = reader.readLine()) != null) {
-                    jsonBuilder.append(line);
-                }
-            }
-            String jsonString = jsonBuilder.toString();
-
-            // Parse JSON để lấy dữ liệu
             Map<String, String> jsonData = objectMapper.readValue(request.getInputStream(), Map.class);
             String email = jsonData.get("email");
             String password = jsonData.get("password");

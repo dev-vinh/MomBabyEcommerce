@@ -49,6 +49,9 @@ public class AddressService {
         return addressDao.updateStatus(id, status);
     }
 
+    public Boolean updateDefautlById(Integer id, boolean defaultStatus) {
+        return addressDao.updateDefaultById(id, defaultStatus);
+    }
     public static void main(String[] args) {
         AddressService addressService = new AddressService(DBConnection.getJdbi());
         System.out.println(addressService.findByUserId(42));

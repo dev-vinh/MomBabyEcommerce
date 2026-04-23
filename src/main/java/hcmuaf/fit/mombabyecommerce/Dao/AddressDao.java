@@ -46,4 +46,10 @@ public interface AddressDao {
             " SET status=:status " +
             "WHERE id =:id ")
     Boolean updateStatus(@Bind("id") Integer id,@Bind("status") String status);
+
+    @SqlUpdate("UPDATE address " +
+            "SET isDefault = :defaultStatus " +
+            "WHERE id = :id; ")
+    Boolean updateDefaultById(@Bind("id") Integer id, @Bind("defaultStatus") boolean defaultStatus);
+
 }
