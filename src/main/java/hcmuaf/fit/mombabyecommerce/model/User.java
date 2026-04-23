@@ -39,7 +39,6 @@ public class User implements Serializable {
                 @ColumnName("passwordUserName") @Nullable String passwordUsername,
                 @ColumnName("avatarId") @Nullable Integer avatarId,
                 @ColumnName("status") @Nullable String status,
-                @ColumnName("role") @Nullable Role role,
                 @ColumnName("salt") @Nullable String salt,
                 @ColumnName("avatar_url") @Nullable String avatarUrl,
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
@@ -58,7 +57,6 @@ public class User implements Serializable {
         this.passwordUsername = passwordUsername;
         this.avatarId = avatarId;
         this.status = status;
-        this.role = role;
         this.salt = salt;
         this.avatarUrl = avatarUrl;
         this.confirmationToken = confirmationToken;
@@ -150,13 +148,8 @@ public class User implements Serializable {
         this.status = status;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
     public String getSalt() {
         return salt;

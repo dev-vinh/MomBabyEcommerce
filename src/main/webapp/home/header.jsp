@@ -6,7 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -178,11 +178,23 @@
       <div class="icon user-login" target="_top">
         <%-- <i class="fas fa-user"></i>--%>
         <i class="fa-solid fa-user"></i>
-        <div class="user-popup">
-          <!-- cần tạo user-profile.jsp  login  -->
-          <a class="nav_item" href="user-profile" id="my-page-link">Trang của tôi</a>
-          <a href="login" id="login-link">Đăng nhập/Đăng ký</a>
-        </div>
+            <div class="user-popup">
+                <c:choose>
+
+                    <c:when test="${not empty sessionScope.user}">
+                        <a class="nav_item" href="user-profile">
+                            Xin chào ${sessionScope.user.displayName}
+                        </a>
+                        <a class="nav_item" href="user-profile">Trang của tôi</a>
+                        <a class="nav_item" href="logout">Đăng xuất</a>
+                    </c:when>
+
+                    <c:otherwise>
+                        <a href="login">Đăng nhập/Đăng ký</a>
+                    </c:otherwise>
+
+                </c:choose>
+            </div>
       </div>
     </div>
 
