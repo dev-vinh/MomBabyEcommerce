@@ -37,8 +37,7 @@ document.getElementById('search-input').addEventListener('input', () => {
                     if (data.status === 'success') {
                         updateSuggestions(data.data);
                     } else {
-                        clearSuggestions();
-                        console.log(data.message || 'Không tìm thấy sản phẩm phù hợp.');
+                        updateSuggestions([]);
                     }
                 })
                 .catch(err => {
@@ -64,6 +63,7 @@ function updateSuggestions(products) {
     const suggestionBox  = document.getElementById("suggestion-box");
     const suggestionList = document.getElementById("suggestion-list");
     const suggestionFooter = document.getElementById("suggestion-footer");
+    const noResult       = document.getElementById("no-result");
 
     if (!suggestionBox || !suggestionList) {
         console.error("Không tìm thấy suggestion-box hoặc suggestion-list trong DOM");
@@ -73,11 +73,20 @@ function updateSuggestions(products) {
     suggestionList.innerHTML = "";
 
     if (!products || products.length === 0) {
-        suggestionBox.style.display = "none";
+        suggestionBox.style.display = "block";
+        suggestionList.innerHTML = "";
+        noResult.style.display = "block";
+
+        suggestionList.style.display = "none";
+
+        const keyword = document.getElementById("search-input").value.trim();
+
         if (suggestionFooter) suggestionFooter.style.display = "none";
+
         return;
     }
-
+    suggestionList.style.display = "block";
+    noResult.style.display = "none";
     const displayed = products.slice(0, 5);
 
     displayed.forEach(product => {
@@ -132,8 +141,10 @@ function updateSuggestions(products) {
 function clearSuggestions() {
     const suggestionList = document.getElementById("suggestion-list");
     const suggestionBox  = document.getElementById("suggestion-box");
+    const noResult       = document.getElementById("no-result");
     if (suggestionList) suggestionList.innerHTML = "";
     if (suggestionBox)  suggestionBox.style.display = "none";
+    if (noResult)       noResult.style.display = "none";
 }
 function performSearch() {
     const searchInput = document.getElementById('search-input').value.trim();
