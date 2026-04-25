@@ -18,7 +18,6 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/home/Home.css" />
   <link rel="stylesheet"
         href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
-
 </head>
 
 <body>
@@ -33,133 +32,68 @@
 
   <nav class="navbar">
     <ul>
-      <li class="active">
-        <a href="#">Combo Đồ sơ sinh
-
+      <li>
+        <a href="${pageContext.request.contextPath}/search-category?categoryId=1">
+          Combo Đồ sơ sinh
         </a>
-        <div class="submenu submenu-do-so-sinh">
-          <div class="submenu-column">
+      </li>
+      <c:choose>
+        <c:when test="${not empty categories}">
+          <c:forEach var="c" items="${categories}">
+            <li>
+              <a href="${pageContext.request.contextPath}/search-category?categoryId=${c.id}">
+                  ${c.name}
+              </a>
+            </li>
+          </c:forEach>
+        </c:when>
 
-            <%-- <a class="nav_item" href="search-do-so-sinh">Tất cả combo đồ sơ sinh</a>--%>
-            <a class="nav_item" href="Search_Clothes">Tất cả combo đồ
-              sơ sinh</a>
+        <c:otherwise>
 
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=1">
+              Combo Đồ sơ sinh
+            </a>
+          </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=8">
+              Máy móc thiết yếu
+            </a>
+          </li>
 
-            <a class="nav_item" href="#">Quần áo sơ sinh <span class="highlight">HẤP
-                                                DẪN</span></a>
-            <a href="">Bình sữa sơ sinh</a>
-            <a href="#">Bao tay, bao chân</a>
-            <a href="#">Bỉm sơ sinh</a>
-            <a href="#">Khăn quấn, túi ngủ</a>
-            <a href="#">Gối chặn, gối ôm
-              <span class="highlight">HẤP DẪN</span></a>
-            <a href="#">Khăn Tắm</a>
-            <a href="#">Chậu tắm</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Máy móc thiết yếu</a>
-        <div class="submenu submenu-may-moc-thiet-yeu">
-          <div class="submenu-column">
-            <%-- <a class="nav_item" href="search-tat-ca-loai-may">Tất cả các loại máy</a>--%>
-            <a class="nav_item" href="Search_mayphasua">Tất cả các loại máy</a>
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=1">
+              Sữa & Bình Sữa
+            </a>
+          </li>
 
-            <a href="#">Máy hút sữa</a>
-            <a href="#">Nồi nấu<span class="new">MỚI</span></a>
-            <a href="#">Máy làm ấm khăn<span class="highlight">HẤP DẪN</span></a>
-            <a href="#">Máy pha sữa</a>
-            <a href="#">Máy tiệt trùng</a>
-            <a href="#">Máy hâm sữa</a>
-            <a href="#">Máy ép-máy xay</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Sữa & Bình Sữa</a>
-        <div class="submenu submenu-sua-&-binh-sua">
-          <div class="submenu-column">
-            <a class="nav_item" href="Search_Sua">Tất cả các loại sữa</a>
-            <a href="#">Sữa bột</a>
-            <a href="#">Sữa pha sẵn <span class="new">MỚI</span></a>
-            <a href="#">Sữa bầu</a>
-            <a href="#">Sữa tươi</a>
-            <a href="#">Bình sữa</a>
-            <a href="#">Cốc tập uống</a>
-            <a href="#">Ti giả</a>
-            <a href="#">Bình đựng sữa bột</a>
-            <a href="#">Vệ sinh bình sữa</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Ăn dặm</a>
-        <div class="submenu submenu-an-dam">
-          <div class="submenu-column">
-            <a class="nav_item" href="Search_Andam">Tất cả món ăn dặm</a>
-            <a href="#">Bánh ăn dặm <span class="new">MỚI</span></a>
-            <a href="#">Bột ăn dặm</a>
-            <a href="#">Gia vị ăn dặm</a>
-            <a href="#">Dầu ăn dặm</a>
-            <a href="#">Yến ăn dặm<span class="new">MỚI</span></a>
-            <a href="#">Đồ chế biến</a>
-          </div>
-        </div>
-      </li>
-      <li class="active">
-        <a href="#">Bỉm tã & vệ sinh</a>
-        <div class="submenu submenu-bim-ta-&-ve-sinh">
-          <div class="submenu-column">
-            <a class="nav_item" href="Search_Bimta">Tất cả các loại bỉm tã</a>
-            <a href="#">Bĩm tã</a>
-            <a href="#">Quần đóng bĩm</a>
-            <a href="#">Quần bỏ bĩm</a>
-            <a href="#">Bỉm người lớn</a>
-            <a href="#">Sữa tắm gội</a>
-            <a href="#">Chậu rữa mặt</a>
-            <a href="#">Khăn vải</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Thời trang cho bé</a>
-        <div class="submenu submenu-thoi-trang-cho-be">
-          <div class="submenu-column">
-            <a class="nav_item" href="Search_TTBe">Tất cả mẫu quần áo</a>
-            <a href="#">Quần áo</a>
-            <a href="#">Balo, túi xách</a>
-            <a href="#">Giày dép</a>
-            <a href="#">Nước hoa</a>
-            <a href="#">Phụ kiện</a>
-            <a href="#">Đồ bơi</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Đồ cho mẹ</a>
-        <div class="submenu submenu-do-cho-me">
-          <div class="submenu-column">
-            <a class="nav_item" href="Search_Me">Tất cả mẫu đồ cho
-              mẹ</a>
-            <a href="#">Sữa bầu</a>
-            <a href="#">Vitamin cho mẹ</a>
-            <a href="#">Gối bầu</a>
-            <a href="#">Quần áo cho mẹ</a>
-            <a href="#">Phụ kiện cho mẹ</a>
-          </div>
-        </div>
-      </li>
-      <li>
-        <a href="#">Hỗ Trợ</a>
-        <div class="submenu submenu-ho-tro">
-          <div class="submenu-column">
-            <a href="#">Trung Tâm Hỗ Trợ</a>
-            <a href="#">Bảo Hành</a>
-            <a href="#">Hướng dẫn sử dụng</a>
-            <a href="#">Câu Hỏi Thường Gặp</a>
-          </div>
-        </div>
-      </li>
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=3">
+              Ăn dặm
+            </a>
+          </li>
+
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=2">
+              Bỉm tã & vệ sinh
+            </a>
+          </li>
+
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=5">
+              Thời trang cho bé
+            </a>
+          </li>
+
+          <li>
+            <a href="${pageContext.request.contextPath}/search-category?categoryId=7">
+              Đồ cho mẹ
+            </a>
+          </li>
+        </c:otherwise>
+
+      </c:choose>
+
     </ul>
     <!-- User Login Icon and Popup -->
     <div class="icons">
