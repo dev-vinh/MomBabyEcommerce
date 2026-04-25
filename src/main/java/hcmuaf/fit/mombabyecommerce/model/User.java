@@ -4,28 +4,29 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class User {
-    Integer id;
-    String fullName;
-    String displayName;
-    LocalDate dOB;
-    String gender;
-    String phoneNumber;
-    String email;
-    String passwordUsername;
-    Integer avatarId;
-    String status;
-    // String role;
-    String role;
-    String salt;
-    String avatarUrl;
-
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private String fullName;
+    private String displayName;
+    private LocalDate dOB;
+    private String gender;
+    private String phoneNumber;
+    private String email;
+    private String passwordUsername;
+    private Integer avatarId;
+    private String status;
+    private Role role;
+    private String salt;
+    private String avatarUrl;
+    private String googleId;
+    private String provider;
     // xem
-    String confirmationToken;
-    String facebookId;
-    Boolean needRefresh;
+    private String confirmationToken;
+    private Boolean needRefresh;
 
     @JdbiConstructor
     public User(@ColumnName("id") Integer id,
@@ -38,12 +39,11 @@ public class User {
                 @ColumnName("passwordUserName") @Nullable String passwordUsername,
                 @ColumnName("avatarId") @Nullable Integer avatarId,
                 @ColumnName("status") @Nullable String status,
-                // pbha sửa
-                @ColumnName("role") @Nullable String role,
                 @ColumnName("salt") @Nullable String salt,
-                @ColumnName("avatarUrl") @Nullable String avatarUrl,
+                @ColumnName("avatar_url") @Nullable String avatarUrl,
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
-                @ColumnName("facebookId") @Nullable String facebookId,
+                @ColumnName("google_id") @Nullable String googleId,
+                @ColumnName("provider") @Nullable String provider,
                 @ColumnName("needRefresh") @Nullable Boolean needRefresh
 
     ) {
@@ -57,12 +57,11 @@ public class User {
         this.passwordUsername = passwordUsername;
         this.avatarId = avatarId;
         this.status = status;
-        // pbha sửa
-        this.role = role;
         this.salt = salt;
         this.avatarUrl = avatarUrl;
         this.confirmationToken = confirmationToken;
-        this.facebookId = facebookId;
+        this.googleId = googleId;
+        this.provider = provider;
         this.needRefresh = needRefresh;
     }
 
@@ -149,13 +148,8 @@ public class User {
         this.status = status;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
     public String getSalt() {
         return salt;
@@ -173,20 +167,28 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
     public String getConfirmationToken() {
         return confirmationToken;
     }
 
     public void setConfirmationToken(String confirmationToken) {
         this.confirmationToken = confirmationToken;
-    }
-
-    public String getFacebookId() {
-        return facebookId;
-    }
-
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
     }
 
     public Boolean getNeedRefresh() {
@@ -213,8 +215,9 @@ public class User {
                 ", role='" + role + '\'' +
                 ", salt='" + salt + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
+                ", googleId='" + googleId + '\'' +
+                ", provider='" + provider + '\'' +
                 ", confirmationToken='" + confirmationToken + '\'' +
-                ", facebookId='" + facebookId + '\'' +
                 ", needRefresh=" + needRefresh +
                 '}';
     }

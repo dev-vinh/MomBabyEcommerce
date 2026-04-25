@@ -32,47 +32,47 @@ public class UpdateUserInforController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        BufferedReader reader = request.getReader();
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line);
-
-        }
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> requestData = objectMapper.readValue(stringBuilder.toString(), Map.class);
+
+        Map<String, String> requestData =
+                objectMapper.readValue(request.getInputStream(), Map.class);
+
         HttpSession session = request.getSession();
-
-
-
         Integer userId = (Integer) session.getAttribute("userId");
+
+        if (userId == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        String fullName = requestData.get("fullName");
+        String displayName = requestData.get("displayName");
+        String gender = requestData.get("gender");
+        String dobStr = requestData.get("dOB");
+
+        LocalDate dob = null;
+        if (dobStr != null && !dobStr.isEmpty()) {
+            dob = LocalDate.parse(dobStr);
+        }
         User user = new User();
         user.setId(userId);
-        user.setFullName(requestData.get("fullName").toString());
-        user.setDisplayName(requestData.get("displayName").toString());
-        user.setGender(requestData.get("gender").toString());
-        user.setdOB(LocalDate.parse(requestData.get("dOB").toString()));
-        user.setEmail(requestData.get("email").toString());
-        user.setPhoneNumber(requestData.get("phoneNumber").toString());
+        user.setFullName(fullName);
+        user.setDisplayName(displayName);
+        user.setGender(gender);
+        user.setdOB(dob);
 
         Boolean success = userService.updateUser(user);
 
+        Map<String, Object> res = new HashMap<>();
 
-
-
-        Map<String, Object> responseBody = new HashMap<>();
-        if (success){
+        if (success) {
             response.setStatus(HttpServletResponse.SC_OK);
-            responseBody.put("status", "success");
-            responseBody.put("message", "User updated successfully!");
-        }
-        else {
+            res.put("status", "success");
+        } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            responseBody.put("status", "failed");
-            responseBody.put("message", "Update user failed!");
+            res.put("status", "failed");
         }
 
-        objectMapper.writeValue(response.getWriter(), responseBody);
+        response.setContentType("application/json");
+        objectMapper.writeValue(response.getWriter(), res);
     }
-
 }

@@ -22,8 +22,6 @@ import java.util.List;
 @WebServlet(name = "BuyNowController", value = "/buy-now")
 public class BuyNowController extends HttpServlet {
     ProductService productService = new ProductService(DBConnection.getJdbi());
-    OrderService orderService = new OrderService(DBConnection.getJdbi());
-    OrderDetailService orderDetailService = new OrderDetailService(DBConnection.getJdbi());
     CardService cardService = new CardService(DBConnection.getJdbi());
     AddressService addressService = new AddressService(DBConnection.getJdbi());
 
@@ -74,14 +72,44 @@ public class BuyNowController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String productIdStr = request.getParameter("productId");
-        String optionIdStr = request.getParameter("optionId");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try {
+            String productId = request.getParameter("productId");
+            String optionId = request.getParameter("optionId");
 
-        if (productIdStr != null && optionIdStr != null) {
-            response.setContentType("application/json");
-            response.getWriter().write("{\"ok\": true}");
-        } else {
-            doGet(request, response);
+            if (productId == null || optionId == null) {
+                JSONObject errorResponse = new JSONObject();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Missing required parameters");
+                response.getWriter().write(errorResponse.toString());
+                return;
+            }
+
+            Product product = productService.getProductByIdAndOptionId(
+                    Integer.parseInt(productId),
+                    Integer.parseInt(optionId)
+            );
+
+            if (product == null) {
+                JSONObject errorResponse = new JSONObject();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Product not found");
+                response.getWriter().write(errorResponse.toString());
+                return;
+            }
+
+            JSONObject successResponse = new JSONObject();
+            successResponse.put("success", true);
+            successResponse.put("message", "Product found");
+            response.getWriter().write(successResponse.toString());
+
+        } catch (Exception e) {
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "An error occurred: " + e.getMessage());
+            response.getWriter().write(errorResponse.toString());
         }
     }
+
 }

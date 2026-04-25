@@ -33,7 +33,7 @@ public class CheckoutController extends HttpServlet {
     CardService cardService = new CardService(DBConnection.getJdbi());
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

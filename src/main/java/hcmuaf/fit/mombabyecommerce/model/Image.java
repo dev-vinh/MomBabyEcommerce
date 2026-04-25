@@ -2,14 +2,21 @@ package hcmuaf.fit.mombabyecommerce.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class Image {
-    @JsonProperty("id")
-    Integer id;
-    @JsonProperty("url")
-    String url;
+import java.io.Serializable;
 
-    public Image(@ColumnName("id") Integer id, @ColumnName("url") String url) {
+public class Image implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Integer id;
+    private String url;
+
+    public Image() {}
+
+    @JdbiConstructor
+    public Image(@ColumnName("id") Integer id,
+                 @ColumnName("url") String url) {
         this.id = id;
         this.url = url;
     }

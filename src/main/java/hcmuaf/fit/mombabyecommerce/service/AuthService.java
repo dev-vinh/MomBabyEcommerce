@@ -1,6 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.PermissionDao;
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
+import hcmuaf.fit.mombabyecommerce.contant.ERole;
+import hcmuaf.fit.mombabyecommerce.model.Permission;
+import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.util.HashUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +16,11 @@ import java.util.UUID;
 
 public class AuthService {
     private UserDao userDAO;
-
+    private PermissionDao permissionDAO;
     public AuthService(Jdbi jdbi) {
+
         this.userDAO = jdbi.onDemand(UserDao.class);
+        this.permissionDAO = jdbi.onDemand(PermissionDao.class);
     }
 
     public boolean register(String fullName, String displayName, String email, String password) {
@@ -23,21 +29,36 @@ public class AuthService {
         }
         String salt = HashUtils.generateSalt();
         String hashedPassword = HashUtils.hashWithSalt(password, salt);
-        String userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt);
-        return userId != null;
+        int userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt);
+        if (userId > 0) {
+            userDAO.assignRole(userId, ERole.USER.name());
+            return true;
+        }
+        return false;
     }
 
 
     public User login(String email, String password) {
         User user = userDAO.getUserByEmail(email);
+
         if (user != null) {
             String storedSalt = user.getSalt();
             String storedHashedPassword = user.getPasswordUsername();
             String hashedPassword = HashUtils.hashWithSalt(password, storedSalt);
-            if (hashedPassword.equals(storedHashedPassword) && "ACTIVE".equalsIgnoreCase(user.getStatus())) {
+
+            if (hashedPassword.equals(storedHashedPassword)
+                    && "ACTIVE".equalsIgnoreCase(user.getStatus())) {
+                List<String> roles = userDAO.getUserRoles(user.getId());
+                if (roles != null && !roles.isEmpty()) {
+                    Role role = new Role();
+                    role.setRoleType(ERole.valueOf(roles.get(0)));
+                    user.setRole(role);
+                }
+
                 return user;
             }
         }
+
         return null;
     }
 
@@ -81,33 +102,62 @@ public class AuthService {
         }
         return false;
     }
-
-
-    public void activateUserAccount(HttpServletRequest request, String sessionId) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            String storedSessionId = (String) session.getAttribute("sessionId");
-            if (storedSessionId != null && storedSessionId.equals(sessionId)) {
-                String email = (String) session.getAttribute("email");
-
-                if (email != null) {
-                    userDAO.updateStatusByEmail(email, "ACTIVE");
-                }
-
-                System.out.println("Tài khoản với email " + email + " đã được xác nhận và kích hoạt.");
-
-                session.removeAttribute("sessionId");
-                session.removeAttribute("email");
-            }
+    public void activateUserAccount(Integer userId) {
+        userDAO.updateUserStatus(userId, "ACTIVE");
         }
+
+
+    public boolean confirmAccount(String token) {
+        User user = userDAO.getUserByConfirmationToken(token);
+        if (user != null && "PENDING".equals(user.getStatus())) {
+            userDAO.updateUserStatusByToken(token, "ACTIVE");
+            return true;
+        }
+        return false;
     }
-
-
-
     public void saveSessionId(HttpServletRequest request, String email, String sessionId) {
         HttpSession session = request.getSession();
         session.setAttribute("sessionId", sessionId);
         session.setAttribute("email", email);  // Lưu email vào session nếu cần thiết
     }
 
+// new code
+public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
+    User existingUser = userDAO.getUserByEmail(email);
+
+    if (existingUser != null) {
+        userDAO.linkGoogleAccount(email, googleId);
+
+        List<String> roles = userDAO.getUserRoles(existingUser.getId());
+        if (roles == null || roles.isEmpty()) {
+            userDAO.assignRole(existingUser.getId(), ERole.USER.name());
+        }
+
+        return true;
+    }
+    try {
+        String dummyPass = "GOOGLE_USER_" + UUID.randomUUID().toString().substring(0, 10);
+        int newUserId = userDAO.createUserGoogle(fullName, displayName, email, googleId, dummyPass);
+
+        if (newUserId > 0) {
+            userDAO.assignRole(newUserId, ERole.USER.name());
+            return true;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+    public List<Permission> getPermissionsByRoleId(Integer roleId) {
+        return permissionDAO.getPermissionsByRoleId(roleId);
+    }
+    public User enrichUserWithRole(User user) {
+        if (user == null) return null;
+
+        List<Role> roles = userDAO.getUserRoleObjects(user.getId());
+        if (roles != null && !roles.isEmpty()) {
+            user.setRole(roles.get(0));
+        }
+        return user;
+    }
 }

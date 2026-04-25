@@ -2,14 +2,17 @@ package hcmuaf.fit.mombabyecommerce.model.cart;
 
 import hcmuaf.fit.mombabyecommerce.model.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Cart {
+public class Cart implements Serializable {
     Map<Integer, ProductCart> data = new HashMap<>();
 
+    public Cart() {
+    }
     public boolean addProduct(Product product) {
         if (product == null) {
             System.err.println("[Cart] ERROR: Cannot add null product");

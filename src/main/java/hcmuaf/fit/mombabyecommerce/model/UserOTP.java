@@ -3,13 +3,18 @@ package hcmuaf.fit.mombabyecommerce.model;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserOTP {
+public class UserOTP implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String email;
     private String otpCode;
     private Timestamp createdAt;
     private Timestamp expiresAt;
+
+    public UserOTP() {
+    }
 
     @JdbiConstructor
     public UserOTP(

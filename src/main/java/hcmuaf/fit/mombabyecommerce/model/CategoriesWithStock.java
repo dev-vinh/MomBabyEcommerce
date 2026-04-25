@@ -9,6 +9,9 @@ public class CategoriesWithStock {
     private Integer totalStock;
     private Boolean isActive;
 
+    public CategoriesWithStock() {
+    }
+
     public CategoriesWithStock(@ColumnName("id") @Nullable Integer id, @ColumnName("name") @Nullable String name, @ColumnName("totalStock") @Nullable Integer totalStock, @ColumnName("isActive") @Nullable Boolean isActive) {
         this.id = id;
         this.name = name;
@@ -40,8 +43,6 @@ public class CategoriesWithStock {
         this.totalStock = totalStock;
     }
 
- 
-    /** Getter cho EL/JSP: ${category.isActive} */
     public Boolean getIsActive() {
         return isActive;
     }

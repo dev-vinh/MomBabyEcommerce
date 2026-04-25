@@ -5,29 +5,31 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.beans.ConstructorProperties;
+import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Product {
-    Integer id;
-    String name;
-    String sku;
-    String description;
-    Boolean isActive;
-    Integer categoryId;
-    Integer brandId;
-    Integer noOfViews;
-    Integer noOfSold;
-    Integer imageId;
-    Integer price; // option
-    Integer stock; // option
-    Integer optionId;
-    String categoryName;
-    String imageUrl;
+public class Product implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private String name;
+    private String sku;
+    private String description;
+    private Boolean isActive;
+    private Integer categoryId;
+    private Integer brandId;
+    private Integer noOfViews;
+    private Integer noOfSold;
+    private Integer imageId;
+    private Integer price; // option
+    private Integer stock; // option
+    private Integer optionId;
+    private String categoryName;
+    private String imageUrl;
 
-    Integer height;
-    Integer length;
-    Integer width;
-    Integer weight;
+    private Integer height;
+    private Integer length;
+    private Integer width;
+    private Integer weight;
 
     @ConstructorProperties({ "id", "name", "sku", "description", "isActive", "categoryId", "brandId", "noOfViews",
             "noOfSold", "imageId", "price", "stock", "optionId", "categoryName", "imageUrl", "height", "length",

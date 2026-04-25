@@ -7,12 +7,13 @@ import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 import java.time.LocalDate;
 
 public class Card {
-    Integer id;
-    Integer userId;
-    LocalDate duration;
-    Integer last4;
-    String type;
-    Boolean isDefault;
+   private Integer id;
+    private Integer userId;
+    private LocalDate duration;
+    private Integer last4;
+    private String type;
+    private Boolean isDefault;
+
 
     @JdbiConstructor
     public Card(

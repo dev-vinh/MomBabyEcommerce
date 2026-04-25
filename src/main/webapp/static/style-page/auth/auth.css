@@ -5,7 +5,18 @@
     box-sizing: border-box;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
-
+.error-msg-box {
+    background-color: #fff0f0;
+    color: #d8000c;
+    border: 1px solid #ffbaba;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box; /* Quan trọng để không bị tràn khung */
+}
 :root {
     --linear-grad: linear-gradient(to right, #141e30, #243b55);
     --grad-clr1: #141e30;
@@ -226,6 +237,20 @@ button.ghost {
     border: 2px solid #ffffff;
 }
 
+
+.back-home-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #666;
+    text-decoration: none;
+}
+
+.back-home-link:hover {
+    color: #1a2e4a;
+    text-decoration: underline;
+}
 .overlay-container {
     position: absolute;
     top: 0;

@@ -16,20 +16,27 @@ public class ConfirmAccountController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String sessionId = request.getParameter("sessionId");
-
-        if (sessionId != null) {
-            if (authService.verifySession(request, sessionId)) {
-                authService.activateUserAccount(request, sessionId);
-
-                request.setAttribute("message", "Tài khoản của bạn đã được xác nhận. Vui lòng đăng nhập.");
-                request.getRequestDispatcher("/auth/auth.jsp").forward(request, response);
-            } else {
-                request.setAttribute("error", "Mã xác nhận không hợp lệ hoặc đã hết hạn.");
-            }
-        } else {
-            request.setAttribute("error", "Mã xác nhận không hợp lệ.");
+        String token = request.getParameter("token");
+        if (token == null || token.isEmpty()) {
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write("<script>alert('Token không hợp lệ'); window.location.href='login';</script>");
+            return;
         }
+
+        try {
+            boolean success = authService.confirmAccount(token);
+            response.setContentType("text/html;charset=UTF-8");
+            if (success) {
+                response.getWriter().write("<script>alert('Chào mừng bạn! Tài khoản của bạn đã được xác nhận thành công. Vui lòng đăng nhập.'); window.location.href='login';</script>");
+            } else {
+                response.getWriter().write("<script>alert('Token không hợp lệ hoặc tài khoản đã được xác nhận'); window.location.href='login';</script>");
+            }
+        } catch (Exception e) {
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write("<script>alert('Đã xảy ra lỗi: " + e.getMessage() + "'); window.location.href='login';</script>");
+        }
+
+        response.sendRedirect("login?status=success");
     }
 }
 

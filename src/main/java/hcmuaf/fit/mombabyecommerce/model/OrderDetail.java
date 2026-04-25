@@ -5,15 +5,18 @@ import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
-public class OrderDetail {
-    Integer id;
-    Integer orderId;
-    Integer productId;
-    Integer quantity;
-    Integer total;
-    Integer optionId;
-    String productName;
-    String imageUrl;
+import java.io.Serializable;
+
+public class OrderDetail implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private Integer orderId;
+    private Integer productId;
+    private Integer quantity;
+    private Integer total;
+    private Integer optionId;
+    private String productName;
+    private String imageUrl;
 
     @JdbiConstructor
     public OrderDetail(@ColumnName("id") @Nullable Integer id,

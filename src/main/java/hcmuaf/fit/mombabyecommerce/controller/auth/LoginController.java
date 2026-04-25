@@ -33,7 +33,8 @@ import java.util.stream.Collectors;
 public class LoginController extends HttpServlet {
 
     private final AuthService authService = new AuthService(DBConnection.getJdbi());
-
+    private static final String SECRET_KEY =  EnvConfig.get("RECAPTCHA_SECRET_KEY");
+    private final UserService userService = new UserService(DBConnection.getJdbi());
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -41,65 +42,62 @@ public class LoginController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-            // Đọc nội dung JSON từ body request
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
-            try (BufferedReader reader = request.getReader()) {
-                while ((line = reader.readLine()) != null) {
-                    jsonBuilder.append(line);
-                }
-            }
-            String jsonString = jsonBuilder.toString();
-
-            // Parse JSON để lấy dữ liệu
-            Map<String, String> jsonData = objectMapper.readValue(jsonString, Map.class);
+            Map<String, String> jsonData = objectMapper.readValue(request.getInputStream(), Map.class);
             String email = jsonData.get("email");
             String password = jsonData.get("password");
+            String recaptchaToken = jsonData.get("recaptcha");
 
-            // Kiểm tra thông tin đầu vào
             if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
                 ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(
                         400, "error", "Email và mật khẩu không được để trống", null);
                 response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
                 return;
             }
-
-            // Xử lý đăng nhập
             User user = authService.login(email, password);
+
             if (user != null) {
-                // Lưu thông tin người dùng vào session
+                List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
+                List<String> permissionTypes = permissions.stream()
+                        .map(p -> p.getType().toString())
+                        .collect(Collectors.toList());
+
                 HttpSession session = request.getSession();
+                session.setAttribute("user", user);
                 session.setAttribute("userId", user.getId());
-                session.setAttribute("role", user.getRole()); // Lưu thông tin role (nếu có)
+                session.setAttribute("roleType", user.getRole().getRoleType());
+                session.setAttribute("permissions", permissionTypes);
 
-                // Trả về thông tin người dùng
-                Map<String, String> userData = Map.of(
-                        "id", String.valueOf(user.getId()),
-                        "fullName", user.getFullName(),
-                        "displayName", user.getDisplayName(),
-                        "email", user.getEmail(),
-                        "role", user.getRole(),
-                        "sessionId", session.getId()
-                );
+                if (Boolean.TRUE.equals(user.getNeedRefresh())){
+                    userService.updateNeedRefresh(user.getId(), false);
+                }
 
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("id", user.getId());
+                userData.put("fullName", user.getFullName());
+                userData.put("displayName", user.getDisplayName());
+                userData.put("email", user.getEmail());
+                userData.put("roleType", user.getRole().getRoleType());
+                userData.put("status", user.getStatus());
+                userData.put("permissions", permissionTypes);
+                userData.put("sessionId", session.getId());
 
-                ResponseWrapper<Map<String, String>> responseWrapper = new ResponseWrapper<>(
-                        200, "success", "Đăng nhập thành công", userData);
-                response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write(objectMapper.writeValueAsString(
+                        new ResponseWrapper<>(200, "success", "Đăng nhập thành công", userData)));
+
             } else {
-                // Trả về lỗi nếu thông tin đăng nhập không hợp lệ
-                ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(
-                        401, "error", "Email hoặc mật khẩu không chính xác", null);
-                response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
+                sendError(response, objectMapper, 401, "Email hoặc mật khẩu không chính xác.");
             }
+        } catch (RuntimeException e) {
+            sendError(response, objectMapper, 401, e.getMessage());
         } catch (Exception e) {
-            // Xử lý lỗi hệ thống
-            ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(
-                    500, "error", "Đã xảy ra lỗi: " + e.getMessage(), null);
-            response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
+            sendError(response, objectMapper, 500, "Lỗi hệ thống: " + e.getMessage());
         }
     }
-
+    private void sendError(HttpServletResponse response, ObjectMapper mapper, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.getWriter().write(mapper.writeValueAsString(new ResponseWrapper<>(status, "error", message, null)));
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

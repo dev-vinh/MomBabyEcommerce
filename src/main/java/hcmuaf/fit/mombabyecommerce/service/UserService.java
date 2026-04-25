@@ -7,7 +7,7 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.List;
 
 public class UserService {
-    UserDao userDao;
+    private final UserDao userDao;
 
     public UserService(Jdbi jdbi) {
         this.userDao = jdbi.onDemand(UserDao.class);
@@ -15,32 +15,25 @@ public class UserService {
 
 
     public User getUserById(Integer id) {
-        User user = userDao.getUserById(id);
-        return user;
+        return userDao.getUserById(id);
     }
 
     public User getUserByEmail(String email) {
-        User user = userDao.getUserByEmail(email);
-        return user;
+        return userDao.getUserByEmail(email);
     }
-
 
     public List<User> getAllUsers() {
         return userDao.getAllUsers();
     }
 
-
     public String getAvatarUrlById(Integer avatarId) {
         return userDao.getAvatarUrlById(avatarId);
     }
-
-
-    public Boolean updateAvatar(Integer userId, Integer avatarId) {
-        return userDao.updateAvatar(userId, avatarId);
+    public boolean updateAvatar(Integer userId, Integer avatarId) {
+        return userDao.updateAvatar(userId, avatarId) > 0;
     }
 
-
-    public Boolean updateUser(User user) {
+    public boolean updateUser(User user) {
         return userDao.updateUser(
                 user.getId(),
                 user.getFullName(),
@@ -48,7 +41,10 @@ public class UserService {
                 user.getdOB(),
                 user.getGender(),
                 user.getPhoneNumber()
-        );
+        ) > 0;
+    }
+    public boolean updateNeedRefresh(Integer userId, Boolean needRefresh) {
+        return userDao.updateNeedRefresh(userId, needRefresh) > 0;
     }
 
 }

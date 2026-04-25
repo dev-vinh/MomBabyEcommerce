@@ -55,36 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // Xử lý nút tìm kiếm
-    const searchIcon = document.getElementById("search-icon");
-    const searchOverlay = document.getElementById("search-overlay");
-    const closeSearchOverlay = document.getElementById("close-search-overlay");
-
-    if (searchIcon) {
-        searchIcon.addEventListener("click", () => {
-            searchOverlay.style.display = "flex";
-        });
-    }
-
-    if (closeSearchOverlay) {
-        closeSearchOverlay.addEventListener("click", () => {
-            searchOverlay.style.display = "none";
-        });
-    }
-
-
-    // Xử lý nút "Trang của tôi"
-    document.getElementById("my-page-link").addEventListener("click", (event) => {
-        event.preventDefault();
-        if (!isLoggedIn) {
-            alert("Bạn cần đăng nhập trước!");
-        } else {
-            // iframe.src = "/web-programming/frontEnd/src/pages/UserProfile.html";
-            // history.pushState({ page: "user-profile" }, "Trang của tôi", "user-profile");
-            window.location.href = 'user-profile';
-        }
-    });
-
     window.addEventListener("message", (event) => {
         if (event.data.type === "navigate") {
             iframe.src = event.data.url;
@@ -116,37 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function showSearchOverlay() {
-    // Hiển thị overlay tìm kiếm bằng cách thay đổi style
-    document.getElementById("search-overlay").style.display = "block";
-}
-
-// Đóng overlay tìm kiếm khi bấm vào nút đóng
-document.getElementById("close-search-overlay").addEventListener("click", function () {
-    document.getElementById("search-overlay").style.display = "none";
-});
 
 
-// Hàm đọc tham số từ URL
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
 
-// Lấy loại sản phẩm từ URL
-const productType = getQueryParam('product');
-
-// Hiển thị nội dung theo loại sản phẩm
-if (productType) {
-    const titleElement = document.querySelector('#list_product .product_item > span');
-    const productMap = {
-        'tu-lanh': 'Tủ Lạnh Bán Chạy',
-        'may-giat': 'Máy Giặt Thông Minh',
-        'may-lanh': 'Máy Lạnh Hiện Đại',
-        'dung-cu-nha-bep': 'Dụng Cụ Nhà Bếp'
-    };
-
-    // Thay đổi tiêu đề danh sách sản phẩm
-    titleElement.textContent = productMap[productType] || 'Sản Phẩm Nổi Bật';
-}
 
