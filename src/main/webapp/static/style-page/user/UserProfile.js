@@ -1,7 +1,8 @@
+console.log("USER PROFILE JS LOADED");
 document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('message', (event) => {
-        const iframe = document.getElementById('main_content'); // Đảm bảo rằng bạn có ít nhất một iframe trong document
+        const iframe = document.getElementById('main_content');
 
         console.log( " event.data : " ,event.data);
 
