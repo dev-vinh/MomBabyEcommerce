@@ -20,26 +20,22 @@ public interface ProductDao {
             "            p.noOfViews as noOfViews, p.noOfSold as noOfSold,  " +
             "            p.categoryId as categoryId, p.imageId as imageId, " +
             "            ops.id as optionId ,ops.price as price, " +
-            "            ops.stock as stock,  " +
+            "            SUM(inv.quantity) as stock, " +                                     
             "            img.url as imageUrl  " +
             "            FROM products as p " +
             "                INNER JOIN categories as cate on cate.id = p.categoryId " +
             "                INNER JOIN `option_variant` as ops on ops.productId = p.id " +
             "                inner join image as img on p.imageId = img.id " +
+            "                INNER JOIN inventory as inv ON inv.optionVariantId = ops.id " + 
             "            WHERE cate.id= :categoryId and ops.price = ( " +
             "                    SELECT MIN(price) " +
             "                    FROM option_variant as ops " +
-            "                    WHERE p.id = ops.productId and ops.stock > 0 " +
-            "                       and p.isActive = true );")
+            "                    WHERE p.id = ops.productId " +
+            "                    AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0) " + // ✅ SỬA
+            "                       and p.isActive = true ) " +
+            "GROUP BY p.id, ops.id, img.url")                                                
     @RegisterConstructorMapper(Product.class)
     List<Product> getProductsByCategory(@Bind("categoryId") int categoryId);
-
-    // @SqlQuery("SELECT p.id as id, p.name as name, p.description as description, "
-    // +
-    // "p.sku as sku, p.isActive as isActive, p.brandId as brandId, " +
-    // "p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
-    // "p.categoryId as categoryId, p.imageId as imageId " +
-    // "FROM products p WHERE p.id = :id")
 
     @SqlQuery(value = "SELECT p.id           as id,\n" +
             "       p.name         as name,\n" +
@@ -53,17 +49,19 @@ public interface ProductDao {
             "       p.imageId     as imageId,\n" +
             "       ops.id         as optionId,\n" +
             "       ops.price      as price,\n" +
-            "       ops.stock      as stock,\n" +
+            "       SUM(inv.quantity) as stock,\n" +                                         
             "       img.url        as imageUrl \n" +
             "FROM products as p\n" +
             "         INNER JOIN categories as cate on cate.id = p.categoryId\n" +
             "         INNER JOIN `option_variant` as ops on ops.productId = p.id\n" +
             "         inner join image as img on p.imageId = img.id\n" +
+            "         INNER JOIN inventory as inv ON inv.optionVariantId = ops.id\n" +       
             "WHERE p.id = :id" +
             "  and ops.price = (SELECT MIN(price)\n" +
             "                   FROM option_variant as ops\n" +
             "                   WHERE p.id = ops.productId\n" +
-            "                     and ops.stock > 0)")
+            "                   AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0))\n" + // ✅ SỬA
+            "GROUP BY p.id, ops.id, img.url")                                                
     @RegisterConstructorMapper(Product.class)
     Product getProductById(@Bind("id") int id);
 
@@ -72,13 +70,15 @@ public interface ProductDao {
             "       p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
             "        p.imageId as imageId, " +
             "       ops.id as optionId ,ops.price as price, " +
-            "       ops.stock as stock, " +
+            "       SUM(inv.quantity) as stock, " +                                          
             "       img.url as imageUrl " +
             "FROM products as p " +
             "         INNER JOIN categories as cate on cate.id = p.categoryId " +
             "         INNER JOIN `option_variant` as ops on ops.productId = p.id " +
             "         inner join image as img on p.imageId = img.id " +
-            "WHERE p.id= :productId and ops.id =:optionId ;")
+            "         INNER JOIN inventory as inv ON inv.optionVariantId = ops.id " +       
+            "WHERE p.id= :productId and ops.id =:optionId " +
+            "GROUP BY p.id, ops.id, img.url;")                                              
 
     @RegisterConstructorMapper(Product.class)
     Product getProductByIdAndOptionId(@Bind("productId") int productId,
@@ -88,19 +88,26 @@ public interface ProductDao {
             "       p.categoryId, cate.name as categoryName, " +
             "       p.brandId, p.noOfViews, p.noOfSold, " +
             "       p.imageId, img.url as imageUrl, " +
-            "       ops.price, ops.stock, ops.id as optionId " +
+            "       ops.price, ops.id as optionId, " +
+            "       SUM(inv.quantity) as stock " +                                           
             "FROM products p " +
             "         INNER JOIN categories cate ON cate.id = p.categoryId " +
             "         INNER JOIN option_variant ops ON ops.productId = p.id " +
             "         INNER JOIN image img ON img.id = p.imageId " +
-            "WHERE p.isActive = true and stock > 0")
+            "         INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +          
+            "WHERE p.isActive = true " +
+            "GROUP BY p.id, ops.id, img.url " +                                             
+            "HAVING SUM(inv.quantity) > 0")                                                  
     @RegisterConstructorMapper(Product.class)
     List<Product> getAllProducts();
 
-    @SqlQuery("SELECT price FROM option_variant WHERE productId = :productId AND stock > 0 ORDER BY price ASC LIMIT 1")
+    @SqlQuery("SELECT ops.price FROM option_variant ops WHERE ops.productId = :productId " +
+            "AND EXISTS (SELECT 1 FROM inventory inv WHERE inv.optionVariantId = ops.id AND inv.quantity > 0) " +
+            "ORDER BY ops.price ASC LIMIT 1")
     Integer getMinimumPriceForProduct(@Bind("productId") int productId);
 
-    @SqlQuery("SELECT price FROM option_variant WHERE id = :optionId AND stock > 0")
+    @SqlQuery("SELECT ops.price FROM option_variant ops WHERE ops.id = :optionId " +        
+            "AND EXISTS (SELECT 1 FROM inventory inv WHERE inv.optionVariantId = ops.id AND inv.quantity > 0)")
     Integer getPriceForOption(@Bind("optionId") int optionId);
 
     @SqlUpdate("INSERT INTO products (name,description, isActive, categoryId, brandId, noOfViews, noOfSold, imageId, sku) "
@@ -127,17 +134,19 @@ public interface ProductDao {
                                p.imageId      as imageId,
                                ops.id         as optionId,
                                ops.price      as price,
-                               ops.stock      as stock,
+                               SUM(inv.quantity) as stock,
                                img.url        as imageUrl
                         FROM products as p
                                  INNER JOIN `option_variant` as ops on ops.productId = p.id
                                  INNER JOIN image as img on p.imageId = img.id
+                                 INNER JOIN inventory as inv ON inv.optionVariantId = ops.id
                         WHERE p.isActive = true
                           AND LOWER(p.name) LIKE CONCAT('%', LOWER(:name), '%')
                           AND ops.price = (SELECT MIN(price)
                                            FROM option_variant as ops
                                            WHERE p.id = ops.productId
-                                             AND ops.stock > 0)
+                                             AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0))
+                        GROUP BY p.id, ops.id, img.url
                      """)
     @RegisterConstructorMapper(Product.class)
     List<Product> searchProducts(@Bind("name") String name);
@@ -154,18 +163,21 @@ public interface ProductDao {
             "       p.imageId as imageId, " +
             "       ops.id         as optionId, " +
             "       ops.price      as price, " +
-            "       ops.stock      as stock, " +
+            "       SUM(inv.quantity) as stock, " +                                          
             "       img.url        as imageUrl " +
             "FROM products as p " +
             "         INNER JOIN categories as cate on cate.id = p.categoryId " +
             "         INNER JOIN `option_variant` as ops on ops.productId = p.id " +
             "         inner join image as img on p.imageId = img.id " +
+            "         INNER JOIN inventory as inv ON inv.optionVariantId = ops.id " +         
             "WHERE cate.id = :categoryId " +
+            "  and p.isActive = true " +
             "  and ops.price = (SELECT MIN(price) " +
             "                   FROM option_variant as ops " +
             "                   WHERE p.id = ops.productId " +
-            "                     and ops.stock > 0" +
+            "                   AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0) " + // ✅ SỬA
             "                     and p.isActive = true ) " +
+            "GROUP BY p.id, ops.id, img.url " +                                               
             "order by p.noOfViews desc , p.noOfSold desc " +
             "limit 3")
     public List<Product> getTopProductsByCategoryId(@Bind("categoryId") int categoryId,
@@ -180,7 +192,7 @@ public interface ProductDao {
                                 p.noOfViews as noOfViews, p.noOfSold as noOfSold,
                                 p.categoryId as categoryId, p.imageId as imageId,
                                 ops.id as optionId, ops.price as price,
-                                ops.stock as stock,
+                                SUM(inv.quantity) as stock,
                                 img.url as imageUrl,
                                 v.id as variantId,
                                 v.value as variantValue,
@@ -189,13 +201,16 @@ public interface ProductDao {
                              INNER JOIN categories as cate on cate.id = p.categoryId
                              INNER JOIN `option_variant` as ops on ops.productId = p.id
                              INNER JOIN image as img on p.imageId = img.id
+                             INNER JOIN inventory as inv ON inv.optionVariantId = ops.id
                              INNER JOIN variant as v on ops.id = v.optionId
                          WHERE p.id = :id
                            AND ops.price = (
                                  SELECT MIN(price)
                                  FROM option_variant as ops
-                                 WHERE p.id = ops.productId AND ops.stock > 0
-                           );
+                                 WHERE p.id = ops.productId
+                                   AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0)
+                           )
+                         GROUP BY p.id, ops.id, img.url, v.id
                      """)
     @RegisterConstructorMapper(Product.class)
     Product editProduct(@Bind("id") int id);
@@ -206,7 +221,7 @@ public interface ProductDao {
                                 p.noOfViews as noOfViews, p.noOfSold as noOfSold,
                                 p.categoryId as categoryId, p.imageId as imageId,
                                 ops.id as optionId, ops.price as price,
-                                ops.stock as stock,
+                                SUM(inv.quantity) as stock,
                                 img.url as imageUrl,
                                 v.id as variantId,
                                 v.value as variantValue,
@@ -215,13 +230,16 @@ public interface ProductDao {
                              INNER JOIN categories as cate on cate.id = p.categoryId
                              INNER JOIN `option_variant` as ops on ops.productId = p.id
                              INNER JOIN image as img on p.imageId = img.id
+                             INNER JOIN inventory as inv ON inv.optionVariantId = ops.id
                              INNER JOIN variant as v on ops.id = v.optionId
                          WHERE p.id = :id
                            AND ops.price = (
                                  SELECT MIN(price)
                                  FROM option_variant as ops
-                                 WHERE p.id = ops.productId AND ops.stock > 0
-                         );
+                                 WHERE p.id = ops.productId
+                                   AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0)
+                         )
+                         GROUP BY p.id, ops.id, img.url, v.id
                      """)
     @RegisterConstructorMapper(Variant.class)
     List<Variant> getVariants(@Bind("id") int id);
@@ -248,15 +266,17 @@ public interface ProductDao {
             "       img.url        as imageUrl,\n" +
             "       ops.id         as optionId,\n" +
             "       ops.price      as price,\n" +
-            "       ops.stock      as stock\n" +
+            "       SUM(inv.quantity) as stock\n" +    
             "FROM products as p\n" +
             "         INNER JOIN `option_variant` as ops on ops.productId = p.id\n" +
             "         inner join image as img on p.imageId = img.id\n" +
+            "         INNER JOIN inventory as inv ON inv.optionVariantId = ops.id\n" +          
             "where p.isActive = true\n" +
             "  and ops.price = (SELECT MIN(price)\n" +
             "                   FROM option_variant as ops\n" +
             "                   WHERE p.id = ops.productId\n" +
-            "                     and ops.stock > 0)\n" +
+            "                   AND EXISTS (SELECT 1 FROM inventory inv2 WHERE inv2.optionVariantId = ops.id AND inv2.quantity > 0))\n" + // ✅ SỬA
+            "GROUP BY p.id, ops.id, img.url\n" +                                         
             "order by p.noOfSold desc, p.noOfViews desc\n" +
             "limit 10\n")
     List<Product> getTopProducts();
@@ -274,11 +294,12 @@ public interface ProductDao {
                                 p.imageId      as imageId,
                                 ops.id         as optionId,
                                 ops.price      as price,
-                                ops.stock      as stock,
+                                SUM(inv.quantity) as stock,
                                 img.url        as imageUrl
                          FROM products as p
                                   INNER JOIN `option_variant` as ops on ops.productId = p.id
                                   INNER JOIN image as img on p.imageId = img.id
+                                  INNER JOIN inventory as inv ON inv.optionVariantId = ops.id
                          WHERE p.categoryId = :categoryId
                            AND p.isActive = true
                            AND (:minPrice IS NULL OR ops.price >= :minPrice)
@@ -288,9 +309,10 @@ public interface ProductDao {
                                WHERE productId = p.id
                                  AND (:minPrice IS NULL OR price >= :minPrice)
                                  AND (:maxPrice IS NULL OR price <= :maxPrice)
-                                 AND stock > 0
+                                 AND EXISTS (SELECT 1 FROM inventory inv3 WHERE inv3.optionVariantId = option_variant.id AND inv3.quantity > 0)
                                ORDER BY price ASC LIMIT 1
                            )
+                         GROUP BY p.id, ops.id, img.url
                      """)
     @RegisterConstructorMapper(Product.class)
     List<Product> filterProducts(@Bind("categoryId") int categoryId,
