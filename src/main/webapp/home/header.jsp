@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/home/Home.css" />
   <link rel="stylesheet"
         href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
 
 </head>
 
@@ -230,7 +231,7 @@
 <div id="loginModal" class="modal">
     <div class="modal-content">
         <span class="close-btn">&times;</span>
-        <jsp:include page="../auth/auth.jsp" />
+<%--        <jsp:include page="../auth/auth.jsp" />--%>
     </div>
 </div>
 <script>
