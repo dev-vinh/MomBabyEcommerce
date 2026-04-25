@@ -44,51 +44,6 @@ $(document).ready(function () {
         }
     })
 
-
-
-
-    // $('.update_btn').click(function() {
-    //     var field = $(this).data('field');
-    //     var currentValue = $('#' + field).text().trim();
-    //
-    //
-    //     console.log(field);
-    //     console.log(currentValue);
-    //
-    //     var inputField = $('<input>', {
-    //         type: 'text',
-    //         id: field + '-input',
-    //         value: currentValue,
-    //         class: 'update-input'
-    //     });
-    //
-    //     $('#' + field).replaceWith(inputField);
-    //     inputField.focus();
-    //
-    //
-    //     inputField.on('blur', function() {
-    //         var newValue = inputField.val().trim();
-    //         if (newValue !== currentValue) {
-    //              var newSpan = $('<span>', {
-    //                 id: field,
-    //                 class: 'item_text',
-    //                 text: newValue
-    //             });
-    //
-    //             inputField.replaceWith(newSpan);
-    //         } else {
-    //              var currentSpan = $('<span>', {
-    //                 id: field,
-    //                 class: 'item_text',
-    //                 text: currentValue
-    //             });
-    //
-    //             inputField.replaceWith(currentSpan);
-    //         }
-    //     });
-    // });
-
-
     $('.update_btn').click(function() {
         var field = $(this).data('field');
         var spanElement = $('#' + field); // Lấy phần tử span
@@ -127,45 +82,30 @@ $(document).ready(function () {
         });
     });
 
-
-
-
-
     save.on('click', function (event) {
         update_profile();
     })
 
-
-
-
-
-
-
-
-
 })
 
 function update_profile() {
-
-    const name = $('#name');
-    const displayName = $('#displayName');
+    const name = $('#name').val().trim();
+    const displayName = $('#displayName').val().trim();
     const gender = $('input[name="gender"]:checked');
-    const birthYear =$('#year')
-    const birthMonth =$('#month')
-    const birthDay =$('#day')
-    const email = $('#email')
-    const phone = $('#phone')
+    const genderValue = gender.length > 0 ? gender.val() : null;
 
-    const birth =(`${birthYear.val()}-${birthMonth.val().padStart(2, '0')}-${birthDay.val().padStart(2, '0')}`);
+    const phone = $('#phone').val().trim();
+    if (!isValidPhoneNumber(phone)) {
+        alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
+        return;
+    }
+
 
     const formData = new FormData();
-    formData.append("fullName", name.val());
-    formData.append("displayName", displayName.val());
-    formData.append("gender", gender.val());
-    formData.append("birth", birth);
-    formData.append("email", email.text());
-    formData.append("phone", phone.text());
-
+    formData.append("fullName", name);
+    formData.append("displayName", displayName);
+    formData.append("gender", genderValue);
+    formData.append("phoneNumber", phone);
 
     for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
@@ -186,5 +126,14 @@ function update_profile() {
         body: JSON.stringify(jsonObject),
     }).then(response => {
         return  response.json()
+    }).then(data => {
+        if (data.success) {
+            alert("Update success! ");
+        }
     })
+}
+
+function isValidPhoneNumber(phone) {
+    const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+    return phoneRegex.test(phone);
 }
