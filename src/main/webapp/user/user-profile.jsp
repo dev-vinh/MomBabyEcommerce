@@ -40,11 +40,7 @@
             <c:if test="${not empty user}">
                 <div id="content_body">
                     <div class="body_container row">
-
-                        <!-- LEFT -->
                         <div class="info_left">
-
-                            <!-- Avatar + Base info -->
                             <div class="form_infor row mid_align">
 
                                 <div class="avatar">
@@ -89,18 +85,11 @@
                                                        <c:if test="${user.gender == 'Female'}">checked</c:if>>
                                                 Nữ
                                             </label>
-
-                                            <label>
-                                                <input type="radio" name="gender" value="Other"
-                                                       <c:if test="${user.gender == 'Other'}">checked</c:if>>
-                                                Khác
-                                            </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- DOB -->
                             <div class="personal_infor">
 
                                 <div class="birth row">
@@ -152,24 +141,51 @@
 
                             <!-- SAVE -->
                             <div class="mid_align bottom">
-                                <button id="save" class="save_btn">Lưu</button>
+                                <button type="button" id="save" class="save_btn">
+                                    Lưu
+                                </button>
                             </div>
 
                         </div>
 
-                        <!-- RIGHT -->
                         <div class="info_right">
 
                             <div class="contact col">
                                 <span>Thông tin liên hệ</span>
 
                                 <div class="contact_item row mid_align">
-                                    <span id="phone">${user.phoneNumber}</span>
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <input id="phone" class="item_text" placeholder="Vui lòng cập nhật số điện thoại." value="${user.phoneNumber}"/>
+
                                 </div>
 
                                 <div class="contact_item row mid_align">
-                                    <span id="email">${user.email}</span>
+                                    <i class="fa-regular fa-envelope"></i>
+
+                                    <c:if test="${not empty user.email}">
+                                        <span id="email" class="item_text"> ${user.email}</span>
+                                    </c:if>
+
+
                                 </div>
+                            </div>
+                            <div class="contact social col ">
+                                <span>Liên kết</span>
+
+                                <div class="contact_item row mid_align">
+                                    <img src="${pageContext.request.contextPath}/static/image/facebook.svg" alt="">
+                                    <span class="item_text mid_align">Facebook </span>
+                                    <button type="button" class="update_btn">Liên kết</button>
+                                </div>
+
+                                <div class="contact_item row mid_align">
+                                    <img src="${pageContext.request.contextPath}/static/image/google.svg" alt="">
+                                    <span class="item_text ">Google</span>
+                                    <button type="button" class="update_btn">Xóa</button>
+                                </div>
+
+
                             </div>
 
                         </div>
@@ -185,35 +201,10 @@
         </div>
     </div>
 </div>
+<div id="footer"></div>
 
-<script>
-    $("#save").click(function () {
-
-        const day = $("#day").val();
-        const month = $("#month").val();
-        const year = $("#year").val();
-
-        const data = {
-            fullName: $("#name").val(),
-            displayName: $("#displayName").val(),
-            gender: $("input[name='gender']:checked").val(),
-            dOB: `${year}-${month}-${day}`
-        };
-
-        $.ajax({
-            url: "${pageContext.request.contextPath}/updateUser",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function () {
-                alert("Cập nhật thành công");
-            },
-            error: function () {
-                alert("Lỗi khi cập nhật");
-            }
-        });
-    });
-</script>
+<script src="${pageContext.request.contextPath}/static/style-page/user/UserProfile.js"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserProfileDetail.js"></script>
 
 </body>
 </html>

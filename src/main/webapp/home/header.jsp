@@ -182,7 +182,7 @@
                 <c:choose>
 
                     <c:when test="${not empty sessionScope.user}">
-                        <a class="nav_item" href="user-profile">
+                        <a class="nav_item" href="user-profile" >
                             Xin chào ${sessionScope.user.displayName}
                         </a>
                         <a class="nav_item" href="user-profile">Trang của tôi</a>
@@ -190,7 +190,7 @@
                     </c:when>
 
                     <c:otherwise>
-                        <a href="login">Đăng nhập/Đăng ký</a>
+                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>
                     </c:otherwise>
 
                 </c:choose>
