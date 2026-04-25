@@ -77,25 +77,62 @@
         </form>
     </div>
 
-    <!-- Đăng nhập -->
+<%--    <!-- Đăng nhập -->--%>
+<%--    <div class="form-container sign-in-container">--%>
+<%--        <form action="#">--%>
+<%--            <h1>Đăng nhập</h1>--%>
+<%--            <div class="social-container">--%>
+<%--                <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>--%>
+<%--                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>--%>
+<%--                <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>--%>
+<%--            </div>--%>
+<%--            <span>hoặc sử dụng tài khoản của bạn</span>--%>
+<%--            <div class="infield">--%>
+<%--                <input type="email" id="email" placeholder=" " name="email" required />--%>
+<%--                <label for="email">Email <span class="required">*</span> </label>--%>
+<%--            </div>--%>
+<%--            <div class="infield password">--%>
+<%--                <input type="password" id="password" placeholder=" " required>--%>
+<%--                <label for="password">Mật khẩu <span class="required">*</span> </label>--%>
+<%--                <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>--%>
+<%--            </div>--%>
+<%--            <div class="remember-forgot-container">--%>
+<%--                <div class="infield remember-me">--%>
+<%--                    <input type="checkbox" id="remember-checkbox" />--%>
+<%--                    <label for="remember-checkbox">Ghi nhớ đăng nhập</label>--%>
+<%--                </div>--%>
+<%--                <a href="${pageContext.request.contextPath}/auth/forgot-password" class="forgot">Quên mật khẩu?</a>--%>
+<%--            </div>--%>
+
+
+<%--            <button type="submit" id="signInButton"--%>
+<%--            >Đăng nhập</button>--%>
+
+<%--            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ--%>
+<%--            </a>--%>
+<%--        </form>--%>
+<%--    </div>--%>
     <div class="form-container sign-in-container">
-        <form action="#">
-            <h1>Đăng nhập</h1>
+        <form action="#" id="signInForm"> <h1>Đăng nhập</h1>
             <div class="social-container">
                 <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>
                 <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
             </div>
             <span>hoặc sử dụng tài khoản của bạn</span>
+
+            <div id="auth-error-message" class="error-msg-box" style="display: none;"></div>
+
             <div class="infield">
-                <input type="email" id="email" placeholder=" " name="email" required />
-                <label for="email">Email <span class="required">*</span> </label>
+                <input type="email" id="login-email" placeholder=" " name="email" required />
+                <label for="login-email">Email <span class="required">*</span> </label>
             </div>
             <div class="infield password">
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Mật khẩu <span class="required">*</span> </label>
-                <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>
+                <input type="password" id="login-password" placeholder=" " required>
+                <label for="login-password">Mật khẩu <span class="required">*</span> </label>
+                <i class="fa-solid fa-eye toggle-password" data-toggle="#login-password"></i>
             </div>
+
             <div class="remember-forgot-container">
                 <div class="infield remember-me">
                     <input type="checkbox" id="remember-checkbox" />
@@ -104,15 +141,12 @@
                 <a href="${pageContext.request.contextPath}/auth/forgot-password" class="forgot">Quên mật khẩu?</a>
             </div>
 
+            <button type="submit" id="signInButton">Đăng nhập</button>
 
-            <button type="submit" id="signInButton"
-            >Đăng nhập</button>
-
-            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ
-            </a>
+            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ</a>
         </form>
     </div>
-
+<%--// đến đây--%>
     <div class="overlay-container" id="overlayCon">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
@@ -148,5 +182,55 @@
 <% if (request.getAttribute("errorMessage") != null) { %>
 <p style="color: red;"><%= request.getAttribute("errorMessage") %></p>
 <% } %>
+<script>
+    document.getElementById("signInForm").addEventListener("submit", function(e) {
+        e.preventDefault(); // Ngăn việc tải lại trang
+
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        const errorBox = document.getElementById("auth-error-message");
+        const btn = document.getElementById("signInButton");
+
+        // Hiệu ứng chờ khi đang đăng nhập
+        btn.innerText = "Đang xử lý...";
+        btn.disabled = true;
+        errorBox.style.display = "none";
+
+        // Chuẩn bị dữ liệu JSON khớp với Controller
+        const data = {
+            email: email,
+            password: password
+        };
+
+        fetch('${pageContext.request.contextPath}/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 200) {
+                    // Thành công: Reload hoặc về trang chủ
+                    window.location.reload();
+                } else {
+                    // Thất bại: Hiện thông báo lỗi từ ResponseWrapper (message)
+                    errorBox.innerText = result.message;
+                    errorBox.style.display = "block";
+
+                    // Trả lại trạng thái nút
+                    btn.innerText = "Đăng nhập";
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                errorBox.innerText = "Lỗi kết nối máy chủ!";
+                errorBox.style.display = "block";
+                btn.innerText = "Đăng nhập";
+                btn.disabled = false;
+            });
+    });
+</script>
 </body>
 </html>
