@@ -13,21 +13,25 @@ import java.util.List;
 @RegisterConstructorMapper(OptionVariant.class)
 public interface OptionVariantDao {
 
-    @SqlUpdate("INSERT INTO option_variant (productId, price, stock) VALUES (:productId, :price, :stock)")
+
+    @SqlUpdate("INSERT INTO option_variant (productId, price) VALUES (:productId, :price)")
     @GetGeneratedKeys
-    int createOption(@Bind("productId") Integer productId, @Bind("price") Integer price,
-                     @Bind("stock") Integer stock);
+    int createOption(@Bind("productId") Integer productId, @Bind("price") Integer price);
+
+
+    @SqlUpdate("INSERT INTO inventory (optionVariantId, quantity) VALUES (:optionVariantId, :quantity)")
+    void createInventory(@Bind("optionVariantId") Integer optionVariantId, @Bind("quantity") Integer quantity);
 
     @SqlQuery(value = "select *\n" +
             "from option_variant\n" +
             "where id = :id;")
     OptionVariant getOptionById(@Bind("id") Integer id);
 
-    @SqlUpdate(value = "update option_variant\n" +
+    @SqlUpdate("update inventory\n" +
             "set\n" +
-            "    stock = :stock " +
-            "where id = :id")
-    Boolean updateStock(@Bind("id") Integer id, @Bind("stock") Integer stock);
+            "    quantity = :quantity " +
+            "where optionVariantId = :optionVariantId")
+    Boolean updateStock(@Bind("optionVariantId") Integer optionVariantId, @Bind("quantity") Integer quantity);
 
     @SqlQuery(value = "select *\n" +
             "from option_variant\n" +
@@ -35,23 +39,33 @@ public interface OptionVariantDao {
     List<OptionVariant> getOptionsByProductId(@Bind("productId") Integer productId);
 
     @SqlQuery(value = "select\n" +
-            "    o.id as id, o.productId, o.price, o.stock,\n" +
+            "    o.id as id, o.productId, o.price,\n" +
+            "    SUM(inv.quantity) as stock,\n" +
             "    v.id as variantId, v.name as variantName,\n" +
             "    v.value as variantValue \n" +
             "from\n" +
             "    option_variant as o\n" +
-            "    inner join variant as  v\n" +
+            "    inner join variant as v\n" +
             "        on o.id = v.optionId\n" +
-            "where o.id in (<optionIds>)\n")
+            "    inner join inventory as inv\n" +
+            "        on inv.optionVariantId = o.id\n" +
+            "where o.id in (<optionIds>)\n" +
+            "GROUP BY o.id, o.productId, o.price, v.id, v.name, v.value\n")
     List<OptionVariant> getVariantByOptionId(@BindList("optionIds") List<Integer> optionIds);
 
     @SqlUpdate("""
             UPDATE option_variant 
-            SET price = :price,
-                stock = :stock
+            SET price = :price
             WHERE id = :id
             """)
     boolean updateOption(@Bind("id") Integer id,
-                         @Bind("price") Integer price,
-                         @Bind("stock") Integer stock);
+                         @Bind("price") Integer price);
+
+    @SqlUpdate("""
+            UPDATE inventory
+            SET quantity = :quantity
+            WHERE optionVariantId = :optionVariantId
+            """)
+    boolean updateOptionStock(@Bind("optionVariantId") Integer optionVariantId,
+                              @Bind("quantity") Integer quantity);
 }

@@ -11,6 +11,7 @@ import hcmuaf.fit.mombabyecommerce.service.ProductService;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,63 +21,64 @@ public class SearchProductController extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         String name = request.getParameter("name");
         String limitParam = request.getParameter("limit");
 
-        if (name == null || name.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
-            response.getWriter().write(new ResponseWrapper<>(400, "error", "Keyword must not be empty", null).toJson());
-            return;
-        }
-
-        // Lấy danh sách sản phẩm từ service
-        List<Product> products = productService.searchProducts(name);
-
-        if (products.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.setContentType("application/json");
-            response.getWriter().write(new ResponseWrapper<>(404, "error", "No products found", null).toJson());
-            return;
-        }
-
-        // Xử lý giới hạn số lượng sản phẩm trả về
-        int limit = 5; // Giá trị mặc định
         try {
-            if (limitParam != null) {
-                limit = Math.max(1, Integer.parseInt(limitParam)); // Tránh giá trị âm hoặc 0
+            if (name == null || name.trim().isEmpty()) {
+                response.getWriter().write(
+                        new ResponseWrapper<>(200, "success", "Empty keyword", new ArrayList<>()).toJson()
+                );
+                return;
             }
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
-            response.getWriter().write(new ResponseWrapper<>(400, "error", "Invalid limit value", null).toJson());
-            return;
+
+            // Lấy danh sách sản phẩm từ service
+            List<Product> products = productService.searchProducts("%" + name + "%");
+
+            if (products == null) {
+                products = new ArrayList<>();
+            }
+
+
+            // Xử lý giới hạn số lượng sản phẩm trả về
+            int limit = 5; // Giá trị mặc định
+            try {
+                if (limitParam != null) {
+                    limit = Math.max(1, Integer.parseInt(limitParam)); // Tránh giá trị âm hoặc 0
+                }
+            } catch (Exception ignored) {
+            }
+
+
+            List<Product> result = products.stream()
+                    .limit(limit)
+                    .map(p -> new Product(
+                            p.getId(),
+                            p.getName(),
+                            null, null, null,
+                            null, null, null, null,
+                            p.getImageId(),
+                            p.getPrice(),
+                            p.getStock(),
+                            p.getOptionId(),
+                            null,
+                            p.getImageUrl()
+                    ))
+                    .collect(Collectors.toList());
+
+            response.getWriter().write(
+                    new ResponseWrapper<>(200, "success", "OK", result).toJson()
+            );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write(
+                    new ResponseWrapper<>(500, "error", "Server error", new ArrayList<>()).toJson()
+            );
         }
-
-        // Chỉ lấy tối đa `limit` sản phẩm
-        List<Product> limitedProducts = products.stream()
-                .limit(limit)
-                .map(product -> new Product(
-                        product.getId(),
-                        product.getName(),
-                        null, // Không cần sku
-                        null, // Không cần description
-                        null, // Không cần isActive
-                        null, // Không cần categoryId
-                        null, // Không cần brandId
-                        null, // Không cần noOfViews
-                        null, // Không cần noOfSold
-                        product.getImageId(),
-                        product.getPrice(),
-                        product.getStock(),
-                        product.getOptionId(),
-                        null,// Không cần categoryName
-                        product.getImageUrl()
-                ))
-                .collect(Collectors.toList());
-
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.getWriter().write(new ResponseWrapper<>(200, "success", "Products found", limitedProducts).toJson());
     }
 }

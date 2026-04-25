@@ -30,6 +30,10 @@ public class CategoryService {
         return category;
     }
 
+
+    public List<Category> getTop7Categories() {
+        return categoryDao.getTop7Categories();
+    }
     public Category createCategory(String name, Boolean isActive ) {
         int id = categoryDao.createCategory(name, isActive);
         return categoryDao.getCategoryById(id);

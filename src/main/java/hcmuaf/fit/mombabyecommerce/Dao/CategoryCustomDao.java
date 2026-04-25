@@ -11,13 +11,14 @@ import java.util.List;
 public interface CategoryCustomDao {
 
     @SqlQuery("""
-        SELECT c.id, c.name, c.isActive,
-               COALESCE(SUM(o.stock), 0) AS totalStock
-        FROM categories c
-        LEFT JOIN products p ON c.id = p.categoryId
-        LEFT JOIN option_variant o ON p.id = o.productId
-        GROUP BY c.id, c.name, c.isActive
-    """)
+    SELECT c.id, c.name, c.isActive,
+           COALESCE(SUM(inv.quantity), 0) AS totalStock
+    FROM categories c
+    LEFT JOIN products p ON c.id = p.categoryId
+    LEFT JOIN option_variant o ON p.id = o.productId
+    LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+    GROUP BY c.id, c.name, c.isActive
+""")
     List<CategoriesWithStock> getCustomCategoriesWithStock();
 
 

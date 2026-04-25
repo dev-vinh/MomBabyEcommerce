@@ -55,49 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // Xử lý nút tìm kiếm
-    const searchIcon    = document.getElementById("search-icon");
-    const searchOverlay = document.getElementById("search-overlay");
-    const closeBtn      = document.getElementById("close-search-overlay");
-
-
-    if (searchIcon) {
-        searchIcon.addEventListener("click", (e) => {
-            e.preventDefault();
-            searchOverlay.classList.add("open");
-            document.getElementById("search-input").focus();
-        });
-    }
-
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            searchOverlay.classList.remove("open");
-            document.getElementById("search-input").value = "";
-            document.getElementById("suggestion-box").style.display = "none";
-        });
-    }
-    window.showSearchOverlay = () => {
-        searchOverlay.classList.add("open");
-        document.getElementById("search-input").focus();
-    };
-
-    // Xử lý nút "Trang của tôi"
-    document.getElementById("my-page-link").addEventListener("click", (event) => {
-        event.preventDefault();
-        if (!isLoggedIn) {
-            alert("Bạn cần đăng nhập trước!");
-        } else {
-            // iframe.src = "/web-programming/frontEnd/src/pages/UserProfile.html";
-            // history.pushState({ page: "user-profile" }, "Trang của tôi", "user-profile");
-            window.location.href = 'user-profile';
-        }
-    });
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            searchOverlay.classList.remove("open");
-            document.getElementById("search-input").value = "";
-        }
-    })
     window.addEventListener("message", (event) => {
         if (event.data.type === "navigate") {
             iframe.src = event.data.url;
@@ -130,18 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-// Đóng overlay tìm kiếm khi bấm vào nút đóng
-document.getElementById("close-search-overlay").addEventListener("click", function () {
-    document.getElementById("search-overlay").style.display = "none";
-});
-
-
-// Hàm đọc tham số từ URL
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
 
 
 

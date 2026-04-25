@@ -37,10 +37,9 @@ public class OptionController  extends HttpServlet {
 
             Integer productId = (Integer) requestData.get("productId");
             Integer price = (Integer) requestData.get("price");
-            Integer stock = (Integer) requestData.get("stock");
 
             // Gọi service để tạo option
-            int option = optionService.createOptions(productId, price, stock);
+            int option = optionService.createOptions(productId, price);
             OptionVariant newOption = optionService.getOptionById(option);
 
 
