@@ -124,13 +124,13 @@
             <div id="auth-error-message" class="error-msg-box" style="display: none;"></div>
 
             <div class="infield">
-                <input type="email" id="login-email" placeholder=" " name="email" required />
-                <label for="login-email">Email <span class="required">*</span> </label>
+                <input type="email" id="email" placeholder=" " name="email" required />
+                <label for="email">Email <span class="required">*</span> </label>
             </div>
             <div class="infield password">
-                <input type="password" id="login-password" placeholder=" " required>
-                <label for="login-password">Mật khẩu <span class="required">*</span> </label>
-                <i class="fa-solid fa-eye toggle-password" data-toggle="#login-password"></i>
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Mật khẩu <span class="required">*</span> </label>
+                <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>
             </div>
 
             <div class="remember-forgot-container">
@@ -186,8 +186,8 @@
     document.getElementById("signInForm").addEventListener("submit", function(e) {
         e.preventDefault(); // Ngăn việc tải lại trang
 
-        const email = document.getElementById("login-email").value;
-        const password = document.getElementById("login-password").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
         const errorBox = document.getElementById("auth-error-message");
         const btn = document.getElementById("signInButton");
 
@@ -196,7 +196,7 @@
         btn.disabled = true;
         errorBox.style.display = "none";
 
-        // Chuẩn bị dữ liệu JSON khớp với Controller
+
         const data = {
             email: email,
             password: password
