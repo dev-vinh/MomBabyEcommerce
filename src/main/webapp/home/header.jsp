@@ -187,8 +187,8 @@
 </div>
 
 
-<script> const contextPath = "${pageContext.request.contextPath}"; </script>
-<script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
+  <script>  window.contextPath = "${pageContext.request.contextPath}"; </script>
+  <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-home/search.js"></script>
 
 

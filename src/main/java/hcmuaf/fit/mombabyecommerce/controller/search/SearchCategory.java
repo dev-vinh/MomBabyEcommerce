@@ -40,7 +40,7 @@ public class SearchCategory extends HttpServlet {
         request.setAttribute("topProducts", topProducts);
         request.setAttribute("categoryId", categoryId);
 
-        request.getRequestDispatcher("search/search-clothings.jsp")
+        request.getRequestDispatcher("search/list-product.jsp")
                 .forward(request, response);
     }
 }
