@@ -92,8 +92,20 @@ public class ProductService {
         return productDao.getTopProducts();
     }
 
-    public List<Product> filterProducts(int categoryId, Integer minPrice, Integer maxPrice) {
-        return productDao.filterProducts(categoryId, minPrice, maxPrice);
+    public List<Product> filterProducts(int categoryId,
+                                        Integer minPrice,
+                                        Integer maxPrice,
+                                        Integer brandId,
+                                        String sort,
+                                        Integer page,
+                                        Integer size) {
+
+        if (page == null || page < 1) page = 1;
+        if (size == null || size <= 0) size = 16;
+
+        int offset = (page - 1) * size;
+
+        return productDao.filterProducts(categoryId, minPrice, maxPrice, brandId, sort, size, offset);
     }
 
     // mới thêm vô bởi NV
@@ -101,6 +113,12 @@ public class ProductService {
         Product product = productDao.editProduct(id);
         List<Variant> variants = productDao.getVariants(id);
         return new ProductDTO(product, variants);
+    }
+    public int countProducts(int categoryId,
+                              Integer minPrice,
+                              Integer maxPrice,
+                              Integer brandId) {
+        return productDao.countProducts(categoryId, minPrice, maxPrice, brandId);
     }
 
     public static void main(String[] args) {
