@@ -1,37 +1,17 @@
 var PAGE_SIZE = 16;
-var allProducts = [];
 var filteredList = [];
 var currentPage = 1;
+var totalPages = 1;
 
-(function init() {
-    try {
-        var dataEl = document.getElementById('product-data');
-        if (!dataEl) {
-            console.error("Không tìm thấy product data");
-            return;
-        }
-        allProducts = JSON.parse(dataEl.textContent.trim());
-    } catch (e) {
-        console.error("Lỗi parse JSON:", e);
-        allProducts = [];
-    }
-    filteredList = allProducts.slice();
-    render();
-})();
 
 function render() {
     renderGrid();
     renderPagination();
-    renderCount();
 }
 
 function renderGrid() {
     var grid = document.getElementById('product_list');
     if (!grid) return;
-
-    var start = (currentPage - 1) * PAGE_SIZE;
-    var end = Math.min(start + PAGE_SIZE, filteredList.length);
-    var page = filteredList.slice(start, end);
 
     if (filteredList.length === 0) {
         grid.innerHTML = `
@@ -42,14 +22,12 @@ function renderGrid() {
         return;
     }
 
-    grid.innerHTML = page.map(renderProductCard).join('');
+    grid.innerHTML = filteredList.map(renderProductCard).join('');
 }
 
 function renderPagination() {
     var wrap = document.getElementById('sp-pagination');
     if (!wrap) return;
-
-    var totalPages = Math.ceil(filteredList.length / PAGE_SIZE);
     if (totalPages <= 1) {
         wrap.innerHTML = '';
         return;
@@ -93,20 +71,11 @@ function renderPagination() {
     });
 }
 
-function renderCount() {
-
-    var total = filteredList.length;
-    var start = total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
-    var end = Math.min(currentPage * PAGE_SIZE, total);
-
-}
 
 function goToPage(page) {
-    var totalPages = Math.ceil(filteredList.length / PAGE_SIZE);
     if (page < 1 || page > totalPages) return;
-
     currentPage = page;
-    render();
+    document.getElementById('apply_btn').click();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -125,19 +94,69 @@ function buildPageRange(cur, total) {
 }
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    document.getElementById('btn_all')?.addEventListener('click', function () {
-        document.querySelectorAll('input[name="price"]').forEach(r => r.checked = false);
-        document.getElementById('price0').checked = true;
-        document.getElementById('sort_select').value = 'default';
+    document.querySelectorAll('.collapse-filter').forEach(item => {
+        item.addEventListener('click', function () {
 
-        filteredList = allProducts.slice();
-        currentPage = 1;
-        render();
+            const targetId = this.dataset.target;
+            const content = document.getElementById(targetId);
+            const arrow = this.querySelector('.arrow');
+
+            if (!content) return;
+
+            content.classList.toggle('active');
+            arrow.classList.toggle('rotate');
+        });
+        document.getElementById('apply_btn')?.click();
     });
+
 });
 
+
+
+document.getElementById('apply_btn')?.addEventListener('click', function () {
+
+
+    let selectedPrice = document.querySelector('input[name="price"]:checked');
+
+    let minPrice = selectedPrice ? selectedPrice.dataset.min : null;
+    let maxPrice = selectedPrice ? selectedPrice.dataset.max : null;
+
+
+    let selectedBrand = document.querySelector('input[name="brand"]:checked');
+    let brandId = selectedBrand ? selectedBrand.value : null;
+
+    console.log("Filter:", { minPrice, maxPrice, brandId });
+
+    fetch(window.contextPath + '/product/filter', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            category_id: document.getElementById('sidebar').dataset.category,
+            minPrice: minPrice ? parseInt(minPrice) : null,
+            maxPrice: maxPrice ? parseInt(maxPrice) : null,
+            brandId: brandId ? parseInt(brandId) : null,
+            page: currentPage,
+            size: PAGE_SIZE
+        })
+    })
+        .then(res => res.json())
+        .then(res => {
+            console.log("Dữ liệu từ Server:", res);
+            console.log("Số lượng sản phẩm nhận được:", res.products.length);
+            console.log("Tổng số trang:", res.totalPages);
+            filteredList = res.products;
+            totalPages = res.totalPages;
+            currentPage = res.currentPage;
+
+            render();
+        })
+        .catch(err => console.error("Filter error:", err));
+});
 function esc(str) {
     return String(str || '')
         .replace(/&/g, '&amp;')
@@ -161,3 +180,16 @@ function renderStars(rating) {
     }
     return html;
 }
+document.querySelectorAll('.collapse-filter').forEach(item => {
+    item.addEventListener('click', function () {
+
+        const targetId = this.dataset.target;
+        const content = document.getElementById(targetId);
+        const arrow = this.querySelector('.arrow');
+
+        if (!content) return;
+
+        content.classList.toggle('active');
+        arrow.classList.toggle('rotate');
+    });
+});

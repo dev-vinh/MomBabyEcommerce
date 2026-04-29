@@ -15,98 +15,98 @@ import java.util.List;
 public interface ProductDao {
 
     @SqlQuery("""
-SELECT p.id, p.name, p.description, p.sku, p.isActive,
-       p.brandId, p.noOfViews, p.noOfSold,
-       p.categoryId, p.imageId,
-       ops.id as optionId,
-       ops.price,
-       inv.quantity as stock,
-       img.url as imageUrl
-FROM products p
-JOIN categories cate ON cate.id = p.categoryId
-JOIN option_variant ops ON ops.productId = p.id
-JOIN inventory inv ON inv.optionVariantId = ops.id
-JOIN image img ON p.imageId = img.id
-WHERE cate.id = :categoryId
-AND ops.price = (
-    SELECT MIN(o.price)
-    FROM option_variant o
-    JOIN inventory i ON i.optionVariantId = o.id
-    WHERE o.productId = p.id AND i.quantity > 0
-)
-""")
+            SELECT p.id, p.name, p.description, p.sku, p.isActive,
+                   p.brandId, p.noOfViews, p.noOfSold,
+                   p.categoryId, p.imageId,
+                   ops.id as optionId,
+                   ops.price,
+                   inv.quantity as stock,
+                   img.url as imageUrl
+            FROM products p
+            JOIN categories cate ON cate.id = p.categoryId
+            JOIN option_variant ops ON ops.productId = p.id
+            JOIN inventory inv ON inv.optionVariantId = ops.id
+            JOIN image img ON p.imageId = img.id
+            WHERE cate.id = :categoryId
+            AND ops.price = (
+                SELECT MIN(o.price)
+                FROM option_variant o
+                JOIN inventory i ON i.optionVariantId = o.id
+                WHERE o.productId = p.id AND i.quantity > 0
+            )
+            """)
     List<Product> getProductsByCategory(@Bind("categoryId") int categoryId);
 
     @SqlQuery("""
-SELECT p.id, p.name, p.description, p.sku, p.isActive,
-       p.brandId, p.noOfViews, p.noOfSold,
-       p.categoryId, p.imageId,
-       ops.id as optionId,
-       ops.price,
-       inv.quantity as stock,
-       img.url as imageUrl
-FROM products p
-JOIN option_variant ops ON ops.productId = p.id
-JOIN inventory inv ON inv.optionVariantId = ops.id
-JOIN image img ON p.imageId = img.id
-WHERE p.id = :id
-AND ops.price = (
-    SELECT MIN(o.price)
-    FROM option_variant o
-    JOIN inventory i ON i.optionVariantId = o.id
-    WHERE o.productId = p.id AND i.quantity > 0
-)
-""")
+            SELECT p.id, p.name, p.description, p.sku, p.isActive,
+                   p.brandId, p.noOfViews, p.noOfSold,
+                   p.categoryId, p.imageId,
+                   ops.id as optionId,
+                   ops.price,
+                   inv.quantity as stock,
+                   img.url as imageUrl
+            FROM products p
+            JOIN option_variant ops ON ops.productId = p.id
+            JOIN inventory inv ON inv.optionVariantId = ops.id
+            JOIN image img ON p.imageId = img.id
+            WHERE p.id = :id
+            AND ops.price = (
+                SELECT MIN(o.price)
+                FROM option_variant o
+                JOIN inventory i ON i.optionVariantId = o.id
+                WHERE o.productId = p.id AND i.quantity > 0
+            )
+            """)
     Product getProductById(@Bind("id") int id);
 
     @SqlQuery(value = "SELECT p.id as id, p.name as name, p.description as description, " +
-        "       p.isActive as isActive, " +
-        "       p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
-        "       p.imageId as imageId, " +
-        "       ops.id as optionId, ops.price as price, " +
-        "       inv.quantity as stock, " +
-        "       img.url as imageUrl " +
-        "FROM products as p " +
-        "INNER JOIN categories as cate on cate.id = p.categoryId " +
-        "INNER JOIN option_variant as ops on ops.productId = p.id " +
-        "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
-        "INNER JOIN image as img on p.imageId = img.id " +
-        "WHERE p.id = :productId AND ops.id = :optionId")
+            "       p.isActive as isActive, " +
+            "       p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
+            "       p.imageId as imageId, " +
+            "       ops.id as optionId, ops.price as price, " +
+            "       inv.quantity as stock, " +
+            "       img.url as imageUrl " +
+            "FROM products as p " +
+            "INNER JOIN categories as cate on cate.id = p.categoryId " +
+            "INNER JOIN option_variant as ops on ops.productId = p.id " +
+            "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
+            "INNER JOIN image as img on p.imageId = img.id " +
+            "WHERE p.id = :productId AND ops.id = :optionId")
 
-@RegisterConstructorMapper(Product.class)
-Product getProductByIdAndOptionId(@Bind("productId") int productId,
-                                 @Bind("optionId") int optionId);
+    @RegisterConstructorMapper(Product.class)
+    Product getProductByIdAndOptionId(@Bind("productId") int productId,
+                                      @Bind("optionId") int optionId);
 
     @SqlQuery("""
-SELECT p.id, p.name, p.sku, p.description, p.isActive,
-       p.categoryId, cate.name as categoryName,
-       p.brandId, p.noOfViews, p.noOfSold,
-       p.imageId, img.url as imageUrl,
-       ops.price, inv.quantity as stock, ops.id as optionId
-FROM products p
-JOIN categories cate ON cate.id = p.categoryId
-JOIN option_variant ops ON ops.productId = p.id
-JOIN inventory inv ON inv.optionVariantId = ops.id
-JOIN image img ON img.id = p.imageId
-WHERE p.isActive = true AND inv.quantity > 0
-""")
+            SELECT p.id, p.name, p.sku, p.description, p.isActive,
+                   p.categoryId, cate.name as categoryName,
+                   p.brandId, p.noOfViews, p.noOfSold,
+                   p.imageId, img.url as imageUrl,
+                   ops.price, inv.quantity as stock, ops.id as optionId
+            FROM products p
+            JOIN categories cate ON cate.id = p.categoryId
+            JOIN option_variant ops ON ops.productId = p.id
+            JOIN inventory inv ON inv.optionVariantId = ops.id
+            JOIN image img ON img.id = p.imageId
+            WHERE p.isActive = true AND inv.quantity > 0
+            """)
     List<Product> getAllProducts();
 
     @SqlQuery("""
-SELECT o.price
-FROM option_variant o
-JOIN inventory i ON i.optionVariantId = o.id
-WHERE o.productId = :productId AND i.quantity > 0
-ORDER BY o.price ASC LIMIT 1
-""")
+            SELECT o.price
+            FROM option_variant o
+            JOIN inventory i ON i.optionVariantId = o.id
+            WHERE o.productId = :productId AND i.quantity > 0
+            ORDER BY o.price ASC LIMIT 1
+            """)
     Integer getMinimumPriceForProduct(@Bind("productId") int productId);
 
     @SqlQuery("""
-SELECT o.price
-FROM option_variant o
-JOIN inventory i ON i.optionVariantId = o.id
-WHERE o.id = :optionId AND i.quantity > 0
-""")
+            SELECT o.price
+            FROM option_variant o
+            JOIN inventory i ON i.optionVariantId = o.id
+            WHERE o.id = :optionId AND i.quantity > 0
+            """)
     Integer getPriceForOption(@Bind("optionId") int optionId);
 
     @SqlUpdate("INSERT INTO products (name,description, isActive, categoryId, brandId, noOfViews, noOfSold, imageId, sku) "
@@ -121,116 +121,116 @@ WHERE o.id = :optionId AND i.quantity > 0
                    @Bind("sku") String sku);
 
     @SqlQuery("""
-SELECT p.id, p.name, p.description, p.sku, p.isActive,
-       p.brandId, p.noOfViews, p.noOfSold,
-       p.categoryId, p.imageId,
-       ops.id as optionId,
-       ops.price,
-       inv.quantity as stock,
-       img.url as imageUrl
-FROM products p
-JOIN option_variant ops ON ops.productId = p.id
-JOIN inventory inv ON inv.optionVariantId = ops.id
-JOIN image img ON p.imageId = img.id
-WHERE p.isActive = true
-AND LOWER(p.name) LIKE CONCAT('%', LOWER(:name), '%')
-AND ops.price = (
-    SELECT MIN(o.price)
-    FROM option_variant o
-    JOIN inventory i ON i.optionVariantId = o.id
-    WHERE o.productId = p.id AND i.quantity > 0
-)
-""")
+            SELECT p.id, p.name, p.description, p.sku, p.isActive,
+                   p.brandId, p.noOfViews, p.noOfSold,
+                   p.categoryId, p.imageId,
+                   ops.id as optionId,
+                   ops.price,
+                   inv.quantity as stock,
+                   img.url as imageUrl
+            FROM products p
+            JOIN option_variant ops ON ops.productId = p.id
+            JOIN inventory inv ON inv.optionVariantId = ops.id
+            JOIN image img ON p.imageId = img.id
+            WHERE p.isActive = true
+            AND LOWER(p.name) LIKE CONCAT('%', LOWER(:name), '%')
+            AND ops.price = (
+                SELECT MIN(o.price)
+                FROM option_variant o
+                JOIN inventory i ON i.optionVariantId = o.id
+                WHERE o.productId = p.id AND i.quantity > 0
+            )
+            """)
     List<Product> searchProducts(@Bind("name") String name);
 
-   @SqlQuery(value = "SELECT p.id           as id, " +
-        "       p.name         as name, " +
-        "       p.description  as description, " +
-        "       p.sku          as sku, " +
-        "       p.isActive     as isActive, " +
-        "       p.brandId      as brandId, " +
-        "       p.noOfViews    as noOfViews, " +
-        "       p.noOfSold     as noOfSold, " +
-        "       p.categoryId   as categoryId, " +
-        "       p.imageId      as imageId, " +
-        "       ops.id         as optionId, " +
-        "       ops.price      as price, " +
-        "       inv.quantity   as stock, " +
-        "       img.url        as imageUrl " +
-        "FROM products as p " +
-        "INNER JOIN categories as cate on cate.id = p.categoryId " +
-        "INNER JOIN option_variant as ops on ops.productId = p.id " +
-        "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
-        "INNER JOIN image as img on p.imageId = img.id " +
-        "WHERE cate.id = :categoryId " +
-        "AND ops.price = (SELECT MIN(o.price) " +
-        "                 FROM option_variant o " +
-        "                 INNER JOIN inventory i ON i.optionVariantId = o.id " +
-        "                 WHERE p.id = o.productId " +
-        "                 AND i.quantity > 0 " +
-        "                 AND p.isActive = true ) " +
-        "ORDER BY p.noOfViews DESC, p.noOfSold DESC " +
-        "LIMIT 3")
-@RegisterConstructorMapper(Product.class)
-public List<Product> getTopProductsByCategoryId(@Bind("categoryId") int categoryId,
-                                                @Bind("limit") Integer limit);
+    @SqlQuery(value = "SELECT p.id           as id, " +
+            "       p.name         as name, " +
+            "       p.description  as description, " +
+            "       p.sku          as sku, " +
+            "       p.isActive     as isActive, " +
+            "       p.brandId      as brandId, " +
+            "       p.noOfViews    as noOfViews, " +
+            "       p.noOfSold     as noOfSold, " +
+            "       p.categoryId   as categoryId, " +
+            "       p.imageId      as imageId, " +
+            "       ops.id         as optionId, " +
+            "       ops.price      as price, " +
+            "       inv.quantity   as stock, " +
+            "       img.url        as imageUrl " +
+            "FROM products as p " +
+            "INNER JOIN categories as cate on cate.id = p.categoryId " +
+            "INNER JOIN option_variant as ops on ops.productId = p.id " +
+            "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
+            "INNER JOIN image as img on p.imageId = img.id " +
+            "WHERE cate.id = :categoryId " +
+            "AND ops.price = (SELECT MIN(o.price) " +
+            "                 FROM option_variant o " +
+            "                 INNER JOIN inventory i ON i.optionVariantId = o.id " +
+            "                 WHERE p.id = o.productId " +
+            "                 AND i.quantity > 0 " +
+            "                 AND p.isActive = true ) " +
+            "ORDER BY p.noOfViews DESC, p.noOfSold DESC " +
+            "LIMIT 3")
+    @RegisterConstructorMapper(Product.class)
+    public List<Product> getTopProductsByCategoryId(@Bind("categoryId") int categoryId,
+                                                    @Bind("limit") Integer limit);
 
     @SqlUpdate("UPDATE products SET isActive = false WHERE id = :id")
     boolean deactivateProduct(@Bind("id") int id);
 
     @SqlQuery(value = """
-    SELECT p.id as id, p.name as name, p.description as description,
-           p.sku as sku, p.isActive as isActive, p.brandId as brandId,
-           p.noOfViews as noOfViews, p.noOfSold as noOfSold,
-           p.categoryId as categoryId, p.imageId as imageId,
-           ops.id as optionId, ops.price as price,
-           inv.quantity as stock,
-           img.url as imageUrl,
-           v.id as variantId,
-           v.value as variantValue,
-           v.name as variantName
-    FROM products p
-        INNER JOIN categories cate ON cate.id = p.categoryId
-        INNER JOIN option_variant ops ON ops.productId = p.id
-        INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-        INNER JOIN image img ON p.imageId = img.id
-        INNER JOIN variant v ON ops.id = v.optionId
-    WHERE p.id = :id
-      AND ops.price = (
-            SELECT MIN(o.price)
-            FROM option_variant o
-            JOIN inventory i ON i.optionVariantId = o.id
-            WHERE p.id = o.productId AND i.quantity > 0
-      )
-""")
+                SELECT p.id as id, p.name as name, p.description as description,
+                       p.sku as sku, p.isActive as isActive, p.brandId as brandId,
+                       p.noOfViews as noOfViews, p.noOfSold as noOfSold,
+                       p.categoryId as categoryId, p.imageId as imageId,
+                       ops.id as optionId, ops.price as price,
+                       inv.quantity as stock,
+                       img.url as imageUrl,
+                       v.id as variantId,
+                       v.value as variantValue,
+                       v.name as variantName
+                FROM products p
+                    INNER JOIN categories cate ON cate.id = p.categoryId
+                    INNER JOIN option_variant ops ON ops.productId = p.id
+                    INNER JOIN inventory inv ON inv.optionVariantId = ops.id
+                    INNER JOIN image img ON p.imageId = img.id
+                    INNER JOIN variant v ON ops.id = v.optionId
+                WHERE p.id = :id
+                  AND ops.price = (
+                        SELECT MIN(o.price)
+                        FROM option_variant o
+                        JOIN inventory i ON i.optionVariantId = o.id
+                        WHERE p.id = o.productId AND i.quantity > 0
+                  )
+            """)
     @RegisterConstructorMapper(Product.class)
     Product editProduct(@Bind("id") int id);
 
     @SqlQuery("""
-    SELECT p.id as id, p.name as name, p.description as description,
-           p.sku as sku, p.isActive as isActive, p.brandId as brandId,
-           p.noOfViews as noOfViews, p.noOfSold as noOfSold,
-           p.categoryId as categoryId, p.imageId as imageId,
-           ops.id as optionId, ops.price as price,
-           inv.quantity as stock,
-           img.url as imageUrl,
-           v.id as variantId,
-           v.value as variantValue,
-           v.name as variantName
-    FROM products p
-        INNER JOIN categories cate ON cate.id = p.categoryId
-        INNER JOIN option_variant ops ON ops.productId = p.id
-        INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-        INNER JOIN image img ON p.imageId = img.id
-        INNER JOIN variant v ON ops.id = v.optionId
-    WHERE p.id = :id
-      AND ops.price = (
-            SELECT MIN(o.price)
-            FROM option_variant o
-            JOIN inventory i ON i.optionVariantId = o.id
-            WHERE p.id = o.productId AND i.quantity > 0
-      )
-""")
+                SELECT p.id as id, p.name as name, p.description as description,
+                       p.sku as sku, p.isActive as isActive, p.brandId as brandId,
+                       p.noOfViews as noOfViews, p.noOfSold as noOfSold,
+                       p.categoryId as categoryId, p.imageId as imageId,
+                       ops.id as optionId, ops.price as price,
+                       inv.quantity as stock,
+                       img.url as imageUrl,
+                       v.id as variantId,
+                       v.value as variantValue,
+                       v.name as variantName
+                FROM products p
+                    INNER JOIN categories cate ON cate.id = p.categoryId
+                    INNER JOIN option_variant ops ON ops.productId = p.id
+                    INNER JOIN inventory inv ON inv.optionVariantId = ops.id
+                    INNER JOIN image img ON p.imageId = img.id
+                    INNER JOIN variant v ON ops.id = v.optionId
+                WHERE p.id = :id
+                  AND ops.price = (
+                        SELECT MIN(o.price)
+                        FROM option_variant o
+                        JOIN inventory i ON i.optionVariantId = o.id
+                        WHERE p.id = o.productId AND i.quantity > 0
+                  )
+            """)
     @RegisterConstructorMapper(Variant.class)
     List<Variant> getVariants(@Bind("id") int id);
 
@@ -245,59 +245,72 @@ public List<Product> getTopProductsByCategoryId(@Bind("categoryId") int category
     Boolean increaseNoOfSold(@Bind("id") int id, @Bind("quantity") Integer quantity);
 
     @SqlQuery(value = """
-SELECT p.id, p.name, p.noOfViews, p.noOfSold, p.sku, p.isActive,
-       p.brandId, p.categoryId, p.imageId,
-       img.url as imageUrl,
-       ops.id as optionId,
-       ops.price,
-       inv.quantity as stock
-FROM products p
-INNER JOIN option_variant ops ON ops.productId = p.id
-INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-INNER JOIN image img ON p.imageId = img.id
-WHERE p.isActive = true
-AND ops.price = (
-    SELECT MIN(o.price)
-    FROM option_variant o
-    JOIN inventory i ON i.optionVariantId = o.id
-    WHERE p.id = o.productId AND i.quantity > 0
-)
-ORDER BY p.noOfSold DESC, p.noOfViews DESC
-LIMIT 10
-""")
+            SELECT p.id, p.name, p.noOfViews, p.noOfSold, p.sku, p.isActive,
+                   p.brandId, p.categoryId, p.imageId,
+                   img.url as imageUrl,
+                   ops.id as optionId,
+                   ops.price,
+                   inv.quantity as stock
+            FROM products p
+            INNER JOIN option_variant ops ON ops.productId = p.id
+            INNER JOIN inventory inv ON inv.optionVariantId = ops.id
+            INNER JOIN image img ON p.imageId = img.id
+            WHERE p.isActive = true
+            AND ops.price = (
+                SELECT MIN(o.price)
+                FROM option_variant o
+                JOIN inventory i ON i.optionVariantId = o.id
+                WHERE p.id = o.productId AND i.quantity > 0
+            )
+            ORDER BY p.noOfSold DESC, p.noOfViews DESC
+            LIMIT 10
+            """)
     List<Product> getTopProducts();
 
     @SqlQuery("""
-SELECT p.id, p.name, p.description, p.sku, p.isActive,
-       p.brandId, p.noOfViews, p.noOfSold,
-       p.categoryId, p.imageId,
-       ops.id as optionId,
-       ops.price,
-       inv.quantity as stock,
-       img.url as imageUrl
-FROM products p
-INNER JOIN option_variant ops ON ops.productId = p.id
-INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-INNER JOIN image img ON p.imageId = img.id
-WHERE p.categoryId = :categoryId
-  AND p.isActive = true
-  AND (:minPrice IS NULL OR ops.price >= :minPrice)
-  AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
-  AND ops.id = (
-      SELECT o.id
-      FROM option_variant o
-      JOIN inventory i ON i.optionVariantId = o.id
-      WHERE o.productId = p.id
-        AND (:minPrice IS NULL OR o.price >= :minPrice)
-        AND (:maxPrice IS NULL OR o.price <= :maxPrice)
-        AND i.quantity > 0
-      ORDER BY o.price ASC LIMIT 1
-  )
-""")
-    @RegisterConstructorMapper(Product.class)
-    List<Product> filterProducts(@Bind("categoryId") int categoryId,
-                                 @Bind("minPrice") @Nullable Integer minPrice,
-                                 @Bind("maxPrice") @Nullable Integer maxPrice);
+            SELECT p.id, p.name, p.description, p.sku, p.isActive,
+                   p.brandId, p.noOfViews, p.noOfSold,
+                   p.categoryId, p.imageId,
+                   ops.id as optionId,
+                   ops.price,
+                   inv.quantity as stock,
+                   img.url as imageUrl
+            FROM products p
+            JOIN option_variant ops ON ops.productId = p.id
+            JOIN inventory inv ON inv.optionVariantId = ops.id
+            JOIN image img ON p.imageId = img.id
+            WHERE p.categoryId = :categoryId
+              AND p.isActive = true
+              AND (:minPrice IS NULL OR ops.price >= :minPrice)
+              AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
+              AND (:brandId IS NULL OR p.brandId = :brandId)
+            
+              AND ops.id = (
+                  SELECT o.id
+                  FROM option_variant o
+                  JOIN inventory i ON i.optionVariantId = o.id
+                  WHERE o.productId = p.id
+                    AND i.quantity > 0
+                  ORDER BY o.price ASC
+                  LIMIT 1
+              )
+            
+            ORDER BY
+              CASE WHEN :sort = 'price_asc' THEN ops.price END ASC,
+              CASE WHEN :sort = 'price_desc' THEN ops.price END DESC,
+              p.noOfSold DESC
+            
+            LIMIT :size OFFSET :offset
+            """)
+    List<Product> filterProducts(
+            @Bind("categoryId") int categoryId,
+            @Bind("minPrice") Integer minPrice,
+            @Bind("maxPrice") Integer maxPrice,
+            @Bind("brandId") Integer brandId,
+            @Bind("sort") String sort,
+            @Bind("size") Integer size,
+            @Bind("offset") Integer offset
+    );
 
     @SqlUpdate("""
             UPDATE products 
@@ -324,4 +337,21 @@ WHERE p.categoryId = :categoryId
                           @Bind("length") Integer length,
                           @Bind("width") Integer width,
                           @Bind("weight") Integer weight);
+
+    @SqlQuery("""
+    SELECT COUNT(DISTINCT p.id)
+    FROM products p
+    JOIN option_variant ops ON ops.productId = p.id
+    JOIN inventory inv ON inv.optionVariantId = ops.id
+    WHERE p.categoryId = :categoryId
+      AND p.isActive = true
+      AND (:minPrice IS NULL OR ops.price >= :minPrice)
+      AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
+      AND (:brandId IS NULL OR p.brandId = :brandId)
+      AND inv.quantity > 0
+    """)
+    int countProducts(@Bind("categoryId") int categoryId,
+                      @Bind("minPrice") Integer minPrice,
+                      @Bind("maxPrice") Integer maxPrice,
+                      @Bind("brandId") Integer brandId);
 }
