@@ -20,7 +20,7 @@ function renderProductCard(p) {
                 </div>
 
                 <div class="sp-card-rating">
-                    ${renderStars(p.rating || 4)}
+                  ${renderStars(5)} 
                 </div>
 
                 <div class="sp-card-price">

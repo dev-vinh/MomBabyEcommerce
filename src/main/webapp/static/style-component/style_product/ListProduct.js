@@ -107,7 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!content) return;
 
             content.classList.toggle('active');
-            arrow.classList.toggle('rotate');
+            if (arrow) {
+                arrow.classList.toggle('rotate');
+            }
         });
         document.getElementById('apply_btn')?.click();
     });
@@ -154,6 +156,7 @@ document.getElementById('apply_btn')?.addEventListener('click', function () {
             currentPage = res.currentPage;
 
             render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         })
         .catch(err => console.error("Filter error:", err));
 });
@@ -180,16 +183,4 @@ function renderStars(rating) {
     }
     return html;
 }
-document.querySelectorAll('.collapse-filter').forEach(item => {
-    item.addEventListener('click', function () {
 
-        const targetId = this.dataset.target;
-        const content = document.getElementById(targetId);
-        const arrow = this.querySelector('.arrow');
-
-        if (!content) return;
-
-        content.classList.toggle('active');
-        arrow.classList.toggle('rotate');
-    });
-});

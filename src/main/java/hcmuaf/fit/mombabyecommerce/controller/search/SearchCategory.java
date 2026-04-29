@@ -36,10 +36,11 @@ public class SearchCategory extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid categoryId");
             return;
         }
+        List<Brand> brands = brandService.getAllBrands();
 
         List<Product> products = productService.getProductsByCategory(categoryId);
         List<Product> topProducts = productService.getTopProductsByCategory(categoryId, 4);
-        List<Brand> brands = brandService.getAllBrands();
+
 
         //phân trang
         String pageRaw = request.getParameter("page");

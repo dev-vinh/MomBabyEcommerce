@@ -12,6 +12,11 @@ $(document).ready(function () {
         let minPrice = selectedPrice.length ? selectedPrice.data('min') : null;
         let maxPrice = selectedPrice.length ? selectedPrice.data('max') : null;
 
+
+        let selectedBrand = $('input[name="brand"]:checked');
+        let brandId = selectedBrand.length ? selectedBrand.val() : null;
+
+
         console.log("Filter parameters:", { category_id, minPrice, maxPrice });
 
         fetch(`${contextPath}/product/filter`, {
@@ -24,14 +29,13 @@ $(document).ready(function () {
                 category_id: category_id,
                 minPrice: minPrice,
                 maxPrice: maxPrice,
+                brandId: brandId,
+                sort: $('#sort_select').val(),
+                page: 1,
+                size: 16
             })
         }).then(response => response.json())
             .then(data => {
-                console.log("Filtered products data: ", data);
-                if (!Array.isArray(data)) {
-                    console.error("API response is not an array:", data);
-                    return;
-                }
                 reRenderProducts(data);
             })
             .catch(error => {

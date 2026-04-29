@@ -3,6 +3,7 @@ package hcmuaf.fit.mombabyecommerce.controller.product;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
@@ -29,6 +30,7 @@ public class ProductFilterController extends HttpServlet {
         try {
             JsonNode rootNode = objectMapper.readTree(request.getReader());
             int categoryId = rootNode.path("category_id").asInt();
+
             Integer minPrice = rootNode.has("minPrice") && !rootNode.path("minPrice").isNull()
                     ? rootNode.path("minPrice").asInt()
                     : null;
@@ -36,9 +38,40 @@ public class ProductFilterController extends HttpServlet {
                     ? rootNode.path("maxPrice").asInt()
                     : null;
 
-            List<Product> filteredProducts = productService.filterProducts(categoryId, minPrice, maxPrice);
+            Integer brandId = rootNode.has("brandId") && !rootNode.path("brandId").isNull()
+                    ? rootNode.path("brandId").asInt()
+                    : null;
 
-            objectMapper.writeValue(response.getWriter(), filteredProducts);
+            String sort = rootNode.has("sort")
+                    ? rootNode.path("sort").asText()
+                    : "default";
+
+            Integer page = rootNode.has("page") && !rootNode.path("page").isNull()
+                    ? rootNode.path("page").asInt()
+                    : 1;
+
+            Integer size = rootNode.has("size") && !rootNode.path("size").isNull()
+                    ? rootNode.path("size").asInt()
+                    : 16;
+            int totalProducts = productService.countProducts(
+                    categoryId,
+                    minPrice,
+                    maxPrice,
+                    brandId
+            );
+            int totalPages = (int) Math.ceil((double) totalProducts / size);
+            List<Product> filteredProducts = productService.filterProducts(
+                    categoryId, minPrice, maxPrice, brandId, sort, page, size
+            );
+
+            ObjectNode result = objectMapper.createObjectNode();
+            result.putPOJO("products", filteredProducts);
+            result.put("totalPages", totalPages);
+            result.put("currentPage", page);
+            result.put("totalProducts", totalProducts);
+
+            objectMapper.writeValue(response.getWriter(), result);
+
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"status\":\"error\", \"message\":\"" + e.getMessage() + "\"}");

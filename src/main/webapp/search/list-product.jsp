@@ -64,19 +64,21 @@
             <div class="collapse-filter" data-target="filter-brand">
                 <i class="fa-solid fa-copyright"></i>
                 Thương hiệu
-                <i class="fa-solid fa-chevron-down"></i>
+                <i class="fa-solid fa-chevron-down arrow"></i>
+            </div>
+
+            <div id="filter-brand" class="filter-content">
+
+                <c:forEach var="b" items="${brands}">
+                    <div class="filter-option">
+                        <input type="radio" name="brand" value="${b.id}">
+                        <label>${b.name}</label>
+                    </div>
+                </c:forEach>
+
             </div>
         </div>
 
-        <div class="divider"></div>
-
-        <div class="filter-section">
-            <div class="collapse-filter" data-target="filter-age">
-                <i class="fa-solid fa-baby"></i>
-                Độ tuổi
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-        </div>
 
         <div class="divider"></div>
 
@@ -99,22 +101,6 @@
     </main>
 </div>
 
-<script id="product-data" type="application/json">
-    [
-    <c:forEach items="${products}" var="p" varStatus="loop">
-        {
-        "id": ${p.id},
-        "name": "${fn:escapeXml(p.name)}",
-        "categoryName": "${fn:escapeXml(p.categoryName)}",
-        "price": ${p.price != null ? p.price : 0},
-        "stock": ${p.stock != null ? p.stock : 0},
-        "optionId": ${p.optionId != null ? p.optionId : 0},
-        "imageUrl": "${fn:escapeXml(p.imageUrl)}",
-        "noOfSold": ${p.noOfSold != null ? p.noOfSold : 0}
-        }${!loop.last ? ',' : ''}
-    </c:forEach>
-    ]
-</script>
 </body>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/productCard.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.js"></script>
