@@ -116,7 +116,8 @@
     ]
 </script>
 </body>
-
+<script src="${pageContext.request.contextPath}/static/style-component/style_product/productCard.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.js"></script>
+
 
 </html>

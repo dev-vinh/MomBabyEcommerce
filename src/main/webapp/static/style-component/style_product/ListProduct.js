@@ -42,35 +42,7 @@ function renderGrid() {
         return;
     }
 
-    grid.innerHTML = page.map(function (p) {
-        var outOfStock = p.stock === 0;
-
-        var imgHtml = p.imageUrl
-            ? `<img src="${p.imageUrl}" alt="${esc(p.name)}" loading="lazy"/>`
-            : `<i class="fa-solid fa-mug-hot no-img"></i>`;
-
-        var btnHtml = outOfStock
-            ? `<button class="btn-add-cart" disabled>
-                <i class="fa-solid fa-ban"></i> Hết hàng
-               </button>`
-            : `<button class="btn-add-cart"
-                    onclick="addToCart(${p.id}, ${p.optionId})">
-                <i class="fa-solid fa-cart-shopping"></i> Thêm vào giỏ
-               </button>`;
-
-        return `
-            <div class="sp-card ${outOfStock ? 'out-of-stock' : ''}">
-                <div class="sp-card-img">${imgHtml}</div>
-                <div class="sp-card-body">
-                    <div class="sp-card-name">
-                        <a href="product-detail?id=${p.id}">${esc(p.name)}</a>
-                    </div>
-                    <div class="sp-card-cat">${esc(p.categoryName || '')}</div>
-                    <div class="sp-card-price">${fmtPrice(p.price)}đ</div>
-                    ${btnHtml}
-                </div>
-            </div>`;
-    }).join('');
+    grid.innerHTML = page.map(renderProductCard).join('');
 }
 
 function renderPagination() {
@@ -176,4 +148,16 @@ function esc(str) {
 
 function fmtPrice(n) {
     return Number(n).toLocaleString('vi-VN');
+}
+
+function goToDetail(id) {
+    window.location.href = window.contextPath + "/product-detail?id=" + id;
+}
+
+function renderStars(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        html += `<i class="fa-solid fa-star ${i <= rating ? 'active' : ''}"></i>`;
+    }
+    return html;
 }

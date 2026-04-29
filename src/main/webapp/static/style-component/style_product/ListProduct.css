@@ -445,3 +445,13 @@ body {
 .sp-empty p {
     font-size: 15px;
 }
+
+.sp-card-rating {
+    font-size: 12px;
+    color: #ddd;
+    margin-bottom: 6px;
+}
+
+.sp-card-rating .active {
+    color: #f5a623;
+}
