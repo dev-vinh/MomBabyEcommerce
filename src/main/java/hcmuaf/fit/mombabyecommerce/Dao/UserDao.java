@@ -192,4 +192,18 @@ public interface UserDao {
 """)
     @RegisterBeanMapper(Role.class)
     List<Role> getUserRoleObjects(@Bind("userId") Integer userId);
+
+    @SqlQuery("""
+    SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,
+           i.url AS avatar_url,
+           u.status, u.confirmationToken, u.passwordUserName, u.salt, u.google_id,
+           r.id as role_id, r.roleType as role_roleType, r.name as role_name, 
+           r.description as role_description, r.isActive as role_isActive
+    FROM users u
+    LEFT JOIN image i ON u.avatarId = i.id
+    LEFT JOIN user_role ur ON u.id = ur.userId
+    LEFT JOIN roles r ON ur.roleId = r.id
+    where r.roleType = "USER"
+    """)
+    List<User> getCustomers();
 }
