@@ -13,7 +13,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lí Khách Hàng</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/customer.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/customer/customer.css">
 </head>
 <body>
 
@@ -117,6 +117,6 @@
 </div>
 
 
-<script src="${pageContext.request.contextPath}/static/style-component/style-admin/customer.js"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/style-admin/customer/customer.js"></script>
 </body>
 </html>
