@@ -35,15 +35,16 @@ public interface UserDao {
     User getUserByGoogleId(@Bind("googleId") String googleId);
 
     @SqlUpdate("""
-        INSERT INTO users (fullName, displayName, email, passwordUserName, salt, provider)
-        VALUES (:fullName, :displayName, :email, :passwordUserName, :salt, 'local')
-    """)
+    INSERT INTO users (fullName, displayName, email, passwordUserName, salt, provider, confirmationToken, status)
+    VALUES (:fullName, :displayName, :email, :passwordUserName, :salt, 'local', :confirmationToken, 'PENDING')
+""")
     @GetGeneratedKeys("id")
     int createUser(@Bind("fullName") String fullName,
                    @Bind("displayName") String displayName,
                    @Bind("email") String email,
                    @Bind("passwordUserName") String passwordUserName,
-                   @Bind("salt") String salt);
+                   @Bind("salt") String salt,
+                   @Bind("confirmationToken") String confirmationToken);
 
     @SqlUpdate("""
         INSERT INTO users (fullName, displayName, email, google_id, provider, status, passwordUserName)
@@ -163,12 +164,12 @@ public interface UserDao {
     int deleteUser(@Bind("id") Integer id);
 
     @SqlQuery("""
-    SELECT 
+    SELECT
         u.id, u.fullName, u.displayName, u.dOB, u.gender,
         u.email, u.phoneNumber,
         u.status, u.confirmationToken,
         u.passwordUserName, u.salt,
-        u.google_id, u.provider, u.needRefresh,
+        u.google_id, u.provider,
         i.url AS avatar_url
     FROM users u
     LEFT JOIN image i ON u.avatarId = i.id
