@@ -48,10 +48,12 @@ public class AuthService {
 
             if (hashedPassword.equals(storedHashedPassword)
                     && "ACTIVE".equalsIgnoreCase(user.getStatus())) {
-                List<String> roles = userDAO.getUserRoles(user.getId());
-                if (roles != null && !roles.isEmpty()) {
+
+                String roleStr = userDAO.getHighestRole(user.getId());
+
+                if (roleStr != null) {
                     Role role = new Role();
-                    role.setRoleType(ERole.valueOf(roles.get(0)));
+                    role.setRoleType(ERole.valueOf(roleStr.toUpperCase()));
                     user.setRole(role);
                 }
 
@@ -125,15 +127,13 @@ public class AuthService {
 // new code
 public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
     User existingUser = userDAO.getUserByEmail(email);
-
     if (existingUser != null) {
         userDAO.linkGoogleAccount(email, googleId);
+        String roleStr = userDAO.getHighestRole(existingUser.getId());
 
-        List<String> roles = userDAO.getUserRoles(existingUser.getId());
-        if (roles == null || roles.isEmpty()) {
+        if (roleStr == null) {
             userDAO.assignRole(existingUser.getId(), ERole.USER.name());
         }
-
         return true;
     }
     try {
@@ -147,6 +147,7 @@ public boolean registerWithGoogleActive(String fullName, String displayName, Str
     } catch (Exception e) {
         e.printStackTrace();
     }
+
     return false;
 }
     public List<Permission> getPermissionsByRoleId(Integer roleId) {

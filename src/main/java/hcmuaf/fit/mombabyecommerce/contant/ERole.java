@@ -2,6 +2,7 @@ package hcmuaf.fit.mombabyecommerce.contant;
 
 public enum ERole {
     USER,
+    ADMIN,
     SUPPER_ADMIN,
     PRODUCT_MANAGER, //Quản lý sản phẩm
     ORDER_MANAGER, //Quản lý đơn hàng

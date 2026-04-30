@@ -72,12 +72,19 @@ public interface UserDao {
                       @Bind("roleId") int roleId);
 
     @SqlQuery("""
-        SELECT r.roleType
-        FROM roles r
-        JOIN user_role ur ON r.id = ur.roleId
-        WHERE ur.userId = :userId
-    """)
-    List<String> getUserRoles(@Bind("userId") Integer userId);
+    SELECT r.roleType
+    FROM roles r
+    JOIN user_role ur ON r.id = ur.roleId
+    WHERE ur.userId = :userId
+    ORDER BY 
+        CASE 
+            WHEN r.roleType = 'ADMIN' THEN 1
+            WHEN r.roleType = 'STAFF' THEN 2
+            ELSE 3
+        END
+    LIMIT 1
+""")
+    String getHighestRole(@Bind("userId") Integer userId);
 
     @SqlUpdate("""
         UPDATE users
