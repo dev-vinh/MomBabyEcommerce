@@ -47,6 +47,9 @@ public class UserService {
         return userDao.updateNeedRefresh(userId, needRefresh) > 0;
     }
 
+    public List<User> getCustomers() {
+        return userDao.getCustomers();
+    }
 }
 
 
