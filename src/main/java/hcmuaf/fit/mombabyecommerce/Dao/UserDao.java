@@ -18,15 +18,6 @@ public interface UserDao {
     @SqlQuery("SELECT * FROM users")
     List<User> getAllUsers();
 
-    @SqlQuery("""
-        SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender,
-               u.email, u.phoneNumber,
-               i.url AS avatar_url
-        FROM users u
-        LEFT JOIN image i ON u.avatarId = i.id
-        WHERE u.id = :id
-    """)
-    User getUserById(@Bind("id") Integer id);
 
     @SqlQuery("SELECT * FROM users WHERE email = :email")
     User getUserByEmail(@Bind("email") String email);
@@ -185,7 +176,7 @@ public interface UserDao {
     User getUserByConfirmationToken(@Bind("token") String token);
 
     @SqlQuery("""
-    SELECT r.id, r.roleType
+    SELECT r.id, r.roleType, r.name, r.description, r.isActive
     FROM roles r
     JOIN user_role ur ON r.id = ur.roleId
     WHERE ur.userId = :userId
@@ -197,13 +188,54 @@ public interface UserDao {
     SELECT u.id, u.fullName, u.displayName, u.dOB, u.gender, u.email, u.phoneNumber,
            i.url AS avatar_url,
            u.status, u.confirmationToken, u.passwordUserName, u.salt, u.google_id,
-           r.id as role_id, r.roleType as role_roleType, r.name as role_name, 
-           r.description as role_description, r.isActive as role_isActive
+           r.id AS r_id,
+           r.roleType AS r_roleType,
+           r.name AS r_name,
+           r.description AS r_description,
+           r.isActive AS r_isActive
     FROM users u
     LEFT JOIN image i ON u.avatarId = i.id
     LEFT JOIN user_role ur ON u.id = ur.userId
     LEFT JOIN roles r ON ur.roleId = r.id
-    where r.roleType = "USER"
-    """)
+    WHERE r.roleType = 'USER'
+""")
+    @RegisterBeanMapper(value = User.class)
+    @RegisterBeanMapper(value = Role.class, prefix = "r")
     List<User> getCustomers();
+
+    @SqlQuery("""
+    SELECT
+        u.*,
+        r.id AS r_id,
+        r.roleType AS r_roleType,
+        r.name AS r_name,
+        r.description AS r_description,
+        r.isActive AS r_isActive,
+        i.url AS avatar_url
+    FROM users u
+    LEFT JOIN user_role ur ON u.id = ur.userId
+    LEFT JOIN roles r ON ur.roleId = r.id
+    LEFT JOIN image i ON u.avatarId = i.id
+    WHERE u.email = :email
+""")
+    @RegisterBeanMapper(value = User.class)
+    @RegisterBeanMapper(value = Role.class, prefix = "r")
+    User getUserWithRoleByEmail(@Bind("email") String email);
+
+    @SqlQuery("""
+    SELECT
+        u.*,
+        r.id AS r_id,
+        r.roleType AS r_roleType,
+        r.name AS r_name,
+        r.description AS r_description,
+        r.isActive AS r_isActive
+    FROM users u
+    LEFT JOIN user_role ur ON u.id = ur.userId
+    LEFT JOIN roles r ON ur.roleId = r.id
+    WHERE u.id = :id
+""")
+    @RegisterBeanMapper(value = User.class)
+    @RegisterBeanMapper(value = Role.class, prefix = "r")
+    User getUserWithRole(@Bind("id") Integer id);
 }
