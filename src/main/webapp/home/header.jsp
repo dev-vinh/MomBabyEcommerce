@@ -126,7 +126,8 @@
                     </c:when>
 
                     <c:otherwise>
-                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>
+<%--                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>--%>
+                        <span id="login-link" style="cursor: pointer; color: inherit;">Đăng nhập/Đăng ký</span>
                     </c:otherwise>
 
                 </c:choose>
@@ -188,17 +189,35 @@
 
 </div>
 
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-<%--        <jsp:include page="../auth/auth.jsp" />--%>
+<%--<div id="loginModal" class="modal">--%>
+<%--    <div class="modal-content">--%>
+<%--        <span class="close-btn">&times;</span>--%>
+<%--&lt;%&ndash;                <jsp:include page="../auth/auth.jsp" />&ndash;%&gt;--%>
+<%--    </div>--%>
+<%--</div>--%>
+<div id="loginModal" class="my-custom-modal">
+    <div class="my-modal-content">
+        <span class="close-btn-auth">&times;</span>
+        <jsp:include page="/auth/auth.jsp" />
     </div>
 </div>
 <script>
     const modal = document.getElementById("loginModal");
-    const btn = document.getElementById("loginTrigger");
-    const span = document.querySelector(".close-btn");
+    const btn = document.getElementById("login-link");
+    const span = document.querySelector(".close-btn-auth");
+    document.addEventListener('click', function (e) {
+        // Kiểm tra xem phần tử bị click có phải là nút login không
+        if (e.target && e.target.id === 'login-link') {
+            // Ngăn chặn hành động chuyển trang hoặc nhảy lên đầu trang của href="#"
+            e.preventDefault();
 
+            const modal = document.getElementById("loginModal");
+            if (modal) {
+                modal.style.display = "block";
+                console.log("Mở popup login");
+            }
+        }
+    });
     // Khi nhấn vào chữ Đăng nhập trên Header
     btn.onclick = function() {
         modal.style.display = "block";

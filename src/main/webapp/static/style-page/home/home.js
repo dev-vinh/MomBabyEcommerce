@@ -79,7 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
             loginLink.textContent = "Đăng nhập/Đăng ký";
             loginLink.addEventListener("click", (event) => {
                 event.preventDefault();
-                window.location.href = 'login';
+
+                if (modal) {
+                    modal.style.display = "block";
+                    console.log("Đã hiện popup thay vì chuyển trang");
+                } else {
+                    window.location.href = 'login';
+                }
             });
         }
     }
