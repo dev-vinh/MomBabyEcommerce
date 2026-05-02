@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import jakarta.annotation.Nullable;
+import org.jdbi.v3.core.mapper.Nested;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
@@ -19,6 +20,7 @@ public class User implements Serializable {
     private String passwordUsername;
     private Integer avatarId;
     private String status;
+    @Nested("r")
     private Role role;
     private String salt;
     private String avatarUrl;
