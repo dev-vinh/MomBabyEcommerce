@@ -87,7 +87,8 @@ public class RegisterController extends HttpServlet {
             }
 
             // Đăng ký người dùng
-            if (authService.register(fullName, displayName, email, inputPassword)) {
+            String confirmationToken = authService.register(fullName, displayName, email, inputPassword);
+            if (confirmationToken != null) {
                 // Tạo sessionId cho người dùng mới đăng ký
                 String sessionId = request.getSession().getId();
 
@@ -98,7 +99,7 @@ public class RegisterController extends HttpServlet {
                 String contextPath = request.getContextPath();
                 String message = "Registration successful. Please check your email to confirm your account.";
                 try {
-                    emailService.sendConfirmationEmail(email, sessionId, contextPath);
+                    emailService.sendConfirmationEmail(email, confirmationToken, contextPath);
                 } catch (Exception e) {
                     e.printStackTrace();
                     message = "Registration successful, but failed to send confirmation email. Please contact support.";

@@ -23,43 +23,28 @@ public class AuthService {
         this.permissionDAO = jdbi.onDemand(PermissionDao.class);
     }
 
-    public boolean register(String fullName, String displayName, String email, String password) {
+    public String  register(String fullName, String displayName, String email, String password) {
         if (userDAO.getUserByEmail(email) != null) {
-            return false;
+            return null;
         }
+        String confirmationToken  = UUID.randomUUID().toString();
         String salt = HashUtils.generateSalt();
         String hashedPassword = HashUtils.hashWithSalt(password, salt);
-        int userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt);
+        int userId = userDAO.createUser(fullName, displayName, email, hashedPassword, salt,confirmationToken );
         if (userId > 0) {
             userDAO.assignRole(userId, ERole.USER.name());
-            return true;
         }
-        return false;
+        return confirmationToken;
     }
 
 
     public User login(String email, String password) {
-        User user = userDAO.getUserByEmail(email);
-
-        if (user != null) {
-            String storedSalt = user.getSalt();
-            String storedHashedPassword = user.getPasswordUsername();
-            String hashedPassword = HashUtils.hashWithSalt(password, storedSalt);
-
-            if (hashedPassword.equals(storedHashedPassword)
-                    && "ACTIVE".equalsIgnoreCase(user.getStatus())) {
-                List<String> roles = userDAO.getUserRoles(user.getId());
-                if (roles != null && !roles.isEmpty()) {
-                    Role role = new Role();
-                    role.setRoleType(ERole.valueOf(roles.get(0)));
-                    user.setRole(role);
-                }
-
-                return user;
-            }
-        }
-
-        return null;
+        User user = userDAO.getUserWithRoleByEmail(email);
+        if (user == null) return null;
+        String hashedPassword = HashUtils.hashWithSalt(password, user.getSalt());
+        if (!hashedPassword.equals(user.getPasswordUsername())) return null;
+        if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) return null;
+        return enrichUserWithRole(user);
     }
 
 
@@ -91,7 +76,7 @@ public class AuthService {
     }
 
     public User getUserById(Integer userId) {
-        return userDAO.getUserById(userId);
+        return enrichUserWithRole(userDAO.getUserWithRole(userId));
     }
 
     public boolean verifySession(HttpServletRequest request, String sessionId) {
@@ -108,10 +93,11 @@ public class AuthService {
 
 
     public boolean confirmAccount(String token) {
+
         User user = userDAO.getUserByConfirmationToken(token);
         if (user != null && "PENDING".equals(user.getStatus())) {
-            userDAO.updateUserStatusByToken(token, "ACTIVE");
-            return true;
+            int updated = userDAO.updateUserStatusByToken(token, "ACTIVE");
+            return updated > 0;
         }
         return false;
     }
@@ -124,15 +110,13 @@ public class AuthService {
 // new code
 public boolean registerWithGoogleActive(String fullName, String displayName, String email, String googleId) {
     User existingUser = userDAO.getUserByEmail(email);
-
     if (existingUser != null) {
         userDAO.linkGoogleAccount(email, googleId);
+        String roleStr = userDAO.getHighestRole(existingUser.getId());
 
-        List<String> roles = userDAO.getUserRoles(existingUser.getId());
-        if (roles == null || roles.isEmpty()) {
+        if (roleStr == null) {
             userDAO.assignRole(existingUser.getId(), ERole.USER.name());
         }
-
         return true;
     }
     try {
@@ -146,6 +130,7 @@ public boolean registerWithGoogleActive(String fullName, String displayName, Str
     } catch (Exception e) {
         e.printStackTrace();
     }
+
     return false;
 }
     public List<Permission> getPermissionsByRoleId(Integer roleId) {

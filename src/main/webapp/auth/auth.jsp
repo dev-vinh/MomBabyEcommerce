@@ -115,12 +115,12 @@
 
             <div class="infield">
                 <input type="email" id="email" placeholder=" " name="email" required />
-                <label for="login-email">Email <span class="required">*</span> </label>
+                <label for="email">Email <span class="required">*</span> </label>
             </div>
             <div class="infield password">
                 <input type="password" id="password" placeholder=" " required>
-                <label for="login-password">Mật khẩu <span class="required">*</span> </label>
-                <i class="fa-solid fa-eye toggle-password" data-toggle="#login-password"></i>
+                <label for="password">Mật khẩu <span class="required">*</span> </label>
+                <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>
             </div>
 
             <div class="remember-forgot-container">
@@ -174,7 +174,7 @@
         btn.disabled = true;
         errorBox.style.display = "none";
 
-        // Chuẩn bị dữ liệu JSON khớp với Controller
+
         const data = {
             email: email,
             password: password

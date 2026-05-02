@@ -1,7 +1,9 @@
 package hcmuaf.fit.mombabyecommerce.controller.search;
 
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.Brand;
 import hcmuaf.fit.mombabyecommerce.model.Product;
+import hcmuaf.fit.mombabyecommerce.service.BrandService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,6 +19,8 @@ public class SearchCategory extends HttpServlet {
 
     private final ProductService productService =
             new ProductService(DBConnection.getJdbi());
+    private final BrandService brandService =
+            new BrandService(DBConnection.getJdbi());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,15 +36,27 @@ public class SearchCategory extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid categoryId");
             return;
         }
+        List<Brand> brands = brandService.getAllBrands();
 
         List<Product> products = productService.getProductsByCategory(categoryId);
         List<Product> topProducts = productService.getTopProductsByCategory(categoryId, 4);
 
+
+        //phân trang
+        String pageRaw = request.getParameter("page");
+        String sizeRaw = request.getParameter("size");
+
+        int page = (pageRaw != null) ? Integer.parseInt(pageRaw) : 1;
+        int size = (sizeRaw != null) ? Integer.parseInt(sizeRaw) : 16;
+
         request.setAttribute("products", products);
         request.setAttribute("topProducts", topProducts);
         request.setAttribute("categoryId", categoryId);
+        request.setAttribute("brands", brands);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("pageSize", size);
 
-        request.getRequestDispatcher("search/search-clothings.jsp")
+        request.getRequestDispatcher("search/list-product.jsp")
                 .forward(request, response);
     }
 }

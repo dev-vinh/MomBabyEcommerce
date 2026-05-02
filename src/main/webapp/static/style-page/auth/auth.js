@@ -134,31 +134,10 @@ document.querySelector(".sign-in-container form").addEventListener("submit", asy
         });
 
         if (response.ok) {
-            const data = await response.json();
-            console.log("Dữ liệu trả về từ server:", data);  // Kiểm tra dữ liệu trả về
-
-            // Kiểm tra xem data có chứa "data" và các thuộc tính cần thiết không
-            if (data && data.data) {
-                console.log("Session ID:", data.data.sessionId);
-                console.log("User ID:", data.data.id);
-                console.log("Role:", data.data.role);
-
-                // Lưu vào sessionStorage
-                sessionStorage.setItem("sessionId", data.data.sessionId);
-                sessionStorage.setItem("userId", data.data.id);
-                sessionStorage.setItem("role", data.data.role);
-
-                if (data.data.role === "ADMIN") {
-                    window.location.href = "admin/dashboard";
-                } else {
-                    window.location.href = "home";
-                }
-            } else {
-                alert("Email hoặc mật khẩu không chính xác!");
-            }
+                const data = await response.json();
+                window.location.href = data.data.redirectUrl;
         } else {
             const errorData = await response.json();
-            alert("Lỗi đăng nhập: " + errorData.message);
         }
     } catch (error) {
         console.error("Lỗi khi đăng nhập:", error);

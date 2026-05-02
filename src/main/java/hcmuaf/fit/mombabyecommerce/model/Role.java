@@ -18,14 +18,7 @@ public class Role implements Serializable {
     public Role() {
     }
 
-    @JdbiConstructor
-    public Role(
-            @ColumnName("id") Integer id,
-            @ColumnName("roleType") ERole roleType,
-            @ColumnName("name") String name,
-            @ColumnName("description") @Nullable String description,
-            @ColumnName("isActive") Boolean isActive
-    ) {
+    public Role(Integer id, ERole roleType, String name, String description, Boolean isActive) {
         this.id = id;
         this.roleType = roleType;
         this.name = name;
