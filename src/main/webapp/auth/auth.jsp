@@ -189,9 +189,8 @@
         })
             .then(response => response.json())
             .then(result => {
-                if (result.status === 200) {
-                    // Thành công: Reload hoặc về trang chủ
-                    window.location.reload();
+                if (Number(result.status) === 200) {
+                    window.location.href = "${pageContext.request.contextPath}/home";
                 } else {
                     // Thất bại: Hiện thông báo lỗi từ ResponseWrapper (message)
                     errorBox.innerText = result.message;
@@ -210,5 +209,3 @@
             });
     });
 </script>
-</body>
-</html>
