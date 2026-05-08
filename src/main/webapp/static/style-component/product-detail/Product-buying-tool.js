@@ -72,6 +72,7 @@ function addToCart(productId, optionId) {
         .then(data => {
             console.log(data);
             if (data.success) {
+                showCartToast();
                 const notification = document.getElementById('cart-notification');
                 if (notification) {
                     notification.classList.remove('hidden');
@@ -80,4 +81,24 @@ function addToCart(productId, optionId) {
             }
         })
         .catch(error => console.log(error));
+}
+function showCartToast() {
+    const toast = document.getElementById('cart-notification');
+    if (!toast) return;
+
+    clearTimeout(toast._hideTimer);
+    toast.classList.remove('hidden');
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+    });
+
+    toast._hideTimer = setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => {
+            toast.classList.add('hidden');
+        }, { once: true });
+    }, 3000);
 }

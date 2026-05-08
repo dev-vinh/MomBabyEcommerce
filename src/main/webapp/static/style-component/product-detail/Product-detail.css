@@ -132,6 +132,7 @@ body2 {
 }
 
 body {
+    overflow-x: hidden;
     font-family: Arial, sans-serif;
 }
 
@@ -495,39 +496,48 @@ body > div.specification > div > div > p {
     background-color: #0056b3;
 }
 
-.notification {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translate(56%, -231%);
-    background-color: #28a745;
-    color: #fff;
-    padding: 15px 30px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    z-index: 9999;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    width: 280px;
-    height: 55px;
-    text-align: center;
-}
 
 
-.notification i {
-    font-size: 20px;
-}
 
 .notification.show {
     opacity: 1;
     transform: translate(-50%, -50%);
 }
 
-.notification.hidden {
+
+#cart-notification {
+    position: fixed;
+    top: 80px;
+    right: 24px;  /* Tăng khoảng cách từ mép phải */
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #22c55e;
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 10px;
+    width: 340px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    font-size: 15px;
+    font-weight: 500;
+
     opacity: 0;
-    transform: translate(-50%, -70%);
+    transform: translateX(30px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+#cart-notification.hidden {
+    display: none;
+}
+
+#cart-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+#cart-notification i {
+    font-size: 18px;
+    flex-shrink: 0;
 }
