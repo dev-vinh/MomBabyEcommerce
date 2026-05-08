@@ -69,7 +69,7 @@
                     HttpSession session = request.getSession();
                     session.setAttribute("user", user);
                     session.setAttribute("userId", user.getId());
-                    session.setAttribute("roleType", user.getRole().getRoleType());
+                    session.setAttribute("roleType", user.getRole().getRoleType().name());
                     session.setAttribute("permissions", permissionTypes);
 
                     if (Boolean.TRUE.equals(user.getNeedRefresh())){
@@ -81,15 +81,15 @@
                     userData.put("fullName", user.getFullName());
                     userData.put("displayName", user.getDisplayName());
                     userData.put("email", user.getEmail());
-                    userData.put("roleType", user.getRole().getRoleType());
+                    userData.put("roleType", user.getRole().getRoleType().name());
                     userData.put("status", user.getStatus());
                     userData.put("permissions", permissionTypes);
                     userData.put("sessionId", session.getId());
 
                     response.setStatus(HttpServletResponse.SC_OK);
                     String redirectUrl;
-                    ERole roleType = user.getRole().getRoleType();
-                    if (roleType == ERole.SUPER_ADMIN) {
+                    String roleType = user.getRole().getRoleType().name();
+                    if (roleType.equals(ERole.SUPER_ADMIN.name())) {
                         redirectUrl = request.getContextPath() + "/admin/dashboard";
                     } else {
                         redirectUrl = request.getContextPath() + "/home";
