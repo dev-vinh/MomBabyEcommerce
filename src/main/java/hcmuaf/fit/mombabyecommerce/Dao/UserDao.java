@@ -93,7 +93,6 @@ public interface UserDao {
         UPDATE users
         SET fullName = :fullName,
             displayName = :displayName,
-            dOB = :dOB,
             gender = :gender,
             phoneNumber = :phoneNumber
         WHERE id = :userId
@@ -101,7 +100,6 @@ public interface UserDao {
     int updateUser(@Bind("userId") Integer userId,
                           @Bind("fullName") String fullName,
                           @Bind("displayName") String displayName,
-                          @Bind("dOB") LocalDate dOB,
                           @Bind("gender") String gender,
                           @Bind("phoneNumber") String phoneNumber);
 
