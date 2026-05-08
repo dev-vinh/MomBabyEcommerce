@@ -40,10 +40,16 @@ public class AdminAuthorizationFilter implements Filter{
             redirectToLoginWithMessage(request, response, "Không xác định được quyền.");
             return;
         }
-        ERole roleType = (ERole) session.getAttribute("roleType");
+        String roleStr = (String) session.getAttribute("roleType");
 
+        if (roleStr == null) {
+            session.invalidate();
+            redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập.");
+            return;
+        }
+        ERole roleType = ERole.valueOf(roleStr);
 
-        if (roleType == null || roleType != ERole.SUPER_ADMIN) {
+        if (roleType != ERole.SUPER_ADMIN) {
             session.invalidate();
             redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập.");
             return;
