@@ -1,0 +1,459 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+
+html{
+
+    width: 100%;
+    height: 100%;
+}
+body{
+    overflow: scroll;
+}
+
+/*Reuse*/
+.mid_align{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+.rec_horizontal{
+    width: 70%;
+    height: 1px;
+    background-color: #cfcfcf;
+}
+
+.rec_vertical{
+    height: 70%;
+    width: 1px;
+    background-color: #cfcfcf;
+    margin:  0 10px;
+    min-height: 20px;
+}
+
+i{
+    color: #616060;
+}
+
+.f16{
+    font-size: 16px;
+}
+
+.f22{
+    font-size: 22px;
+}
+
+
+
+
+.container{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    padding: 10px 20px;
+}
+
+
+.content{
+    width: 100%;
+    padding-left:20px;
+    padding-top: 20px;
+}
+
+/*Header*/
+#address_header{
+    width: 100%;
+    min-height: 80px;
+    border-bottom: 1px solid #cfcfcf;
+    justify-content: space-between;
+}
+
+#address_header .title{
+    font-size: 22px;
+}
+
+.add_btn{
+    margin-left: auto;
+    border: 1px solid #cfcfcf;
+    width: 100px;
+    height: 40px;
+    justify-content: center;
+    background-color: #3665F3;
+    border-radius: 20px;
+}
+
+.add_btn a{
+    text-decoration: none;
+    color: white;
+    padding-left: 10px;
+}
+
+.add_btn i {
+    color: white;
+}
+
+/*Body*/
+.card_body{
+    width: 100%;
+    height: 100%;
+}
+
+.address_item{
+    width: 100%;
+    border-bottom: 1px solid #CFCFCF;
+    padding: 25px 0px;
+}
+
+.address_item .icon{
+    width: 80px;
+    height: 80px;
+    font-size: 35px;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid #cfcfcf;
+}
+
+.address_item .infor{
+    padding-left: 10px;
+    width: 75%;
+    height: 100%;
+}
+
+.item_header{
+    width: 100%;
+    min-height: 30px;
+    height: 100%;
+}
+
+.item_header .name{
+    font-weight: bold;
+    color: rgb(63 59 59);
+}
+
+.item_header .phone{
+    color: #757575;
+}
+
+
+.item_body{
+    padding-left: 10px;
+}
+
+.manage{
+    width: 25%;
+    min-height: 50px;
+    justify-content: center;
+}
+
+.manage .default{
+    background-color: #c1e4ff;
+    width: 80px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 5px;
+}
+
+
+.update_btn, .delete_btn {
+    border: none;
+    background-color: unset;
+    height: 25px;
+    width: 60px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.update_btn{
+    border: 1px solid rgba(128, 128, 128, 0.27);
+}
+.update_btn:hover{
+    color: #059af8;
+}
+
+.delete_btn {
+    background-color: #f44336;
+    color: white;
+    border-radius: 5px;
+    border: 1px solid transparent;
+}
+
+.delete_btn:hover {
+    background-color: #d32f2f;
+}
+
+.set_default_btn {
+    border-radius: 5px;
+    background-color: unset;
+    height: 35px;
+    width: 120px;
+    margin: 5px;
+    border: 1px solid rgba(128, 128, 128, 0.27);
+    color: rgba(0, 0, 0, 0.95);
+}
+
+.set_default_btn:hover{
+    cursor: pointer;
+}
+
+.disabled{
+    border: 1px solid rgba(128, 128, 128, 0.27);
+    color: rgba(135, 135, 135, 0.95);
+    pointer-events: none;
+}
+
+.disabled:hover{
+    cursor: default;
+}
+/* Bảng (Modal) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal_content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close_modal {
+    color: black;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close_modal:hover {
+    color: red;
+}
+
+.modal_content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modal_content label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.modal_content input[type="text"],
+.modal_content input[type="radio"] {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #cfcfcf;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal_content button {
+    width: 100%;
+    background-color: #3665F3;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.modal_content button:hover {
+    background-color: #274bb3;
+}
+
+.HomeorOffice{
+    display:inline-flex;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+
+
+#addAddressFormContainer {
+    display: none; /* Ẩn form theo mặc định */
+    padding: 20px 50px;
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Hiển thị nổi */
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    z-index: 1000;
+    background: #fff;
+    width: 450px;
+}
+
+
+#addAddressFormContainer label {
+    font-weight: 400;
+    margin-top: 10px;
+    color: #555;
+    justify-content: flex-start;
+    display: flex
+;
+    margin-bottom: 5px;
+}
+
+#addAddressFormContainer input, #addAddressFormContainer select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.radio-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+    margin: 10px 0;
+    flex-wrap: nowrap;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch .slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.toggle-switch .slider::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch input:checked + .slider {
+    background: #4CAF50;
+}
+
+.toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-text {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+
+.submit-btn {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+}
+
+
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-icon:hover {
+    color: red;
+}
+.no_address {
+    padding: 40px;
+    text-align: center;
+    color: #757575;
+    font-size: 16px;
+}
+/* Đảm bảo container đủ cao */
+.container {
+    min-height: calc(100vh - 80px);
+}
+
+#address_header {
+    position: relative;  /* cần cho form popup absolute */
+}

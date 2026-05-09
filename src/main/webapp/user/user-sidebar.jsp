@@ -8,28 +8,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserSideBar.css">
-</head>
-<body>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserSideBar.css">
+
 <div id="side_bar" class="container  col">
-    <div class=" infor row mid_align  ">
-        <div class="profile_avatar">
-            <img src="${pageContext.request.contextPath}/static/image/medium%20(1).png" height="500" width="500"/>
-        </div>
-        <div class="name">
-            <span>User</span>
-        </div>
-
-    </div>
-
-    <div class="rec_horizontal"></div>
-
     <div class=" wrap_item  col">
 
         <div class="item  ">
@@ -95,5 +76,3 @@
 
 <script src="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserSidebar.js"></script>
 
-</body>
-</html>

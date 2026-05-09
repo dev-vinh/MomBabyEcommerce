@@ -1,146 +1,171 @@
 <%--
-  Created by IntelliJ IDEA.
-  User: vinhp
-  Date: 3/15/2026
-  Time: 5:19 PM
-  To change this template use File | Settings | File Templates.
+  Address.jsp – JSTL version (no scriptlets)
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="hcmuaf.fit.mombabyecommerce.model.User" %>
-<%@ page import="hcmuaf.fit.mombabyecommerce.model.Address" %>
-<%@ page import="java.util.List" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Title</title>
+    <title>Địa Chỉ</title>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_profile/Address.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script
-            src="${pageContext.request.contextPath}/static/style-component/style-user_profile/Address.js"></script>
 </head>
 <body>
+
 <div class="header">
-    <jsp:include page="/home/header.jsp" />
+    <jsp:include page="/home/header.jsp"/>
 </div>
 
 <div class="container">
 
     <div class="sidebar">
-        <jsp:include page="user-sidebar.jsp" />
+        <jsp:include page="user-sidebar.jsp"/>
     </div>
 
     <div class="content">
-        <%
-            String require = request.getParameter("requireAddress");
-            if ("true".equals(require)) {
-        %>
-        <div style="color: red; font-weight: bold; margin: 10px 0;">
-            Vui lòng thêm địa chỉ để tiếp tục thanh toán.
-        </div>
-        <%
-            }
-        %>
+
+        <%-- Cảnh báo yêu cầu địa chỉ khi thanh toán --%>
+        <c:if test="${param.requireAddress eq 'true'}">
+            <div style="color: red; font-weight: bold; margin: 10px 0;">
+                Vui lòng thêm địa chỉ để tiếp tục thanh toán.
+            </div>
+        </c:if>
 
         <div id="address_header" class="row mid_align">
             <span class="title">Địa Chỉ</span>
+
             <div class="add_btn mid_align">
                 <i class="fa-solid fa-plus"></i>
-                <a href="#">Thêm </a>
+                <a href="#">Thêm</a>
             </div>
+
             <div class="overlay"></div>
+
+            <%-- Form thêm địa chỉ (popup) --%>
             <div id="addAddressFormContainer" style="display: none;">
                 <span class="close-icon">&times;</span>
                 <h2>Thêm Địa Chỉ</h2>
-                <form id="addAddressForm" action="${pageContext.request.contextPath}/AddAddressController" method="post">
-                    <label for="name">Tên người nhận:<span style="color: red;">*</span></label>
-                    <input type="text" id="name" placeholder="Nhập tên người nhận" required>
 
-                    <label for="phone">Số điện thoại:<span style="color: red;">*</span></label>
-                    <input type="text" id="phone" placeholder="Nhập số điện thoại" maxlength="10" required>
+                <form id="addAddressForm"
+                      action="${pageContext.request.contextPath}/AddAddressController"
+                      method="post">
 
-                    <label for="province" >Tỉnh/Thành phố:<span style="color: red;">*</span></label>
-                    <select id="province" required></select>
+                    <label for="name">Tên người nhận:<span style="color:red;">*</span></label>
+                    <input type="text" id="name" autocomplete="name" placeholder="Nhập tên người nhận" required/>
 
-                    <label for="country">Quốc gia:</label>
-                    <input type="text" id="country" name="country" value="Việt Nam" required />
-                    <label for="state">Tỉnh / Thành phố:</label>
-                    <input type="text" id="state" name="state" placeholder="Nhập tỉnh/thành phố"
-                           required />
-                    <label for="city">Quận / Huyện:</label>
-                    <input type="text" id="city" name="city" placeholder="Nhập quận/huyện"
-                           required />
+                    <label for="phone">Số điện thoại:<span style="color:red;">*</span></label>
+                    <input type="text" id="phone" autocomplete="phone" placeholder="Nhập số điện thoại"
+                           maxlength="10" required/>
+
+                    <input type="hidden" name="country" value="Việt Nam"/>
+
+                    <label for="provinceSelect">Tỉnh / Thành phố:<span style="color:red;">*</span></label>
+                    <select id="provinceSelect" name="state" autocomplete="state" required>
+                        <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                    </select>
+
+                    <label for="districtSelect">Quận / Huyện:<span style="color:red;">*</span></label>
+                    <select id="districtSelect" name="city" autocomplete="city" required disabled>
+                        <option value="">-- Chọn Quận / Huyện --</option>
+                    </select>
+
+                    <label for="wardSelect">Phường / Xã:<span style="color:red;">*</span></label>
+                    <select id="wardSelect" name="ward" autocomplete="ward" required disabled>
+                        <option value="">-- Chọn Phường / Xã --</option>
+                    </select>
+
+                    <label for="detail">Địa chỉ chi tiết:<span style="color:red;">*</span></label>
+                    <input type="text" id="detail" name="detail" autocomplete="detail"
+                           placeholder="Số nhà, tên đường..." required/>
+
                     <div class="radio-group">
                         <label>
-                            <input type="radio" name="addressType" value="Home" checked> Nhà riêng
+                            <input type="radio" name="addressType" value="Home" checked/> Nhà riêng
                         </label>
                         <label>
-                            <input type="radio" name="addressType" value="Office"> Văn phòng
+                            <input type="radio" name="addressType" value="Office"/> Văn phòng
                         </label>
                     </div>
-                    <button class="submit-btn" >Xác nhận</button>
+
+                    <button type="submit" class="submit-btn">Xác nhận</button>
                 </form>
-
             </div>
         </div>
+
+        <%-- Danh sách địa chỉ --%>
         <div id="card_body">
-            <%
-                User user = (User) request.getAttribute("user");
-                List<Address> addresses = (List<Address>) request.getAttribute("addresses");
-                if (user != null && addresses != null) {
-                    for (Address address : addresses) {
-            %>
-            <div class="address_item row" data-id ="<%= address.getId() %>">
-                <div class="icon mid_align">
-                    <i class="fa-solid <%= (address.getAddressType() != null && address.getAddressType().equals("house")) ? "fa-house" : "fa-building" %>"></i>
-                </div>
+            <c:choose>
+                <c:when test="${not empty user and not empty addresses}">
+                    <c:forEach var="address" items="${addresses}">
+                        <div class="address_item row" data-id="${address.id}">
 
-                <div class="infor">
-                    <div class="item_header row mid_align">
-                        <span class="name">
-                            <%= address.getFullName() %>
-                        </span>
-                        <div class="rec_vertical"></div>
-                        <span class="phone">
-                            <%= address.getPhoneNumber() %>
-                        </span>
-                        <% if (Boolean.TRUE.equals(address.getDefault())) { %>
-                        <div class="default">Mặc định</div>
-                        <% } %>
-                    </div>
+                            <div class="icon mid_align">
+                                <c:choose>
+                                    <c:when test="${address.addressType eq 'house'}">
+                                        <i class="fa-solid fa-house"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fa-solid fa-building"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
 
-                    <div class="item_body">
-                        <div class="address_detail">
-                            <span>
-                                <%= address.getStreet() %>
-                            </span>
+                            <div class="infor">
+                                <div class="item_header row mid_align">
+                                    <span class="name">${fn:escapeXml(address.fullName)}</span>
+                                    <div class="rec_vertical"></div>
+                                    <span class="phone">${fn:escapeXml(address.phoneNumber)}</span>
+                                    <c:if test="${address.isDefault}">
+                                        <div class="default">Mặc định</div>
+                                    </c:if>
+                                </div>
+
+                                <div class="item_body">
+                                    <div class="address_detail">
+                                        <span>${fn:escapeXml(address.street)}</span>
+                                    </div>
+                                    <div class="location">
+                                        <span>${fn:escapeXml(address.state)}, ${fn:escapeXml(address.city)}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="manage mid_align col">
+                                <button class="update_btn">Thay đổi</button>
+
+                                <c:choose>
+                                    <c:when test="${address.isDefault}">
+                                        <div class="default">Mặc định</div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button class="set_default_btn"
+                                                onclick="setDefault('${address.id}')">
+                                            Đặt làm mặc định
+                                        </button>
+                                        <button class="delete_btn"
+                                                onclick="deleteAddress('${address.id}')">
+                                            Xóa
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+
                         </div>
-                        <div class="location">
-                            <span>
-                                <%= address.getState() %>, <%= address.getCity() %>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="manage mid_align col">
-                    <button class="update_btn">Thay đổi</button>
-                    <% if (!address.getIsDefault()) { %>
-                    <button class="set_default_btn" onclick= "setDefault('<%= address.getId() %>')" >Đặt làm mặc định</button>
-                    <button onclick= "deleteAddress('<%= address.getId() %>')" class="delete_btn" >Xóa</button>
-                    <% } else { %>
-                    <div class="default">Mặc định</div>
-                    <% } %>
-                    <button class="delete_btn">Xóa</button>
-                </div>
-            </div>
-            <% } } %>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <p class="no_address">Bạn chưa có địa chỉ nào. Hãy thêm địa chỉ mới!</p>
+                </c:otherwise>
+            </c:choose>
         </div>
+
     </div>
 </div>
+
+<script src="${pageContext.request.contextPath}/static/style-component/style-user_profile/Address.js"></script>
+
 </body>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script
-        src="${pageContext.request.contextPath}/static/style-component/style-user_profile/Address.js"></script>
 </html>
