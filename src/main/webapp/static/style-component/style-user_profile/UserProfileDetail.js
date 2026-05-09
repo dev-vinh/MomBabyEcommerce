@@ -99,8 +99,6 @@ function update_profile() {
         alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
         return;
     }
-
-
     const formData = new FormData();
     formData.append("fullName", name);
     formData.append("displayName", displayName);
@@ -117,7 +115,7 @@ function update_profile() {
         jsonObject[key] = value;
     });
 
-
+    console.log("Request data:", jsonObject);
     fetch(`updateUser`, {
         method: 'POST',
         headers: {
@@ -127,8 +125,12 @@ function update_profile() {
     }).then(response => {
         return  response.json()
     }).then(data => {
+        console.log(data)
         if (data.success) {
             alert("Update success! ");
+        }
+        else{
+            alert("Update fall! ");
         }
     })
 }
