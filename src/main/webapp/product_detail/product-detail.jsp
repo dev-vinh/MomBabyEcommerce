@@ -127,10 +127,10 @@
                                                 </a>
                                             </div>
 
-                                            <div id="cart-notification" class="notification hidden">
-                                                <i class="fa-solid fa-circle-check"></i>
-                                                <span>Thêm vào giỏ hàng thành công</span>
-                                            </div>
+                                    <div id="cart-notification" class="notification hidden">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span>Thêm vào giỏ hàng thành công</span>
+                                    </div>
 
                                 </div>
                             </div>
