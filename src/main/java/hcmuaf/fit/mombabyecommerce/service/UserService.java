@@ -1,7 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
-import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import org.jdbi.v3.core.Jdbi;
 
@@ -15,18 +14,8 @@ public class UserService {
     }
 
 
-
     public User getUserById(Integer id) {
-        return enrichUserWithRole(userDao.getUserWithRole(id));
-    }
-
-    private User enrichUserWithRole(User user) {
-        if (user == null) return null;
-        List<Role> roles = userDao.getUserRoleObjects(user.getId());
-        if (roles != null && !roles.isEmpty()) {
-            user.setRole(roles.get(0));
-        }
-        return user;
+        return userDao.getUserById(id);
     }
 
     public User getUserByEmail(String email) {

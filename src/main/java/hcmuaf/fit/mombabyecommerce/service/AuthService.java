@@ -39,12 +39,29 @@ public class AuthService {
 
 
     public User login(String email, String password) {
-        User user = userDAO.getUserWithRoleByEmail(email);
-        if (user == null) return null;
-        String hashedPassword = HashUtils.hashWithSalt(password, user.getSalt());
-        if (!hashedPassword.equals(user.getPasswordUsername())) return null;
-        if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) return null;
-        return enrichUserWithRole(user);
+        User user = userDAO.getUserByEmail(email);
+
+        if (user != null) {
+            String storedSalt = user.getSalt();
+            String storedHashedPassword = user.getPasswordUsername();
+            String hashedPassword = HashUtils.hashWithSalt(password, storedSalt);
+
+            if (hashedPassword.equals(storedHashedPassword)
+                    && "ACTIVE".equalsIgnoreCase(user.getStatus())) {
+
+                String roleStr = userDAO.getHighestRole(user.getId());
+
+                if (roleStr != null) {
+                    Role role = new Role();
+                    role.setRoleType(ERole.valueOf(roleStr.toUpperCase()));
+                    user.setRole(role);
+                }
+
+                return user;
+            }
+        }
+
+        return null;
     }
 
 
@@ -76,7 +93,7 @@ public class AuthService {
     }
 
     public User getUserById(Integer userId) {
-        return enrichUserWithRole(userDAO.getUserWithRole(userId));
+        return userDAO.getUserById(userId);
     }
 
     public boolean verifySession(HttpServletRequest request, String sessionId) {
