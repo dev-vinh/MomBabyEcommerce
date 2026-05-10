@@ -42,21 +42,22 @@
 
                                 <div class="carousel-container">
 
-                                    <img id="mainImage" src="${primaryImageUrl}" alt="Carousel Image"
-                                        class="carousel-image">
+                                    <img id="mainImage"
+                                    src="${primaryImageUrl}"
+                                    data-context-path="${pageContext.request.contextPath}"
+                                    alt="Carousel Image"
+                                    class="carousel-image">
                                     <!-- Navigation Arrows -->
                                     <div class="nav-arrow left" onclick="prevImage()">&#10094;</div>
                                     <div class="nav-arrow right" onclick="nextImage()">&#10095;</div>
 
                                     <!-- Thumbnails -->
                                     <div class="thumbnails">
-                                        <div class="thumbnail">
-                                            <c:if test="${not empty images}">
-                                                <c:forEach var="image" items="${images}">
-                                                    <img src="${image}" alt="Thumbnail " />
-                                                </c:forEach>
-                                            </c:if>
-                                        </div>
+                                        <c:if test="${not empty images}">
+                                            <c:forEach var="image" items="${images}">
+                                                <img class="thumbnail" src="${image}" alt="Thumbnail" />
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
                                 </div>
 
@@ -71,23 +72,16 @@
                                         ${product.name}
                                     </div>
 
-                                    <c:if test="${not empty optionVariant}">
+                                    <c:if test="${not empty productOptions}">
                                         <div class="wrap_variant">
                                             <div class="option-title">Chọn phân loại:</div>
 
-                                            <c:forEach items="${optionVariant}" var="op">
+                                            <c:forEach items="${productOptions}" var="op">
                                                 <div class="option-item"
-                                                     data-option-id="${op.id}"
+                                                     data-option-id="${op.optionId}"
                                                      data-price="${op.price}"
                                                      data-stock="${op.stock}">
-                                                    <c:choose>
-                                                        <c:when test="${not empty op.variantName}">
-                                                            ${op.variantName}: ${op.variantValue}
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            Mặc định
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                        ${op.variantText}
                                                 </div>
                                             </c:forEach>
                                         </div>

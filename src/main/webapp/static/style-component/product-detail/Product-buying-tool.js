@@ -37,6 +37,10 @@ $(document).ready(function () {
 
     add_to_cart.on('click', function (e) {
         e.preventDefault();
+        if (!currentOptionId || currentOptionId === 'undefined') {
+            alert("Vui lòng chọn phân loại sản phẩm");
+            return;
+        }
         addToCart(product_id, currentOptionId);
     });
 

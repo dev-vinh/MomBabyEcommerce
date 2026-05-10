@@ -57,18 +57,24 @@ function toggleSpecification() {
 
 // Hiển thị hoặc ẩn phần thông số kỹ thuật
 function toggleSpecifications() {
+    if (!specsSection || !mainToggleButton) return;
+
     if (specsSection.style.display === "none") {
         specsSection.style.display = "block";
-        mainToggleButton.style.display = "none"; // Ẩn nút chính
+        mainToggleButton.style.display = "none";
     } else {
         specsSection.style.display = "none";
-        mainToggleButton.style.display = "inline-block"; // Hiển thị nút chính
+        mainToggleButton.style.display = "inline-block";
     }
 }
 
-// Gắn sự kiện cho các nút hiển thị/ẩn thông số kỹ thuật
-mainToggleButton.addEventListener("click", toggleSpecifications);
-bottomToggleButton.addEventListener("click", toggleSpecifications);
+if (mainToggleButton) {
+    mainToggleButton.addEventListener("click", toggleSpecifications);
+}
+
+if (bottomToggleButton) {
+    bottomToggleButton.addEventListener("click", toggleSpecifications);
+}
 
 // Thêm sản phẩm vào giỏ hàng với thông báo
 document.addEventListener("DOMContentLoaded", function () {

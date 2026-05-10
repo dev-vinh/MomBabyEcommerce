@@ -4,6 +4,7 @@ package hcmuaf.fit.mombabyecommerce.controller.product;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.OptionVariant;
 import hcmuaf.fit.mombabyecommerce.model.Product;
+import hcmuaf.fit.mombabyecommerce.model.ProductOptionDTO;
 import hcmuaf.fit.mombabyecommerce.service.ImageService;
 import hcmuaf.fit.mombabyecommerce.service.OptionService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
@@ -14,7 +15,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "ProductDetailController", value = "/product-detail")
@@ -41,12 +45,48 @@ public class ProductDetailController extends HttpServlet {
 
 
         List<OptionVariant> optionVariant = optionService.getOptionDetailsByProductId(product.getId());
+
+        Map<Integer, ProductOptionDTO> optionMap = new LinkedHashMap<>();
+
+        for (OptionVariant op : optionVariant) {
+            ProductOptionDTO dto = optionMap.get(op.getId());
+
+            if (dto == null) {
+                dto = new ProductOptionDTO(
+                        op.getId(),
+                        op.getProductId(),
+                        op.getPrice(),
+                        op.getStock()
+                );
+                dto.setVariantText("");
+                optionMap.put(op.getId(), dto);
+            }
+
+            if (op.getVariantName() != null && op.getVariantValue() != null) {
+                String text = op.getVariantName() + ": " + op.getVariantValue();
+
+                if (dto.getVariantText() == null || dto.getVariantText().isEmpty()) {
+                    dto.setVariantText(text);
+                } else {
+                    dto.setVariantText(dto.getVariantText() + " | " + text);
+                }
+            }
+        }
+
+        List<ProductOptionDTO> productOptions = new ArrayList<>(optionMap.values());
+
+        for (ProductOptionDTO dto : productOptions) {
+            if (dto.getVariantText() == null || dto.getVariantText().isEmpty()) {
+                dto.setVariantText("Mặc định");
+            }
+        }
+
         request.setAttribute("images", images);
         request.setAttribute("primaryImageUrl", primaryImageUrl);
         request.setAttribute("product", product);
         request.setAttribute("descriptions", descriptions);
         request.setAttribute("productPrice", productPrice);
-        request.setAttribute("optionVariant", optionVariant);
+        request.setAttribute("productOptions", productOptions);
 
 
         productService.increaseNoOfViews(productId);
