@@ -71,25 +71,27 @@
                                         ${product.name}
                                     </div>
 
-                                    <%-- product này là gì--%>
-                                        <%-- VARIANT --%>
-                                            <c:if test="${not empty optionVariant  && not empty variants}">
-                                                <c:forEach items="${variants}" var="type">
+                                    <c:if test="${not empty optionVariant}">
+                                        <div class="wrap_variant">
+                                            <div class="option-title">Chọn phân loại:</div>
 
-                                                    <div class="wrap_variant ">
-                                                        <div class="option-title">Chọn ${type}:</div>
-
-                                                        <c:forEach items="${optionVariant}" var="op">
-                                                            <c:if test="${op.variantName eq type  }">
-                                                                <div class="option-item" data-option-id="${op.id}"
-                                                                    data-price="${op.price}"> ${op.variantValue}</div>
-                                                            </c:if>
-                                                        </c:forEach>
-                                                    </div>
-
-                                                </c:forEach>
-
-                                            </c:if>
+                                            <c:forEach items="${optionVariant}" var="op">
+                                                <div class="option-item"
+                                                     data-option-id="${op.id}"
+                                                     data-price="${op.price}"
+                                                     data-stock="${op.stock}">
+                                                    <c:choose>
+                                                        <c:when test="${not empty op.variantName}">
+                                                            ${op.variantName}: ${op.variantValue}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Mặc định
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:if>
 
 
                                             <div id="price" class="price">

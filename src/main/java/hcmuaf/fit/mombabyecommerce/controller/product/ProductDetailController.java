@@ -30,7 +30,7 @@ public class ProductDetailController extends HttpServlet {
         int productId = Integer.parseInt(request.getParameter("id"));
         Product product = productService.getProductById(productId);
 
-        Integer productPrice = productService.getMinimumPriceForProduct(productId); // Default to minimum price
+        Integer productPrice = productService.getMinimumPriceForProduct(productId);
         if (product.getOptionId() != null) {
             productPrice = productService.getPriceForOption(product.getOptionId());
         }
@@ -39,23 +39,15 @@ public class ProductDetailController extends HttpServlet {
         String primaryImageUrl = imageService.getImageUrlById(product.getImageId());
         List<String> descriptions = List.of(product.getDescription().split("\\n"));
 
-        // lỗi
-        List<OptionVariant> options = optionService.getOptionsByProductId(product.getId());
-        List<Integer> optionIds = options.stream().map(OptionVariant::getId).collect(Collectors.toList());
 
-        List<OptionVariant> optionVariant = optionService.getVariantByOptionId(optionIds);
-        List<String> variants = optionVariant.stream().map(OptionVariant::getVariantName).distinct()
-                .collect(Collectors.toList());
-
-        // nếu lấy chi tieets sản phẩm ra không được xem lại chỗ này
-
+        List<OptionVariant> optionVariant = optionService.getOptionDetailsByProductId(product.getId());
         request.setAttribute("images", images);
         request.setAttribute("primaryImageUrl", primaryImageUrl);
         request.setAttribute("product", product);
         request.setAttribute("descriptions", descriptions);
         request.setAttribute("productPrice", productPrice);
         request.setAttribute("optionVariant", optionVariant);
-        request.setAttribute("variants", variants);
+
 
         productService.increaseNoOfViews(productId);
         request.getRequestDispatcher("product_detail/product-detail.jsp").forward(request, response);

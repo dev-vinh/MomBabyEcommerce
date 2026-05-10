@@ -72,10 +72,12 @@
 
                                                             <div class="description mid_align col  ">
                                                                 <div class="title ">${p.name}</div>
+                                                                <c:if test="${not empty p.variantText}">
+                                                                    <div class="variant-text">
+                                                                            ${p.variantText}
+                                                                    </div>
+                                                                </c:if>
 
-<%--                                                                <div class="color">--%>
-<%--                                                                    <span class="color_name">Màu Sắc: Đen </span>--%>
-<%--                                                                </div>--%>
 
 
 

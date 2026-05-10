@@ -71,9 +71,10 @@ public interface ProductDao {
             "INNER JOIN option_variant as ops on ops.productId = p.id " +
             "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
             "INNER JOIN image as img on p.imageId = img.id " +
-            "WHERE p.id = :productId AND ops.id = :optionId")
-
-    @RegisterConstructorMapper(Product.class)
+            "WHERE p.id = :productId " +
+            "AND ops.id = :optionId " +
+            "AND p.isActive = true " +
+            "AND inv.quantity > 0")
     Product getProductByIdAndOptionId(@Bind("productId") int productId,
                                       @Bind("optionId") int optionId);
 
