@@ -38,9 +38,9 @@ public class ProductCart implements Serializable {
         this.length = product.getLength();
         this.width = product.getWidth();
         this.weight = product.getWeight();
-
-
+        this.variantText = product.getVariantText();
     }
+
 
 
     public Integer getProductId() {
