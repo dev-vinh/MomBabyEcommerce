@@ -38,7 +38,6 @@ public class UserService {
                 user.getId(),
                 user.getFullName(),
                 user.getDisplayName(),
-                user.getdOB(),
                 user.getGender(),
                 user.getPhoneNumber()
         ) > 0;
