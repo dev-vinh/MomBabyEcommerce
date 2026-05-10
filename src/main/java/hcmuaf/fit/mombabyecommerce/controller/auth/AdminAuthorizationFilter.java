@@ -27,31 +27,17 @@ public class AdminAuthorizationFilter implements Filter{
 
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
+        String role = (String) session.getAttribute("role");
         if (userId == null) {
             redirectToLoginWithMessage(request, response, "Bạn chưa đăng nhập.");
             return;
         }
 
-
         User user = authService.getUserById(userId);
 
-        if (user == null || user.getRole() == null) {
+        if (user == null || !"ADMIN".equalsIgnoreCase(role)) {
             session.invalidate();
-            redirectToLoginWithMessage(request, response, "Không xác định được quyền.");
-            return;
-        }
-        String roleStr = (String) session.getAttribute("roleType");
-
-        if (roleStr == null) {
-            session.invalidate();
-            redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập.");
-            return;
-        }
-        ERole roleType = ERole.valueOf(roleStr);
-
-        if (roleType != ERole.SUPER_ADMIN) {
-            session.invalidate();
-            redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập.");
+            redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập vào trang này.");
             return;
         }
 
