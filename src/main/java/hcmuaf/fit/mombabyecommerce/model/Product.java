@@ -25,15 +25,16 @@ public class Product implements Serializable {
     private Integer optionId;
     private String categoryName;
     private String imageUrl;
-
     private Integer height;
     private Integer length;
     private Integer width;
     private Integer weight;
+    private String variantText;
+
 
     @ConstructorProperties({ "id", "name", "sku", "description", "isActive", "categoryId", "brandId", "noOfViews",
             "noOfSold", "imageId", "price", "stock", "optionId", "categoryName", "imageUrl", "height", "length",
-            "width", "weight"
+            "width", "weight","variantText"
     })
     public Product(
             @ColumnName("id") Integer id,
@@ -54,7 +55,9 @@ public class Product implements Serializable {
             @ColumnName("height") @Nullable Integer height,
             @ColumnName("length") @Nullable Integer length,
             @ColumnName("width") @Nullable Integer width,
-            @ColumnName("weight") @Nullable Integer weight
+            @ColumnName("weight") @Nullable Integer weight,
+            @ColumnName("variantText") @Nullable String variantText
+
 
     ) {
         this.id = id;
@@ -76,6 +79,7 @@ public class Product implements Serializable {
         this.length = length;
         this.width = width;
         this.weight = weight;
+        this.variantText = variantText;
     }
 
     public Product(
@@ -268,6 +272,13 @@ public class Product implements Serializable {
         this.weight = weight;
     }
 
+    public String getVariantText() {
+        return variantText;
+    }
+
+    public void setVariantText(String variantText) {
+        this.variantText = variantText;
+    }
     @Override
     public String toString() {
         return "Product{" +

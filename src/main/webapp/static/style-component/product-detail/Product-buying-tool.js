@@ -14,15 +14,12 @@ $(document).ready(function () {
     const firstOption = option_items.first();
 
     if (firstOption.length > 0) {
-        wrap_variant.each(function () {
-            const group_options = $(this).find('.option-item');
-            const groupFirst = group_options.first();
-            group_options.removeClass('selected');
-            groupFirst.addClass('selected');
-        });
+        option_items.removeClass('selected');
+        firstOption.addClass('selected');
 
         const priceDisplay = $('#price');
         const initialPrice = firstOption.attr("data-price");
+
         if (initialPrice) {
             priceDisplay.text(Number(initialPrice).toLocaleString('vi-VN') + ' VND');
         }
@@ -40,21 +37,22 @@ $(document).ready(function () {
 
     add_to_cart.on('click', function (e) {
         e.preventDefault();
+        if (!currentOptionId || currentOptionId === 'undefined') {
+            alert("Vui lòng chọn phân loại sản phẩm");
+            return;
+        }
         addToCart(product_id, currentOptionId);
     });
 
     $('.option-item').on('click', function () {
-        const group = $(this).closest('.wrap_variant');
-        group.find('.option-item').removeClass('selected');
+        $('.option-item').removeClass('selected');
         $(this).addClass('selected');
 
-        // Update price based on selected item
         const selectedPrice = $(this).attr("data-price");
         if (selectedPrice) {
             $('#price').text(Number(selectedPrice).toLocaleString('vi-VN') + ' VND');
         }
 
-        // Update option id for buttons
         const optionId = $(this).attr('data-option-id');
         updateButtons(optionId);
     });

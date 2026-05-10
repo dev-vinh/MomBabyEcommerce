@@ -40,6 +40,10 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Product not found\"}");
                 return;
             }
+            if (product.getStock() == null || product.getStock() <= 0) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Sản phẩm đã hết hàng\"}");
+                return;
+            }
 
             System.out.println("[AddToCart] Product retrieved: " + product.getName() +
                     ", optionId in product: " + product.getOptionId());
@@ -60,7 +64,14 @@ public class AddToCart extends HttpServlet {
                 System.out.println(
                         "[AddToCart] Retrieved existing cart from session with " + cart.getData().size() + " items");
             }
+            if (cart.getData().containsKey(optionId)) {
+                int currentQty = cart.getData().get(optionId).getQuantity();
 
+                if (currentQty + 1 > product.getStock()) {
+                    response.getWriter().write("{\"success\": false, \"message\": \"Số lượng vượt quá tồn kho\"}");
+                    return;
+                }
+            }
             boolean added = cart.addProduct(product);
 
             if (added) {

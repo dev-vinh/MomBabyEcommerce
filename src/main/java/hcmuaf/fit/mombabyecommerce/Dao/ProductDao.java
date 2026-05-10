@@ -60,20 +60,29 @@ public interface ProductDao {
     Product getProductById(@Bind("id") int id);
 
     @SqlQuery(value = "SELECT p.id as id, p.name as name, p.description as description, " +
+            "       p.sku as sku, " +
             "       p.isActive as isActive, " +
+            "       p.categoryId as categoryId, " +
+            "       p.brandId as brandId, " +
             "       p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
             "       p.imageId as imageId, " +
             "       ops.id as optionId, ops.price as price, " +
             "       inv.quantity as stock, " +
-            "       img.url as imageUrl " +
+            "       img.url as imageUrl, " +
+            "       GROUP_CONCAT(CONCAT(v.name, ': ', v.value) SEPARATOR ' | ') as variantText " +
             "FROM products as p " +
             "INNER JOIN categories as cate on cate.id = p.categoryId " +
             "INNER JOIN option_variant as ops on ops.productId = p.id " +
             "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
             "INNER JOIN image as img on p.imageId = img.id " +
-            "WHERE p.id = :productId AND ops.id = :optionId")
-
-    @RegisterConstructorMapper(Product.class)
+            "LEFT JOIN variant v ON v.optionId = ops.id " +
+            "WHERE p.id = :productId " +
+            "AND ops.id = :optionId " +
+            "AND p.isActive = true " +
+            "AND inv.quantity > 0 " +
+            "GROUP BY p.id, p.name, p.description, p.sku, p.isActive, " +
+            "p.categoryId, p.brandId, p.noOfViews, p.noOfSold, p.imageId, " +
+            "ops.id, ops.price, inv.quantity, img.url")
     Product getProductByIdAndOptionId(@Bind("productId") int productId,
                                       @Bind("optionId") int optionId);
 

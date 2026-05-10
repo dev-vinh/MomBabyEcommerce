@@ -68,4 +68,22 @@ public interface OptionVariantDao {
             """)
     boolean updateOptionStock(@Bind("optionVariantId") Integer optionVariantId,
                               @Bind("quantity") Integer quantity);
+
+
+    @SqlQuery("""
+    SELECT
+        o.id as id,
+        o.productId,
+        o.price,
+        COALESCE(inv.quantity, 0) as stock,
+        v.id as variantId,
+        v.name as variantName,
+        v.value as variantValue
+    FROM option_variant o
+    LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+    LEFT JOIN variant v ON v.optionId = o.id
+    WHERE o.productId = :productId
+    ORDER BY o.id, v.id
+""")
+    List<OptionVariant> getOptionDetailsByProductId(@Bind("productId") Integer productId);
 }

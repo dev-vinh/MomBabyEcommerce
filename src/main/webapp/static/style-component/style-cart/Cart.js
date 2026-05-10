@@ -71,7 +71,7 @@ $(document).ready(function () {
             let decrement = $(this).find('#decrement');
             let remove = $(this).find('.remove');
 
-            let stock = $(this).attr('data-stock');
+            let stock = parseInt($(this).attr('data-stock'));
             let option_id = parseInt($(this).attr('data-id'));
 
 
@@ -182,7 +182,10 @@ $(document).ready(function () {
                 quantity: quantity
             },
             success: function (result) {
-                console.log(result);
+                if (!result.success) {
+                    alert(result.message || "Cập nhật số lượng thất bại");
+                    location.reload();
+                }
             },
             error: function (xhr, status, error) {
                 console.log(xhr.responseText);

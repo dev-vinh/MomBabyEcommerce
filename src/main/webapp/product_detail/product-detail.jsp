@@ -42,21 +42,22 @@
 
                                 <div class="carousel-container">
 
-                                    <img id="mainImage" src="${primaryImageUrl}" alt="Carousel Image"
-                                        class="carousel-image">
+                                    <img id="mainImage"
+                                    src="${primaryImageUrl}"
+                                    data-context-path="${pageContext.request.contextPath}"
+                                    alt="Carousel Image"
+                                    class="carousel-image">
                                     <!-- Navigation Arrows -->
                                     <div class="nav-arrow left" onclick="prevImage()">&#10094;</div>
                                     <div class="nav-arrow right" onclick="nextImage()">&#10095;</div>
 
                                     <!-- Thumbnails -->
                                     <div class="thumbnails">
-                                        <div class="thumbnail">
-                                            <c:if test="${not empty images}">
-                                                <c:forEach var="image" items="${images}">
-                                                    <img src="${image}" alt="Thumbnail " />
-                                                </c:forEach>
-                                            </c:if>
-                                        </div>
+                                        <c:if test="${not empty images}">
+                                            <c:forEach var="image" items="${images}">
+                                                <img class="thumbnail" src="${image}" alt="Thumbnail" />
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
                                 </div>
 
@@ -71,25 +72,20 @@
                                         ${product.name}
                                     </div>
 
-                                    <%-- product này là gì--%>
-                                        <%-- VARIANT --%>
-                                            <c:if test="${not empty optionVariant  && not empty variants}">
-                                                <c:forEach items="${variants}" var="type">
+                                    <c:if test="${not empty productOptions}">
+                                        <div class="wrap_variant">
+                                            <div class="option-title">Chọn phân loại:</div>
 
-                                                    <div class="wrap_variant ">
-                                                        <div class="option-title">Chọn ${type}:</div>
-
-                                                        <c:forEach items="${optionVariant}" var="op">
-                                                            <c:if test="${op.variantName eq type  }">
-                                                                <div class="option-item" data-option-id="${op.id}"
-                                                                    data-price="${op.price}"> ${op.variantValue}</div>
-                                                            </c:if>
-                                                        </c:forEach>
-                                                    </div>
-
-                                                </c:forEach>
-
-                                            </c:if>
+                                            <c:forEach items="${productOptions}" var="op">
+                                                <div class="option-item"
+                                                     data-option-id="${op.optionId}"
+                                                     data-price="${op.price}"
+                                                     data-stock="${op.stock}">
+                                                        ${op.variantText}
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:if>
 
 
                                             <div id="price" class="price">
