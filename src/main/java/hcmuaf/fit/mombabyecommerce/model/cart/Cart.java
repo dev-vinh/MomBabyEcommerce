@@ -46,14 +46,20 @@ public class Cart implements Serializable {
             return false;
         }
 
+        if (quantity < 1) {
+            return false;
+        }
+
+        if (product.getStock() != null && quantity > product.getStock()) {
+            return false;
+        }
+
         if (data.containsKey(product.getOptionId())) {
             ProductCart productCart = data.get(product.getOptionId());
             productCart.setQuantity(quantity);
             data.put(product.getOptionId(), productCart);
-            System.out.println("[Cart] Updated quantity for optionId " + product.getOptionId() + " to " + quantity);
             return true;
         }
-        System.err.println("[Cart] ERROR: Product with optionId " + product.getOptionId() + " not found in cart");
         return false;
     }
 

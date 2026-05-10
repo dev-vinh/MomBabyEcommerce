@@ -18,6 +18,7 @@ public class ProductCart implements Serializable {
     private Integer length;
     private Integer width;
     private Integer weight;
+    private String variantText;
 
 
     public ProductCart() {}
@@ -128,6 +129,13 @@ public class ProductCart implements Serializable {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+    public String getVariantText() {
+        return variantText;
+    }
+
+    public void setVariantText(String variantText) {
+        this.variantText = variantText;
     }
 
     @Override

@@ -58,6 +58,10 @@ public class CheckoutController extends HttpServlet {
         }
 
         String optionIdParam = request.getParameter("optionIds");
+        if (productList.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
         System.out.println("[CheckOut] Received optionIds parameter: " + optionIdParam);
 
         if (optionIdParam != null && !optionIdParam.trim().isEmpty()) {

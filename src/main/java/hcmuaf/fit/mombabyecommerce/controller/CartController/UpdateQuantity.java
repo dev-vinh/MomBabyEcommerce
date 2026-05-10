@@ -20,21 +20,50 @@ public class UpdateQuantity extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if (session != null) {
-            Cart cart = (Cart) session.getAttribute("cart");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-            if (cart != null) {
-                Integer optionId = Integer.parseInt(request.getParameter("optionId"));
-                int quantity = Integer.parseInt(request.getParameter("quantity"));
-
-                if (cart.getData().containsKey(optionId)) {
-                    ProductCart productCart = cart.getData().get(optionId);
-                    productCart.setQuantity(quantity);
-                    cart.getData().put(optionId, productCart);
-                }
+        try {
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                response.getWriter().write("{\"success\":false,\"message\":\"No session\"}");
+                return;
             }
 
+            Cart cart = (Cart) session.getAttribute("cart");
+            if (cart == null) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Cart not found\"}");
+                return;
+            }
+
+            Integer optionId = Integer.parseInt(request.getParameter("optionId"));
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+            if (!cart.getData().containsKey(optionId)) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Item not found\"}");
+                return;
+            }
+
+            ProductCart productCart = cart.getData().get(optionId);
+
+            if (quantity < 1) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Quantity invalid\"}");
+                return;
+            }
+
+            if (productCart.getStock() != null && quantity > productCart.getStock()) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Quantity exceeds stock\"}");
+                return;
+            }
+
+            productCart.setQuantity(quantity);
+            cart.getData().put(optionId, productCart);
+            session.setAttribute("cart", cart);
+
+            response.getWriter().write("{\"success\":true}");
+
+        } catch (Exception e) {
+            response.getWriter().write("{\"success\":false,\"message\":\"" + e.getMessage() + "\"}");
         }
 
     }
