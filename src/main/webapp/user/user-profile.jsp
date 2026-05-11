@@ -11,6 +11,9 @@
           href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserProfileDetail.css">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-page/user/UserProfile.css">
+    <script>
+        window.contextPath = "${pageContext.request.contextPath}";
+    </script>
 </head>
 
 <body>
