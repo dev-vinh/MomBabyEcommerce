@@ -10,7 +10,7 @@
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserSideBar.css">
 
-<div id="side_bar" class="container  col">
+<div id="side_bar" class="col">
     <div class=" wrap_item  col">
 
         <div class="item  ">

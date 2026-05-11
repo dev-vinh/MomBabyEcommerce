@@ -1,6 +1,5 @@
 package hcmuaf.fit.mombabyecommerce.controller.user.address;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Address;
@@ -12,54 +11,46 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
-@WebServlet(name = "AddAddressController", value = "/AddAddressController")
-public class AddAddressController extends HttpServlet {
-    private static final Logger log = LoggerFactory.getLogger(AddAddressController.class);
-    AddressService addressService = new AddressService(DBConnection.getJdbi());
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    }
+@WebServlet(name = "UpdateAddressController", value = "/address/update")
+public class UpdateAddressController extends HttpServlet {
+    private final AddressService addressService = new AddressService(DBConnection.getJdbi());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
+
         if (userId == null) {
-            throw new RuntimeException("User not logged in");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(new JSONObject()
+                    .put("status", "error")
+                    .put("message", "Bạn chưa đăng nhập.")
+                    .toString());
+            return;
         }
+
         try {
             StringBuilder jsonBuffer = new StringBuilder();
             BufferedReader reader = request.getReader();
             String line;
+
             while ((line = reader.readLine()) != null) {
                 jsonBuffer.append(line);
             }
-            String jsonData = jsonBuffer.toString();
+
             ObjectMapper mapper = new ObjectMapper();
+            Address address = mapper.readValue(jsonBuffer.toString(), Address.class);
 
-            Address newAddress = mapper.readValue(jsonData, Address.class);
-
-            newAddress.setUserId(userId);
-
-            Address addressDefault = addressService.findDefautlByUserId(userId);
-
-            if (addressDefault == null) {
-                newAddress.setDefault(true);
-            }
-
-            int resultId = addressService.addAddress(newAddress);
-
-            String validationError = validateAddress(newAddress);
+            String validationError = validateAddress(address);
             if (validationError != null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write(new JSONObject()
@@ -69,28 +60,36 @@ public class AddAddressController extends HttpServlet {
                 return;
             }
 
-            if (resultId > 0) {
-                newAddress.setId(resultId);
+            boolean success = addressService.updateAddress(userId, address);
 
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "success");
-                jsonResponse.put("message", "Thêm địa chỉ thành công!");
-                String jsonAddress = mapper.writeValueAsString(newAddress);
-                jsonResponse.put("address", new JSONObject(jsonAddress));
-                response.getWriter().write(jsonResponse.toString());
-
+            if (success) {
+                response.getWriter().write(new JSONObject()
+                        .put("status", "success")
+                        .put("message", "Cập nhật địa chỉ thành công.")
+                        .toString());
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"status\":\"error\", \"message\":\"Thêm địa chỉ thất bại.\"}");
+                response.getWriter().write(new JSONObject()
+                        .put("status", "error")
+                        .put("message", "Không tìm thấy địa chỉ hoặc bạn không có quyền sửa địa chỉ này.")
+                        .toString());
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e.getMessage());
-            response.getWriter().println("Lỗi khi thêm địa chỉ.");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write(new JSONObject()
+                    .put("status", "error")
+                    .put("message", "Lỗi khi cập nhật địa chỉ.")
+                    .toString());
         }
     }
 
     private String validateAddress(Address address) {
+        if (address.getId() == null) {
+            return "Thiếu id địa chỉ cần cập nhật.";
+        }
+
         if (address.getFullName() == null || address.getFullName().isBlank()) {
             return "Tên người nhận không được để trống.";
         }
@@ -121,5 +120,4 @@ public class AddAddressController extends HttpServlet {
 
         return null;
     }
-
 }

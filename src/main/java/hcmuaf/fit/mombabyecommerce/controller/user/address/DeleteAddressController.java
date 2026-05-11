@@ -43,7 +43,7 @@ public class DeleteAddressController extends HttpServlet {
             throw new RuntimeException("Address not found");
         }
 
-        boolean success=  addressService.updateStatus(addressId, "DELETED");
+        boolean success = addressService.deleteAddress(userId, addressId);
         if (success) {
             response.getWriter().write("{\"status\":\"success\", \"message\":\"Address deleted\"}");
         }
@@ -60,4 +60,8 @@ public class DeleteAddressController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
+
+
+
+
 }
