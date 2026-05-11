@@ -21,23 +21,33 @@ public class UserOrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Integer userId = (Integer) session.getAttribute("userId");
+        List<Order> orders = new ArrayList<>(); // 1. Khai báo sẵn danh sách rỗng
+        int roundedSavings = 0;
 
-        List<Order> orders = new ArrayList<>();
-        try {
+        Object userIdObj = session.getAttribute("userId");
 
-            orders = orderService.getOrdersByUserId(userId);
-            int savings = orders.stream().mapToInt(Order::getTotal).sum();
-            int roundedSavings = Math.round(savings / 1_000_000f);
+        if (userIdObj != null) {
+            try {
+                Integer userId = Integer.parseInt(userIdObj.toString());
 
+                orders = orderService.getOrdersByUserId(userId);
 
-            request.setAttribute("count", orders.size());
-            request.setAttribute("orders", orders);
-            request.setAttribute("savings", roundedSavings);
+                int savings = orders.stream().mapToInt(Order::getTotal).sum();
+                roundedSavings = Math.round(savings / 1_000_000f);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                System.out.println("DEBUG: Đã lấy được đơn hàng cho User ID: " + userId + " - Số lượng: " + orders.size());
+            } catch (NumberFormatException e) {
+                System.out.println("Lỗi: userId trong session không phải là số hợp lệ!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Lỗi: userId trong session bị NULL (chưa đăng nhập?)");
         }
+
+        request.setAttribute("count", orders.size());
+        request.setAttribute("orders", orders);
+        request.setAttribute("savings", roundedSavings);
 
         request.getRequestDispatcher("user/user-order.jsp").forward(request, response);
     }
