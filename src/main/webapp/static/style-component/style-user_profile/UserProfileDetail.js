@@ -14,7 +14,7 @@ $(document).ready(function () {
 
             const formData = new FormData();
             formData.append("file", file);
-            fetch(`admin/uploadImage`, {
+            fetch(`${window.contextPath}/api/uploadImage`, {
                 method: "POST",
                 body: formData,
             })
@@ -95,7 +95,7 @@ function update_profile() {
     const genderValue = gender.length > 0 ? gender.val() : null;
 
     const phone = $('#phone').val().trim();
-    if (!isValidPhoneNumber(phone)) {
+    if (phone && !isValidPhoneNumber(phone)) {
         alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
         return;
     }

@@ -47,12 +47,14 @@ public class UpdateUserInforController extends HttpServlet {
         String fullName = requestData.get("fullName");
         String displayName = requestData.get("displayName");
         String gender = requestData.get("gender");
+        String phoneNumber = requestData.get("phoneNumber");
 
         User user = new User();
         user.setId(userId);
         user.setFullName(fullName);
         user.setDisplayName(displayName);
         user.setGender(gender);
+        user.setPhoneNumber(phoneNumber);
 
         boolean success = userService.updateUser(user);
 

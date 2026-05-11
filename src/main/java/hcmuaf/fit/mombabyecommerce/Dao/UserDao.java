@@ -205,6 +205,7 @@ public interface UserDao {
     SELECT
         u.*,
         r.id AS r_id,
+        r.id AS r_id,
         r.roleType AS r_roleType,
         r.name AS r_name,
         r.description AS r_description,

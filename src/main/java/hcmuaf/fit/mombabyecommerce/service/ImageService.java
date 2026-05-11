@@ -35,7 +35,6 @@ public class ImageService {
     public String uploadImage(byte[] fileBytes) throws Exception {
         Map uploadResult = cloudinary.uploader().upload(fileBytes, ObjectUtils.emptyMap());
         String imageUrl = (String) uploadResult.get("url");
-        imageDao.saveImage(imageUrl);
         return imageUrl;
     }
 
