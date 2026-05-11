@@ -24,6 +24,7 @@ public interface AddressDao {
             " WHERE id = :addressId;")
     Address getAddressById(@Bind("addressId") Integer addressId);
 
+
     @SqlUpdate("INSERT INTO address (userId, addressType, fullName, phoneNumber, street, city, state, country, isDefault) " +
             "VALUES (:userId, :addressType, :fullName, :phoneNumber, :street, :city, :state, :country, :isDefault)")
     @GetGeneratedKeys("id")
@@ -47,9 +48,36 @@ public interface AddressDao {
             "WHERE id =:id ")
     Boolean updateStatus(@Bind("id") Integer id,@Bind("status") String status);
 
+
+    @SqlUpdate("DELETE FROM address WHERE id = :addressId AND userId = :userId")
+    int deleteAddressByIdAndUserId(@Bind("addressId") Integer addressId,
+                                   @Bind("userId") Integer userId);
+
     @SqlUpdate("UPDATE address " +
             "SET isDefault = :defaultStatus " +
             "WHERE id = :id; ")
     Boolean updateDefaultById(@Bind("id") Integer id, @Bind("defaultStatus") boolean defaultStatus);
 
+    @SqlQuery("SELECT * FROM address WHERE id = :addressId AND userId = :userId")
+    Address getAddressByIdAndUserId(@Bind("addressId") Integer addressId,
+                                    @Bind("userId") Integer userId);
+
+    @SqlUpdate("UPDATE address SET isDefault = 0 WHERE userId = :userId")
+    int clearDefaultByUserId(@Bind("userId") Integer userId);
+
+    @SqlUpdate("UPDATE address SET isDefault = :defaultStatus WHERE id = :addressId AND userId = :userId")
+    int updateDefaultByIdAndUserId(@Bind("addressId") Integer addressId,
+                                   @Bind("userId") Integer userId,
+                                   @Bind("defaultStatus") boolean defaultStatus);
+
+    @SqlUpdate("UPDATE address " +
+            "SET addressType = :addressType, " +
+            "fullName = :fullName, " +
+            "phoneNumber = :phoneNumber, " +
+            "street = :street, " +
+            "city = :city, " +
+            "state = :state, " +
+            "country = :country " +
+            "WHERE id = :id AND userId = :userId")
+    int updateAddress(@BindBean Address address);
 }
