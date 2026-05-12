@@ -19,24 +19,8 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.css">
 
-    <script
-            src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.js"
-            defer></script>
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.css">
-
-    <script
-            src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.js"></script>
-
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/static/style-component/product-detail/review.css"/>
-
-    <script
-            src="${pageContext.request.contextPath}/static/style-component/product-detail/review.js"></script>
 </head>
 
 <body>
@@ -84,21 +68,12 @@
             <div class="nav-arrow left" onclick="prevImage()">&#10094;</div>
             <div class="nav-arrow right" onclick="nextImage()">&#10095;</div>
 
-            <!-- THUMBNAILS -->
             <div class="thumbnails">
-
                 <c:if test="${not empty images}">
-
-                    <c:forEach var="image" items="${images}">
-
-                        <img class="thumbnail"
-                             src="${image}"
-                             alt="Thumbnail"/>
-
+                    <c:forEach var="image" items="${images}" varStatus="loop">
+                        <img class="thumbnail" src="${image}" data-index="${loop.index}" alt="Thumbnail"/>
                     </c:forEach>
-
                 </c:if>
-
             </div>
 
         </div>
@@ -248,39 +223,22 @@
                     Số lượng
                 </div>
 
-                <div class="quantity-box">
-
-                    <button type="button" class="qty-btn minus">
-                        -
-                    </button>
-
-                    <input type="number"
-                           id="quantity"
-                           value="1"
-                           min="1">
-
-                    <button type="button" class="qty-btn plus">
-                        +
-                    </button>
-
-                </div>
+               <div class="quantity-box">
+                <button type="button" class="qty-btn minus">-</button>
+                <input type="number" id="quantity" value="1" min="1">
+                <button type="button" class="qty-btn plus">+</button>
+            </div>
 
             </div>
 
             <!-- BUTTON -->
             <div class="button-group">
 
-                <a id="add-to-cart" href="#">
-
-                    <button class="btn-add-to-cart btn add">
-
-                        <i class="fa-solid fa-cart-shopping"></i>
-
-                        Thêm vào giỏ hàng
-
+                <div class="button-group">
+                    <button id="add-to-cart" class="btn-add-to-cart btn add">
+                        <i class="fa-solid fa-cart-shopping"></i> Thêm vào giỏ hàng
                     </button>
-
-                </a>
+                </div>
 
             </div>
 
@@ -477,6 +435,7 @@
 
 <script
         src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
+
 
 </body>
 
