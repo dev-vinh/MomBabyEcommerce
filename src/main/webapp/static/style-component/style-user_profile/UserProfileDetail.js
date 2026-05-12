@@ -9,38 +9,49 @@ $(document).ready(function () {
     })
 
     upload_avatar.on('change', function (event) {
+
+        console.log("change triggered");
+
         const file = event.target.files[0];
+
+        console.log(file);
+
         if (file){
 
             const formData = new FormData();
             formData.append("file", file);
-            fetch(`admin/uploadImage`, {
+
+            fetch(`${window.contextPath}/api/uploadImage`, {
                 method: "POST",
                 body: formData,
             })
-                .then(
-                    response => response.json()
-                ).then(data => {
-                if (data.statusCode === 200) {
-                    const imageId = data.data[0].id;
+                .then(response => response.json())
+                .then(data => {
 
-                    fetch(`update-avatar`,{
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({imageId: imageId}),
-                    })
-                }
-            })
+                    console.log("upload response:", data);
 
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                avatar.attr('src', e.target.result);
-            }
-            reader.readAsDataURL(file);
+                    if (data.statusCode === 200) {
 
+                        const imageId = data.data[0].id;
 
+                        console.log("imageId:", imageId);
+
+                        return fetch(`update-avatar`,{
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({imageId: imageId}),
+                        });
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("update avatar:", data);
+                })
+                .catch(err => {
+                    console.error(err);
+                });
         }
     })
 
@@ -95,12 +106,10 @@ function update_profile() {
     const genderValue = gender.length > 0 ? gender.val() : null;
 
     const phone = $('#phone').val().trim();
-    if (!isValidPhoneNumber(phone)) {
+    if (phone && !isValidPhoneNumber(phone)) {
         alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
         return;
     }
-
-
     const formData = new FormData();
     formData.append("fullName", name);
     formData.append("displayName", displayName);
@@ -117,7 +126,7 @@ function update_profile() {
         jsonObject[key] = value;
     });
 
-
+    console.log("Request data:", jsonObject);
     fetch(`updateUser`, {
         method: 'POST',
         headers: {
@@ -127,8 +136,12 @@ function update_profile() {
     }).then(response => {
         return  response.json()
     }).then(data => {
+        console.log(data)
         if (data.success) {
             alert("Update success! ");
+        }
+        else{
+            alert("Update fall! ");
         }
     })
 }

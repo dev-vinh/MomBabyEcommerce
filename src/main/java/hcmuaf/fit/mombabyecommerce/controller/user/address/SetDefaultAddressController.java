@@ -46,7 +46,7 @@ public class SetDefaultAddressController extends HttpServlet {
             addressDefault.setIsDefault(false);
             addressService.updateDefautlById(addressDefault.getId(), false);
         }
-        boolean success=  addressService.updateDefautlById(address.getId(), true);
+        boolean success = addressService.setDefaultAddress(userId, addressId);
         if (success) {
             response.getWriter().write("{\"status\":\"success\", \"message\":\"Address updated successfully\"}");
         }

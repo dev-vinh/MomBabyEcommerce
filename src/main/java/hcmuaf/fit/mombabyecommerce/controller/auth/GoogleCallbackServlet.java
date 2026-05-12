@@ -7,6 +7,7 @@ import com.google.gson.JsonSerializer;
 import hcmuaf.fit.mombabyecommerce.config.ConfigLoader;
 import hcmuaf.fit.mombabyecommerce.config.EnvConfig;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.contant.ERole;
 import hcmuaf.fit.mombabyecommerce.model.Permission;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.service.AuthService;
@@ -137,8 +138,17 @@ public class GoogleCallbackServlet extends HttpServlet {
             session.setAttribute("user", user);
             session.setAttribute("userId", user.getId());
             session.setAttribute("roleType", user.getRole().getRoleType().name());
+            session.setAttribute("permissions", permissionTypes);
 
-            response.sendRedirect(request.getContextPath() + "/home");
+            String roleType = user.getRole().getRoleType().name();
+            String redirectUrl;
+            if (roleType.equals(ERole.SUPER_ADMIN.name())) {
+                redirectUrl = request.getContextPath() + "/admin/dashboard";
+            } else {
+                redirectUrl = request.getContextPath() + "/home";
+            }
+
+            response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/login?error=Google%20Login%20Failed");

@@ -86,7 +86,10 @@ public class CheckoutController extends HttpServlet {
         }
 
         System.out.println("[CheckOut] Final productList size: " + productList.size());
-
+        if (productList.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
         // Only fetch addresses and cards if user is logged in
         if (userId != null) {
             try {

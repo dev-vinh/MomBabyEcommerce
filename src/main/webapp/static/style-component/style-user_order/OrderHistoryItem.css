@@ -173,7 +173,7 @@ body{
 
 }
 
-.btn_detail, .btn_support{
+.btn_detail, .cancel_btn{
     width: 100px;
     margin: 5px ;
     height:30px;
@@ -184,6 +184,15 @@ body{
     transition: 0.3s;
     font-size: 14px;
     color: #333333;
+}
+
+.disabled{
+    pointer-events: none;
+    background-color: #e0e0e0;
+    color: #999;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .btn_detail:hover, .btn_support:hover{

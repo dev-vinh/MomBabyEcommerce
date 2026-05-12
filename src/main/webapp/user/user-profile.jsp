@@ -11,6 +11,9 @@
           href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserProfileDetail.css">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-page/user/UserProfile.css">
+    <script>
+        window.contextPath = "${pageContext.request.contextPath}";
+    </script>
 </head>
 
 <body>
@@ -86,55 +89,6 @@
                                                 Nữ
                                             </label>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="personal_infor">
-
-                                <div class="birth row">
-                                    <div class="birth_title">
-                                        <span>Ngày sinh :</span>
-                                    </div>
-
-                                    <c:if test="${not empty user.dOB}">
-                                        <c:set var="birthDay" value="${user.dOB.dayOfMonth}"/>
-                                        <c:set var="birthMonth" value="${user.dOB.monthValue}"/>
-                                        <c:set var="birthYear" value="${user.dOB.year}"/>
-                                    </c:if>
-
-                                    <div class="birth_form mid_align">
-
-                                        <select id="day" name="day">
-                                            <option value="">Ngày</option>
-                                            <c:forEach var="i" begin="1" end="31">
-                                                <option value="${i}"
-                                                        <c:if test="${i == birthDay}">selected</c:if>>
-                                                        ${i}
-                                                </option>
-                                            </c:forEach>
-                                        </select>
-
-                                        <select id="month" name="month">
-                                            <option value="">Tháng</option>
-                                            <c:forEach var="i" begin="1" end="12">
-                                                <option value="${i}"
-                                                        <c:if test="${i == birthMonth}">selected</c:if>>
-                                                        ${i}
-                                                </option>
-                                            </c:forEach>
-                                        </select>
-
-                                        <select id="year" name="year">
-                                            <option value="">Năm</option>
-                                            <c:forEach var="i" begin="1900" end="2026">
-                                                <option value="${i}"
-                                                        <c:if test="${i == birthYear}">selected</c:if>>
-                                                        ${i}
-                                                </option>
-                                            </c:forEach>
-                                        </select>
-
                                     </div>
                                 </div>
                             </div>

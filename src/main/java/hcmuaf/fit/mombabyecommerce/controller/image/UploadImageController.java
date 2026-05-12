@@ -9,6 +9,7 @@ import hcmuaf.fit.mombabyecommerce.model.Image;
 import hcmuaf.fit.mombabyecommerce.service.ImageService;
 import hcmuaf.fit.mombabyecommerce.util.ResponseWrapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 @WebServlet("/api/uploadImage")
+@MultipartConfig
 public class UploadImageController extends HttpServlet {
     private ImageService imageService;
 

@@ -25,12 +25,23 @@ public class UserAddressController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
-
+        System.out.println("=== UserAddressController ===");
+        System.out.println("userId from session: " + userId);
         if (userId != null) {
-            User user = userService.getUserById(userId);
-            List<Address> addresses = addressSevice.findByUserId(userId);
-            request.setAttribute("user", user);
-            request.setAttribute("addresses", addresses);
+            try {
+                User user = userService.getUserById(userId);
+                System.out.println("user: " + user);
+
+                List<Address> addresses = addressSevice.findByUserId(userId);
+                System.out.println("addresses: " + addresses);
+
+                request.setAttribute("user", user);
+                request.setAttribute("addresses", addresses);
+            } catch (Exception e) {
+                // In ra lỗi cụ thể để biết chỗ nào fail
+                System.err.println("=== LỖI trong UserAddressController ===");
+                e.printStackTrace();
+            }
         }
 
         request.getRequestDispatcher("user/user-address.jsp").forward(request, response);
