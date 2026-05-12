@@ -102,6 +102,9 @@
 </div>
 
 </body>
+<script>
+    window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/productCard.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.js"></script>
 

@@ -127,7 +127,7 @@
 
                     <c:otherwise>
 <%--                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>--%>
-                        <span id="login-link" style="cursor: pointer; color: inherit;">Đăng nhập/Đăng ký</span>
+                        <span id="login-link" style="cursor: pointer; color: inherit; font-size: 12px">Đăng nhập/Đăng ký</span>
                     </c:otherwise>
 
                 </c:choose>

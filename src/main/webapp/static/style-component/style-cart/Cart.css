@@ -133,7 +133,7 @@ a{
     background: #0170F0;
     color: white;
 }
-.btn button:hover{
+.btn button, .btn .btn_login:hover{
     transition: 0.4s;
     scale: 1.05;
     cursor: pointer;

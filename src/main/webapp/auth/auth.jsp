@@ -6,8 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<div class="container" id="container">
+<div class="auth-wrapper">
+<div class="auth-container" id="container">
     <!-- Đăng ký -->
     <div class="form-container sign-up-container">
         <form action="#">
@@ -160,7 +160,7 @@
 <% if (request.getAttribute("errorMessage") != null) { %>
 <p style="color: red;"><%= request.getAttribute("errorMessage") %></p>
 <% } %>
-<script>
+<script >
     document.getElementById("signInForm").addEventListener("submit", function(e) {
         e.preventDefault(); // Ngăn việc tải lại trang
 
