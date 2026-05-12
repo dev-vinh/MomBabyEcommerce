@@ -2,6 +2,7 @@ package hcmuaf.fit.mombabyecommerce.controller.user.profile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.User;
 import hcmuaf.fit.mombabyecommerce.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,31 +28,46 @@ public class UpdateAvatarController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         BufferedReader reader = request.getReader();
+
         StringBuilder stringBuilder = new StringBuilder();
+
         String line;
+
         while ((line = reader.readLine()) != null) {
             stringBuilder.append(line);
-
         }
+
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> requestData = objectMapper.readValue(stringBuilder.toString(), Map.class);
+
+        Map<String, Object> requestData =
+                objectMapper.readValue(stringBuilder.toString(), Map.class);
 
         Integer imageId = (Integer) requestData.get("imageId");
 
         HttpSession session = request.getSession();
+
         Integer userId = (Integer) session.getAttribute("userId");
 
         Boolean success = userService.updateAvatar(userId, imageId);
+
         Map<String, Object> responseBody = new HashMap<>();
-        if (success){
+
+        if (success) {
+
+            User updatedUser = userService.getUserById(userId);
+
+            session.setAttribute("user", updatedUser);
+
             response.setStatus(HttpServletResponse.SC_OK);
+
             responseBody.put("status", "success");
             responseBody.put("message", "Avatar updated successfully!");
         }
         else {
+
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
             responseBody.put("status", "failed");
             responseBody.put("message", "Update avatar failed!");
         }
