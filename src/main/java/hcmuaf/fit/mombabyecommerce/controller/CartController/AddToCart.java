@@ -17,7 +17,7 @@ public class AddToCart extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Xử lý yêu cầu GET ở đây
+
     }
 
     @Override
@@ -29,7 +29,15 @@ public class AddToCart extends HttpServlet {
         try {
             Integer productId = Integer.parseInt(request.getParameter("productId"));
             Integer optionId = Integer.parseInt(request.getParameter("optionId"));
-
+            String qtyParam = request.getParameter("quantity");
+            int quantity = 1;
+            if (qtyParam != null && !qtyParam.isEmpty()) {
+                try {
+                    quantity = Integer.parseInt(qtyParam);
+                } catch (NumberFormatException e) {
+                    quantity = 1;
+                }
+            }
             System.out.println("[AddToCart] Received request - productId: " + productId + ", optionId: " + optionId);
 
             Product product = productService.getProductByIdAndOptionId(productId, optionId);
@@ -72,10 +80,9 @@ public class AddToCart extends HttpServlet {
                     return;
                 }
             }
-            boolean added = cart.addProduct(product);
+            boolean added = cart.addProduct(product, quantity);
 
             if (added) {
-                // Explicitly save cart back to session to ensure persistence
                 session.setAttribute("cart", cart);
                 System.out.println("[AddToCart] SUCCESS: Product added to cart. Cart now has " +
                         cart.getData().size() + " items");

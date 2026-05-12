@@ -1,22 +1,27 @@
 /* Basic reset */
+/*Product-detail-item.css*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Container styling */
 .carousel-container {
-    max-width: 500px;
-    margin: auto;
-    text-align: center;
+    width: 100%;
     position: relative;
 }
 
-/* Image styling */
+.container-product-Bt {
+    width: 100%;
+}
+
 .carousel-image {
     width: 100%;
-    height: auto;
+    height: 550px;
+    object-fit: cover;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: #fff;
 }
 
 .product-img {
@@ -26,32 +31,33 @@
 }
 
 
-/* Thumbnails styling */
 .thumbnails {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.thumbnail img{
-    width: 60px;
-    height: 60px;
-    margin: 0 5px;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .thumbnail {
-    display: contents;
-    width: 60px;
-    height: 60px;
-    margin: 0 5px;
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+
+    border-radius: 12px;
+    border: 1px solid #ddd;
+
     cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+    padding: 4px;
+
+    transition: all 0.2s ease;
 }
 
+.thumbnail:hover {
+    border-color: #0a7c3d;
+}
+
+.thumbnail.active {
+    border: 2px solid #0a7c3d;
+}
 .image {
 
 }
@@ -61,27 +67,34 @@
     border: 2px solid #000;
 }
 
-/* Navigation arrows */
 .nav-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 24px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
+    background: white;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.nav-arrow:hover {
+    transform: translateY(-50%) scale(1.08);
 }
 
 .nav-arrow.left {
-    left: -20px;
+    left: -22px;
 }
 
 .nav-arrow.right {
-    right: -20px;
+    right: -22px;
 }
