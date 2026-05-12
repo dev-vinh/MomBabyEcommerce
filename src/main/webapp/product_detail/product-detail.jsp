@@ -1,194 +1,483 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    <%-- Created by IntelliJ IDEA. User: vinhp Date: 12/24/2025 Time: 1:55 PM To change this template use File |
-        Settings | File Templates. --%>
-        <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-            <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-                <!DOCTYPE html>
-                <html lang="en">
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
 
-                    <title>Chi tiết sản phẩm</title>
-                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-                    <link rel="stylesheet"
-                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-                    <link rel="stylesheet"
-                        href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
-                    <link rel="stylesheet"
-                        href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.css">
-                    <script
-                        src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.js"
-                        defer></script>
-                    <link rel="stylesheet"
-                        href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.css">
-                    <script
-                        src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.js"></script>
-                    <link rel="stylesheet"
-                        href="${pageContext.request.contextPath}/static/style-component/product-detail/review.css" />
-                    <script
-                        src="${pageContext.request.contextPath}/static/style-component/product-detail/review.js"></script>
-                </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-                <body>
-                    <div class="cart_header">
-                        <jsp:include page="/home/header.jsp" />
+    <title>${product.name}</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.css">
+
+    <script
+            src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail-item.js"
+            defer></script>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.css">
+
+    <script
+            src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-buying-tool.js"></script>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/static/style-component/product-detail/review.css"/>
+
+    <script
+            src="${pageContext.request.contextPath}/static/style-component/product-detail/review.js"></script>
+</head>
+
+<body>
+
+<div class="cart_header">
+    <jsp:include page="/home/header.jsp"/>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+
+    <a href="${pageContext.request.contextPath}/home">
+        Trang chủ
+    </a>
+
+    <span>/</span>
+
+    <a href="#">
+        Sản phẩm
+    </a>
+
+    <span>/</span>
+
+    <span class="active">
+        ${product.name}
+    </span>
+
+</div>
+
+<div class="container">
+
+    <!-- LEFT -->
+    <div class="section1">
+
+        <div class="carousel-container">
+
+            <!-- MAIN IMAGE -->
+            <img id="mainImage"
+                 src="${primaryImageUrl}"
+                 data-context-path="${pageContext.request.contextPath}"
+                 alt="${product.name}"
+                 class="carousel-image">
+
+            <!-- NAV -->
+            <div class="nav-arrow left" onclick="prevImage()">&#10094;</div>
+            <div class="nav-arrow right" onclick="nextImage()">&#10095;</div>
+
+            <!-- THUMBNAILS -->
+            <div class="thumbnails">
+
+                <c:if test="${not empty images}">
+
+                    <c:forEach var="image" items="${images}">
+
+                        <img class="thumbnail"
+                             src="${image}"
+                             alt="Thumbnail"/>
+
+                    </c:forEach>
+
+                </c:if>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="section1">
+
+        <div id="product"
+             data-id="${product.id}"
+             data-option-default="${product.optionId}"
+             class="container-product-Bt">
+
+            <!-- TITLE -->
+            <div class="product-title">
+                ${product.name}
+            </div>
+
+            <!-- META -->
+            <div class="product-meta">
+
+                <div class="product-rating">
+
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+
+                    <span>
+                        (128 đánh giá)//todo
+                    </span>
+
+                </div>
+
+                <div class="product-view">
+
+                    <i class="fa-solid fa-eye"></i>
+
+                    ${product.noOfViews} lượt xem
+
+                </div>
+
+            </div>
+
+            <!-- OPTION -->
+            <c:if test="${not empty productOptions}">
+
+                <div class="variant-wrapper">
+
+                    <div class="option-title">
+                        Chọn phân loại:
                     </div>
-                    <div class="container">
-                        <div class="section1">
-                            <div class="carousel-container">
 
+                    <div class="wrap_variant">
 
-                                <div class="carousel-container">
+                        <c:forEach items="${productOptions}" var="op">
 
-                                    <img id="mainImage"
-                                    src="${primaryImageUrl}"
-                                    data-context-path="${pageContext.request.contextPath}"
-                                    alt="Carousel Image"
-                                    class="carousel-image">
-                                    <!-- Navigation Arrows -->
-                                    <div class="nav-arrow left" onclick="prevImage()">&#10094;</div>
-                                    <div class="nav-arrow right" onclick="nextImage()">&#10095;</div>
+                            <div class="option-item"
+                                 data-option-id="${op.optionId}"
+                                 data-price="${op.price}"
+                                 data-stock="${op.stock}">
 
-                                    <!-- Thumbnails -->
-                                    <div class="thumbnails">
-                                        <c:if test="${not empty images}">
-                                            <c:forEach var="image" items="${images}">
-                                                <img class="thumbnail" src="${image}" alt="Thumbnail" />
-                                            </c:forEach>
-                                        </c:if>
-                                    </div>
-                                </div>
+                                    ${op.variantText}
 
                             </div>
-                        </div>
 
-                        <%-- product này là gì--%>
-                            <div class="section1">
-                                <div id="product" data-id="${product.id}" data-option-default="${product.optionId}"
-                                    class="container-product-Bt">
-                                    <div class="product-title">
-                                        ${product.name}
-                                    </div>
-
-                                    <c:if test="${not empty productOptions}">
-                                        <div class="wrap_variant">
-                                            <div class="option-title">Chọn phân loại:</div>
-
-                                            <c:forEach items="${productOptions}" var="op">
-                                                <div class="option-item"
-                                                     data-option-id="${op.optionId}"
-                                                     data-price="${op.price}"
-                                                     data-stock="${op.stock}">
-                                                        ${op.variantText}
-                                                </div>
-                                            </c:forEach>
-                                        </div>
-                                    </c:if>
-
-
-                                            <div id="price" class="price">
-                                                <c:choose>
-                                                    <c:when test="${not empty productPrice}">
-
-                                                        <fmt:formatNumber value="${productPrice}" pattern="#,###" /> VND
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        Đang câp nhật
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-
-
-                                            <div class="product-features">
-                                                <ul>
-
-                                                    <!-- Lặp qua danh sách descriptions -->
-                                                    <c:forEach var="desc" items="${descriptions}">
-                                                        <li>${desc}</li>
-                                                    </c:forEach>
-                                                </ul>
-                                            </div>
-
-
-
-                                            <div class="button-group">
-                                                <a id="add-to-cart" href="#">
-                                                    <button class="btn-add-to-cart btn add">Thêm vào giỏ hàng</button>
-                                                </a>
-
-                                                <a id="buy-now" href="#">
-                                                    <button class="btn-buy-now btn buy"> Mua ngay</button>
-                                                </a>
-                                            </div>
-
-                                    <div id="cart-notification" class="notification hidden">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        <span>Thêm vào giỏ hàng thành công</span>
-                                    </div>
-
-                                </div>
-                            </div>
+                        </c:forEach>
 
                     </div>
-                    <%--summary__list--%>
-                        <div class="summary__list">
-                            <div class="summary__item">
-                                <img src="${pageContext.request.contextPath}/static/image/img-detail/pediatrics_24dp_000000_FILL0_wght400_GRAD0_opsz24.png"
-                                    alt="Icon 1" class="summary__icon">
-                                <p class="summary__text">Thương Hiệu Abbott</p>
-                            </div>
-                            <div class="summary__divider"></div>
-                            <div class="summary__item">
-                                <img src="${pageContext.request.contextPath}/static/image/img-detail/replay_10_24dp_000000_FILL0_wght400_GRAD0_opsz24.png"
-                                    alt="Icon 2" class="summary__icon">
-                                <p class="summary__text">Độ Tuổi Phù Hợp cho trẻ từ 1-10 tuổi</p>
-                            </div>
-                            <div class="summary__divider"></div>
-                            <div class="summary__item">
-                                <img src="${pageContext.request.contextPath}/static/image/img-detail/cool_to_dry_24dp_000000_FILL0_wght400_GRAD0_opsz24.png"
-                                    alt="Icon 3" class="summary__icon">
-                                <p class="summary__text">Bảo quản nơi khô ráo, hộp đã mở sử dụng trong vòng 3 tuần</p>
-                            </div>
-                        </div>
-                        <div class="Section-Pt">
-                            <img src="${pageContext.request.contextPath}/static/image/img-detail/img00.1.jpg"
-                                alt="Section1">
-                        </div>
-                        <%--fix nay--%>
-                            <%--<div class="text1">--%>
-                                <%-- <h2>Thiết kế phẳng hiện đại, hoàn hảo mọi gian bếp</h2>--%>
-                                    <%-- <p>Nâng tầm không gian bếp với thiết kế thời thượng từ tủ lạnh Samsung thế hệ
-                                        mới. Thiết kế phẳng giảm thiểu--%>
-                                        <%-- chi--%>
-                                            <%-- tiết đem lại sự tao nhã sang trọng, cùng chất liệu cao cấp bền đẹp theo
-                                                thời gian.</p>--%>
-                                                <%--< /div>--%>
-                                                    <div class="feature-benefit">
-                                                        <div class="feature-benefit__text">
-                                                            <h3>Hướng Dẫn Sử Dụng</h3>
-                                                            <ul>
-                                                                <li>Để có 225 ml PediaSure BA pha chuẩn, cho 190ml nước
-                                                                    chín để nguội (≤ 37 độ C) vào ly.</li>
-                                                                <li>Vừa cho từ từ 5 muỗng gạt ngang bột PediaSure BA
-                                                                    (muỗng có sẵn trong hộp) vừa khuấy cho tan đều.</li>
-                                                                <li>Khi pha đúng theo hướng dẫn, 1ml PediaSure BA cung
-                                                                    cấp 1 kcal hoặc 4.18 KJ.</li>
-                                                                <li>Sữa vừa pha dùng ngay hay đậy kín, cho vào tủ lạnh
-                                                                    và dùng trong vòng 24 giờ.</li>
-                                                                <li>Để bổ sung dinh dưỡng: 2 ly/ngày (trẻ 1 - 8 tuổi),
-                                                                    2-3 ly/ngày (trẻ 9 - 10 tuổi) hoặc theo hướng dẫn
-                                                                    của
-                                                                    chuyên viên dinh dưỡng.
-                                                                </li>
-                                                                <li>Không dùng lò vi sóng để hâm nóng sữa.</li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <script> const contextPath = "${pageContext.request.contextPath}"; </script>
-                                                    <script
-                                                        src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
-                </body>
 
-                </html>
+                </div>
+
+            </c:if>
+
+            <!-- PRICE -->
+            <div id="price" class="price">
+
+                <c:choose>
+
+                    <c:when test="${not empty productPrice}">
+
+                        <fmt:formatNumber value="${productPrice}" pattern="#,###"/>
+                        VND
+
+                    </c:when>
+
+                    <c:otherwise>
+
+                        Đang cập nhật
+
+                    </c:otherwise>
+
+                </c:choose>
+
+            </div>
+
+            <!-- SHORT DESC -->
+            <div class="short-description">
+
+                <c:if test="${not empty descriptions}">
+                    ${descriptions[0]}
+                </c:if>
+
+            </div>
+
+            <!-- PRODUCT INFO -->
+            <div class="product-info-box">
+
+                <div class="info-item">
+
+                    <i class="fa-solid fa-box"></i>
+
+                    <span>
+                        Còn hàng
+                    </span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <i class="fa-solid fa-truck"></i>
+
+                    <span>
+                        Giao hàng toàn quốc
+                    </span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <i class="fa-solid fa-shield"></i>
+
+                    <span>
+                        Cam kết chính hãng
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- QUANTITY -->
+            <div class="quantity-wrapper">
+
+                <div class="quantity-title">
+                    Số lượng
+                </div>
+
+                <div class="quantity-box">
+
+                    <button type="button" class="qty-btn minus">
+                        -
+                    </button>
+
+                    <input type="number"
+                           id="quantity"
+                           value="1"
+                           min="1">
+
+                    <button type="button" class="qty-btn plus">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div class="button-group">
+
+                <a id="add-to-cart" href="#">
+
+                    <button class="btn-add-to-cart btn add">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        Thêm vào giỏ hàng
+
+                    </button>
+
+                </a>
+
+            </div>
+
+            <div id="cart-notification" class="notification hidden">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <span>
+                    Thêm vào giỏ hàng thành công
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- PRODUCT DETAIL -->
+<div class="product-detail-wrapper">
+
+    <!-- TAB -->
+    <div class="product-tabs">
+
+        <button class="tab-btn active" data-tab="description">
+            Mô tả sản phẩm
+        </button>
+
+        <button class="tab-btn" data-tab="guide">
+            Hướng dẫn sử dụng
+        </button>
+
+        <button class="tab-btn" data-tab="info">
+            Thông tin sản phẩm
+        </button>
+
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="tab-content active" id="description">
+
+        <div class="description-content">
+
+            <h3>
+                ${product.name}
+            </h3>
+
+            <p>
+                ${product.name} là dòng sản phẩm dinh dưỡng chất lượng cao,
+                hỗ trợ phát triển toàn diện cho bé.
+            </p>
+
+            <ul>
+
+                <c:forEach var="desc" items="${descriptions}">
+
+                    <li>${desc}</li>
+
+                </c:forEach>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- GUIDE -->
+    <div class="tab-content" id="guide">
+
+        <div class="guide-content">
+
+            <ul>
+
+                <li>
+                    Rửa tay và dụng cụ pha sữa thật sạch trước khi sử dụng.
+                </li>
+
+                <li>
+                    Đun sôi nước và để nguội khoảng 40°C trước khi pha.
+                </li>
+
+                <li>
+                    Pha đúng liều lượng theo hướng dẫn của nhà sản xuất.
+                </li>
+
+                <li>
+                    Khuấy đều đến khi sữa tan hoàn toàn.
+                </li>
+
+                <li>
+                    Sữa nên sử dụng ngay sau khi pha.
+                </li>
+
+                <li>
+                    Không sử dụng phần sữa thừa sau 2 giờ.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- PRODUCT INFO -->
+    <div class="tab-content" id="info">
+
+        <div class="product-information-table">
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    Mã sản phẩm
+                </div>
+
+                <div class="info-value">
+                    #${product.id}
+                </div>
+
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    Tên sản phẩm
+                </div>
+
+                <div class="info-value">
+                    ${product.name}
+                </div>
+
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    Giá
+                </div>
+
+                <div class="info-value">
+
+                    <fmt:formatNumber value="${productPrice}" pattern="#,###"/>
+                    VND
+
+                </div>
+
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    Lượt xem
+                </div>
+
+                <div class="info-value">
+                    ${product.noOfViews}
+                </div>
+
+            </div>
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    Tồn kho
+                </div>
+
+                <div class="info-value">
+
+                    <c:choose>
+
+                        <c:when test="${product.stock > 0}">
+                            Còn hàng
+                        </c:when>
+
+                        <c:otherwise>
+                            Hết hàng
+                        </c:otherwise>
+
+                    </c:choose>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const contextPath = "${pageContext.request.contextPath}";
+</script>
+
+<script
+        src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
+
+</body>
+
+</html>
