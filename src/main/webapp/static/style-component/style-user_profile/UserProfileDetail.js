@@ -150,6 +150,6 @@ function update_profile() {
 }
 
 function isValidPhoneNumber(phone) {
-    const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+    const phoneRegex = /^(0)\d{9}$/;
     return phoneRegex.test(phone);
 }
