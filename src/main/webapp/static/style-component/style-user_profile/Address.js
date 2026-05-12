@@ -1,14 +1,7 @@
-/* ================================================================
-   Address.js  –  phù hợp với Address.jsp (JSTL version)
-   API địa chỉ: GHN (Giao Hàng Nhanh)
-================================================================ */
 const CONTEXT_PATH = window.contextPath || "";
 const GHN_TOKEN = "b5610ffa-4b5b-11f1-a973-aee5264794df";
 const GHN_BASE  = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data";
 
-/* ----------------------------------------------------------------
-   Helpers
----------------------------------------------------------------- */
 function resetSelect(selectEl, placeholder) {
     selectEl.innerHTML = `<option value="">${placeholder}</option>`;
     selectEl.disabled = true;
@@ -19,12 +12,7 @@ function setLoading(selectEl, text = "Đang tải...") {
     selectEl.disabled = true;
 }
 
-/* ================================================================
-   DOMContentLoaded – toàn bộ logic chính
-================================================================ */
 document.addEventListener("DOMContentLoaded", function () {
-
-    /* --- Popup / Overlay --- */
     const addButtons = document.querySelectorAll(".open-add-address-btn");
     const formContainer = document.getElementById("addAddressFormContainer");
     const overlay       = document.querySelector(".overlay");
@@ -113,15 +101,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
-
-    /* --- Selects --- */
     const provinceSelect = document.getElementById("provinceSelect");
     const districtSelect = document.getElementById("districtSelect");
     const wardSelect     = document.getElementById("wardSelect");
 
     if (!provinceSelect) return;
-
-    /* ---- Load Tỉnh/Thành ---- */
     (async function loadProvinces() {
         try {
             const res  = await fetch(`${GHN_BASE}/province`, {
@@ -143,8 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Lỗi tải tỉnh/thành:", err);
         }
     })();
-
-    /* ---- Chọn Tỉnh → load Quận/Huyện ---- */
     provinceSelect.addEventListener("change", async function () {
         const provinceId = this.value;
         this.dataset.id   = provinceId;
@@ -180,8 +162,6 @@ document.addEventListener("DOMContentLoaded", function () {
             resetSelect(districtSelect, "-- Lỗi tải dữ liệu --");
         }
     });
-
-    /* ---- Chọn Quận → load Phường/Xã ---- */
     districtSelect.addEventListener("change", async function () {
         const districtId = this.value;
         this.dataset.id   = districtId;
@@ -215,22 +195,16 @@ document.addEventListener("DOMContentLoaded", function () {
             resetSelect(wardSelect, "-- Lỗi tải dữ liệu --");
         }
     });
-
-    /* ---- Chọn Phường/Xã → ghi data-attribute ---- */
     wardSelect.addEventListener("change", function () {
         this.dataset.id   = this.value;
         this.dataset.name = this.selectedOptions[0]?.dataset.name || "";
     });
-
-    /* ---- Validate số điện thoại ---- */
     const phoneInput = document.getElementById("phone");
     if (phoneInput) {
         phoneInput.addEventListener("input", function () {
             this.value = this.value.replace(/\D/g, "").slice(0, 10);
         });
     }
-
-    /* ---- Submit form (AJAX → JSON) ---- */
     const addForm = document.getElementById("addAddressForm");
     if (addForm) {
         addForm.addEventListener("submit", function (e) {
@@ -279,11 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-}); // end DOMContentLoaded
-
-/* ================================================================
-   Xóa địa chỉ
-================================================================ */
+});
 function deleteAddress(addressId) {
     if (!confirm("Bạn có chắc muốn xóa địa chỉ này?")) return;
     fetch(`${CONTEXT_PATH}/address/delete`, {
@@ -299,9 +269,6 @@ function deleteAddress(addressId) {
         .catch(err => console.error("Lỗi xóa địa chỉ:", err));
 }
 
-/* ================================================================
-   Đặt địa chỉ mặc định
-================================================================ */
 function setDefault(addressId) {
     fetch(`${CONTEXT_PATH}/address/default`, {
         method: "POST",
@@ -315,3 +282,4 @@ function setDefault(addressId) {
         })
         .catch(err => console.error("Lỗi đặt mặc định:", err));
 }
+

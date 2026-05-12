@@ -102,51 +102,54 @@ $(document).ready(function () {
 function update_profile() {
     const name = $('#name').val().trim();
     const displayName = $('#displayName').val().trim();
+
     const gender = $('input[name="gender"]:checked');
     const genderValue = gender.length > 0 ? gender.val() : null;
 
     const phone = $('#phone').val().trim();
+
     if (phone && !isValidPhoneNumber(phone)) {
-        alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
+        alert("Số điện thoại không hợp lệ.");
         return;
     }
-    const formData = new FormData();
-    formData.append("fullName", name);
-    formData.append("displayName", displayName);
-    formData.append("gender", genderValue);
-    formData.append("phoneNumber", phone);
 
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
+    const jsonObject = {
+        fullName: name,
+        displayName: displayName,
+        gender: genderValue,
+        phoneNumber: phone
+    };
 
-
-    const jsonObject = {};
-    formData.forEach((value, key) => {
-        jsonObject[key] = value;
-    });
-
-    console.log("Request data:", jsonObject);
     fetch(`updateUser`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(jsonObject),
-    }).then(response => {
-        return  response.json()
-    }).then(data => {
-        console.log(data)
-        if (data.success) {
-            alert("Update success! ");
-        }
-        else{
-            alert("Update fall! ");
-        }
     })
+        .then(response => response.json())
+        .then(data => {
+
+            console.log(data);
+
+            if (data.success) {
+
+                $('#name').val(name);
+                $('#displayName').val(displayName);
+                $('#phone').val(phone);
+                $('.nav_item').text("Xin chào " + displayName);
+
+                alert("Update success!");
+            } else {
+                alert("Update fail!");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 function isValidPhoneNumber(phone) {
-    const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+    const phoneRegex = /^(0)\d{9}$/;
     return phoneRegex.test(phone);
 }
