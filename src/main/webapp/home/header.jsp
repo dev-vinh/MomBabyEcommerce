@@ -110,7 +110,7 @@
                         <a class="nav_item" href="user-profile" >
                             Xin chào ${sessionScope.user.displayName}
                         </a>
-                        <a class="nav_item" href="user-profile">Trang của tôi</a>
+<%--                        <a class="nav_item" href="user-profile">Trang của tôi</a>--%>
                         <a class="nav_item" href="logout">Đăng xuất</a>
                     </c:when>
 
