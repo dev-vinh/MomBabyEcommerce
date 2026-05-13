@@ -24,7 +24,8 @@ public class AddToCart extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         try {
             Integer productId = Integer.parseInt(request.getParameter("productId"));
@@ -48,10 +49,6 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Product not found\"}");
                 return;
             }
-            if (quantity < 1) {
-                response.getWriter().write("{\"success\": false, \"message\": \"Số lượng không hợp lệ\"}");
-                return;
-            }
             if (product.getStock() == null || product.getStock() <= 0) {
                 response.getWriter().write("{\"success\": false, \"message\": \"Sản phẩm đã hết hàng\"}");
                 return;
@@ -61,9 +58,9 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
                         + product.getStock() + " sản phẩm\"}");
                 return;
-            }
-            System.out.println("[AddToCart] Product retrieved: " + product.getName() +
-                    ", optionId in product: " + product.getOptionId());
+                }
+                System.out.println("[AddToCart] Product retrieved: " + product.getName() +
+                        ", optionId in product: " + product.getOptionId());
 
             if (product.getOptionId() == null) {
                 System.err.println("[AddToCart] ERROR: Product optionId is NULL!");

@@ -34,11 +34,15 @@ public class ProductDetailController extends HttpServlet {
         int productId = Integer.parseInt(request.getParameter("id"));
         Product product = productService.getProductById(productId);
 
-        Integer productPrice = productService.getMinimumPriceForProduct(productId);
-
         if (product == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
             return;
+        }
+
+        Integer productPrice = productService.getMinimumPriceForProduct(productId);
+
+        if (product.getOptionId() != null) {
+            productPrice = productService.getPriceForOption(product.getOptionId());
         }
         if (product.getOptionId() != null) {
             productPrice = productService.getPriceForOption(product.getOptionId());

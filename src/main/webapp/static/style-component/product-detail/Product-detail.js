@@ -13,18 +13,51 @@ $(document).ready(function () {
         let currentOptionId = option_id_default;
 
         const option_items = $('.option-item');
-        const firstOption = option_items.first();
+        let firstOption = option_items.filter(function () {
+            return getStock($(this)) > 0;
+        }).first();
+
+        if (firstOption.length === 0) {
+            firstOption = option_items.first();
+        }
 
         if (firstOption.length > 0) {
             option_items.removeClass('selected');
             firstOption.addClass('selected');
-            maxStock = parseInt(firstOption.attr('data-stock')) || 99;
+
+            currentOptionId = firstOption.attr('data-option-id');
+            setPurchaseState(getStock(firstOption));
+
             const initialPrice = firstOption.attr("data-price");
             if (initialPrice) {
                 $('#price').text(Number(initialPrice).toLocaleString('vi-VN') + ' VND');
             }
         }
+        function getStock(optionElement) {
+            const stock = parseInt(optionElement.attr('data-stock'), 10);
+            return Number.isNaN(stock) ? 0 : stock;
+        }
 
+        function setPurchaseState(stock) {
+            maxStock = stock;
+
+            if (stock <= 0) {
+                qtyInput.val(1).prop('disabled', true).attr('max', 0);
+                btnMinus.prop('disabled', true);
+                btnPlus.prop('disabled', true);
+                add_to_cart.prop('disabled', true);
+            } else {
+                qtyInput.prop('disabled', false).attr('max', stock);
+                btnMinus.prop('disabled', false);
+                btnPlus.prop('disabled', false);
+                add_to_cart.prop('disabled', false);
+
+                let currentQty = parseInt(qtyInput.val(), 10) || 1;
+                if (currentQty > stock) currentQty = stock;
+                if (currentQty < 1) currentQty = 1;
+                qtyInput.val(currentQty);
+            }
+        }
 
         function updateButtons(optionId) {
             currentOptionId = optionId;
@@ -62,21 +95,22 @@ $(document).ready(function () {
         updateButtons(currentOptionId);
 
         $('.option-item').on('click', function () {
+            const selectedOption = $(this);
+
             $('.option-item').removeClass('selected');
-            $(this).addClass('selected');
+            selectedOption.addClass('selected');
 
-            maxStock = parseInt($(this).attr('data-stock')) || 99;
+            currentOptionId = selectedOption.attr('data-option-id');
+            const stock = getStock(selectedOption);
 
-            let currentQty = parseInt(qtyInput.val()) || 1;
-            if (currentQty > maxStock) {
-                qtyInput.val(maxStock > 0 ? maxStock : 1);
-            }
+            setPurchaseState(stock);
 
-            const selectedPrice = $(this).attr("data-price");
+            const selectedPrice = selectedOption.attr("data-price");
             if (selectedPrice) {
                 $('#price').text(Number(selectedPrice).toLocaleString('vi-VN') + ' VND');
             }
-            updateButtons($(this).attr('data-option-id'));
+
+            updateButtons(currentOptionId);
         });
 
         add_to_cart.on('click', function (e) {
@@ -118,7 +152,11 @@ function addToCart(productId, optionId, quantity) {
     })
         .then(response => response.json())
         .then(data => {
-            if (data.success) showCartToast();
+            if (data.success) {
+                showCartToast();
+            } else {
+                alert(data.message || 'Không thể thêm vào giỏ hàng');
+            }
         })
         .catch(error => console.error(error));
 }
@@ -185,29 +223,6 @@ function nextImage() {
 function prevImage() {
     if (productImagesList.length > 0) {
         showImg((currentImgIdx - 1 + productImagesList.length) % productImagesList.length);
-    }
-}
-function setPurchaseState(stock) {
-    maxStock = parseInt(stock) || 0;
-
-    if (maxStock > 0) {
-        qtyInput.prop('disabled', false).attr('max', maxStock);
-        btnMinus.prop('disabled', false);
-        btnPlus.prop('disabled', false);
-        add_to_cart.prop('disabled', false);
-        stockStatus.removeClass('out-of-stock').addClass('in-stock')
-            .text('Còn hàng (' + maxStock + ' sản phẩm)');
-
-        let currentQty = parseInt(qtyInput.val()) || 1;
-        if (currentQty < 1) currentQty = 1;
-        if (currentQty > maxStock) currentQty = maxStock;
-        qtyInput.val(currentQty);
-    } else {
-        qtyInput.val(1).prop('disabled', true).attr('max', 0);
-        btnMinus.prop('disabled', true);
-        btnPlus.prop('disabled', true);
-        add_to_cart.prop('disabled', true);
-        stockStatus.removeClass('in-stock').addClass('out-of-stock').text('Hết hàng');
     }
 }
 const mainToggleButton = document.getElementById("toggle-specs-btn");
