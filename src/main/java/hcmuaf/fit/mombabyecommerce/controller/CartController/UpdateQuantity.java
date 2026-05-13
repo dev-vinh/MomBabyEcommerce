@@ -1,7 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.controller.CartController;
 
+import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
 import hcmuaf.fit.mombabyecommerce.model.cart.ProductCart;
+import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -10,7 +13,7 @@ import java.io.IOException;
 
 @WebServlet(name = "IncreaseQuantity", value = "/cart/update-quantity")
 public class UpdateQuantity extends HttpServlet {
-
+    ProductService productService = new ProductService(DBConnection.getJdbi());
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,18 +48,21 @@ public class UpdateQuantity extends HttpServlet {
             }
 
             ProductCart productCart = cart.getData().get(optionId);
-
-            if (quantity < 1) {
-                response.getWriter().write("{\"success\":false,\"message\":\"Quantity invalid\"}");
+            Product product = productService.getProductByIdAndOptionId(productCart.getProductId(), optionId);
+            int currentStock = product == null || product.getStock() == null ? 0 : product.getStock();
+            if (currentStock <= 0) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Sản phẩm đã hết hàng\"}");
                 return;
             }
-
-            if (productCart.getStock() != null && quantity > productCart.getStock()) {
-                response.getWriter().write("{\"success\":false,\"message\":\"Quantity exceeds stock\"}");
+            if (quantity > currentStock) {
+                productCart.setStock(currentStock);
+                response.getWriter().write("{\"success\":false,\"message\":\"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
+                        + currentStock + " sản phẩm\"}");
                 return;
             }
 
             productCart.setQuantity(quantity);
+            productCart.setStock(currentStock);
             cart.getData().put(optionId, productCart);
             session.setAttribute("cart", cart);
 

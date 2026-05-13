@@ -133,12 +133,16 @@
 
                         <c:forEach items="${productOptions}" var="op">
 
-                            <div class="option-item"
+                            <div class="option-item <c:if test="${op.stock <= 0}">out-of-stock</c:if>"
                                  data-option-id="${op.optionId}"
                                  data-price="${op.price}"
                                  data-stock="${op.stock}">
 
-                                    ${op.variantText}
+                                <span>${op.variantText}</span>
+
+                                <c:if test="${op.stock <= 0}">
+                                    <small class="option-stock">Hết hàng</small>
+                                </c:if>
 
                             </div>
 
@@ -181,18 +185,8 @@
 
             </div>
 
-            <!-- PRODUCT INFO -->
+
             <div class="product-info-box">
-
-                <div class="info-item">
-
-                    <i class="fa-solid fa-box"></i>
-
-                    <span>
-                        Còn hàng
-                    </span>
-
-                </div>
 
                 <div class="info-item">
 
@@ -225,7 +219,7 @@
 
                <div class="quantity-box">
                 <button type="button" class="qty-btn minus">-</button>
-                <input type="number" id="quantity" value="1" min="1">
+                   <input type="number" id="quantity" value="1" min="1" max="5">
                 <button type="button" class="qty-btn plus">+</button>
             </div>
 
@@ -428,15 +422,15 @@
     </div>
 
 </div>
-
+<div id="footer">
+    <jsp:include page="/home/footer.jsp" />
+</div>
 <script>
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 
 <script
         src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
-
-
 </body>
 
 </html>

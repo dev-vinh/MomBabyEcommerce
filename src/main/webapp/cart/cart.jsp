@@ -55,8 +55,11 @@
 
                                                         <div class="wrap mid_align row product-item"
                                                             data-stock="${p.stock}" data-id="${p.optionId}">
-                                                            <input type="checkbox" checked class="product_checked"
-                                                                value="${p.optionId}">
+                                                            <input type="checkbox"
+                                                                   <c:if test="${p.stock > 0}">checked</c:if>
+                                                                   class="product_checked"
+                                                                   value="${p.optionId}"
+                                                                   <c:if test="${p.stock <= 0}">disabled</c:if>>
                                                             <div class="image">
                                                                 <c:choose>
                                                                     <c:when test="${empty p.imageUrl}">
@@ -82,7 +85,14 @@
 
 
                                                                 <div class="status">
-                                                                    <span class="status_type">Còn hàng</span>
+                                                                    <c:choose>
+                                                                        <c:when test="${p.stock > 0}">
+                                                                            <span class="status_type">Còn hàng (${p.stock})</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="status_type out-of-stock">Hết hàng</span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
                                                                 </div>
 
                                                             </div>

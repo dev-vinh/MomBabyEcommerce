@@ -1,5 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.OptionVariantDao;
 import hcmuaf.fit.mombabyecommerce.Dao.OrderDetailDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.OptionVariant;
@@ -19,13 +20,23 @@ public class OrderDetailService {
 
 
     public Boolean addOrderDetail(OrderDetail orderDetail) {
+        if (orderDetail == null || orderDetail.getOptionId() == null || orderDetail.getQuantity() == null
+                || orderDetail.getQuantity() <= 0) {
+            throw new RuntimeException("Số lượng đặt hàng không hợp lệ");
+        }
 
-        OptionVariant options = optionService.getOptionById(orderDetail.getOptionId());
-        if (options == null || (options.getStock() < orderDetail.getQuantity())) {
-            throw new RuntimeException("Bad request");
-        } else {
+        return jdbi.inTransaction(handle -> {
+            OptionVariantDao optionDao = handle.attach(OptionVariantDao.class);
+            OrderDetailDao detailDao = handle.attach(OrderDetailDao.class);
 
-            Boolean flag = orderDetailDao.addOrderDetail(
+            OptionVariant option = optionDao.getOptionById(orderDetail.getOptionId());
+            int currentStock = option == null || option.getStock() == null ? 0 : option.getStock();
+
+            if (option == null || currentStock < orderDetail.getQuantity()) {
+                throw new RuntimeException("Sản phẩm không đủ tồn kho");
+            }
+
+            Boolean inserted = detailDao.addOrderDetail(
                     orderDetail.getOrderId(),
                     orderDetail.getProductId(),
                     orderDetail.getQuantity(),
@@ -33,16 +44,21 @@ public class OrderDetailService {
                     orderDetail.getOptionId()
             );
 
-            if (flag) {
-                Integer newStock = options.getStock() - orderDetail.getQuantity();
-                // Increase Stock Quantity
-                optionService.updateStock(orderDetail.getOptionId(), newStock);
+            if (!Boolean.TRUE.equals(inserted)) {
+                throw new RuntimeException("Không thể tạo chi tiết đơn hàng");
             }
 
-            return flag;
-        }
+            boolean stockUpdated = optionDao.decreaseStockIfEnough(
+                    orderDetail.getOptionId(),
+                    orderDetail.getQuantity()
+            );
 
+            if (!stockUpdated) {
+                throw new RuntimeException("Sản phẩm không đủ tồn kho");
+            }
 
+            return true;
+        });
     }
 
     public String getProductNameById(Integer productId) {

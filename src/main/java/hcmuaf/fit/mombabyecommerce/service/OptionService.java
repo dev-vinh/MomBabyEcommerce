@@ -45,7 +45,14 @@ public class OptionService {
     public List<OptionVariant> getOptionDetailsByProductId(Integer productId) {
         return optionDao.getOptionDetailsByProductId(productId);
     }
+    public Integer getStockByOptionId(Integer optionVariantId) {
+        Integer stock = optionDao.getStockByOptionId(optionVariantId);
+        return stock == null ? 0 : stock;
+    }
 
+    public boolean decreaseStockIfEnough(Integer optionVariantId, Integer quantity) {
+        return optionDao.decreaseStockIfEnough(optionVariantId, quantity);
+    }
     public static void main(String[] args) {
         OptionService  optionService = new OptionService(DBConnection.getJdbi());
 
