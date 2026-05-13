@@ -30,6 +30,13 @@ public class CartDetail extends HttpServlet {
 
             item.setStock(currentStock);
 
+            if (dbProduct != null) {
+                item.setPrice(dbProduct.getPrice());
+                item.setName(dbProduct.getName());
+                item.setImageUrl(dbProduct.getImageUrl());
+                item.setVariantText(dbProduct.getVariantText());
+            }
+
             if (currentStock > 0 && item.getQuantity() != null && item.getQuantity() > currentStock) {
                 item.setQuantity(currentStock);
             }

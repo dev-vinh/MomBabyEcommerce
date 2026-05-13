@@ -219,21 +219,16 @@
 
                <div class="quantity-box">
                 <button type="button" class="qty-btn minus">-</button>
-                   <input type="number" id="quantity" value="1" min="1" max="5">
+                   <input type="number" id="quantity" value="1" min="1">
                 <button type="button" class="qty-btn plus">+</button>
             </div>
 
             </div>
 
-            <!-- BUTTON -->
             <div class="button-group">
-
-                <div class="button-group">
                     <button id="add-to-cart" class="btn-add-to-cart btn add">
                         <i class="fa-solid fa-cart-shopping"></i> Thêm vào giỏ hàng
                     </button>
-                </div>
-
             </div>
 
             <div id="cart-notification" class="notification hidden">

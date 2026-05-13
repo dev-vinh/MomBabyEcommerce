@@ -41,7 +41,10 @@ public class UpdateQuantity extends HttpServlet {
 
             Integer optionId = Integer.parseInt(request.getParameter("optionId"));
             int quantity = Integer.parseInt(request.getParameter("quantity"));
-
+            if (quantity < 1) {
+                response.getWriter().write("{\"success\":false,\"message\":\"Số lượng không hợp lệ\"}");
+                return;
+            }
             if (!cart.getData().containsKey(optionId)) {
                 response.getWriter().write("{\"success\":false,\"message\":\"Item not found\"}");
                 return;
@@ -66,7 +69,7 @@ public class UpdateQuantity extends HttpServlet {
             cart.getData().put(optionId, productCart);
             session.setAttribute("cart", cart);
 
-            response.getWriter().write("{\"success\":true}");
+            response.getWriter().write("{\"success\":true,\"stock\":" + currentStock + ",\"quantity\":" + quantity + "}");
 
         } catch (Exception e) {
             response.getWriter().write("{\"success\":false,\"message\":\"" + e.getMessage() + "\"}");

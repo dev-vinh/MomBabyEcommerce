@@ -108,15 +108,17 @@
 
 
                                                                 <div class="quantity mid_align row">
-                                                                    <button id="decrement"><i
-                                                                            class="fa-solid fa-minus"></i></button>
-                                                                    <span class="num mid_align"
-                                                                        data-quantity="${p.quantity}">
-                                                                        ${p.quantity}
+                                                                    <button class="decrement" <c:if test="${p.stock <= 0}">disabled</c:if>>
+                                                                        <i class="fa-solid fa-minus"></i>
+                                                                    </button>
+
+                                                                    <span class="num mid_align" data-quantity="${p.quantity}">
+                                                                            ${p.quantity}
                                                                     </span>
 
-                                                                    <button id="increment"><i
-                                                                            class="fa-solid fa-plus"></i></button>
+                                                                    <button class="increment" <c:if test="${p.stock <= 0 || p.quantity >= p.stock}">disabled</c:if>>
+                                                                        <i class="fa-solid fa-plus"></i>
+                                                                    </button>
 
                                                                 </div>
 
