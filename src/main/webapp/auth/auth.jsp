@@ -6,18 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Auth</title>
-    <script src="https://www.google.com/recaptcha/api.js?hl=vi" async defer></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
-<div class="container" id="container">
+<div class="auth-wrapper">
+<div class="auth-container" id="container">
     <!-- Đăng ký -->
     <div class="form-container sign-up-container">
         <form action="#">
@@ -164,25 +154,13 @@
         </div>
     </div>
 </div>
-<%--<main>--%>
-<%--<script>--%>
-<%--    function handleFacebookAuth(mode) {--%>
-<%--        // Chuyển hướng trực tiếp đến servlet--%>
-<%--        window.location.href = '${pageContext.request.contextPath}/login-facebook?mode=' + mode;--%>
-<%--    }--%>
-<%--</script>--%>
-<%--</main>--%>
-<%--<script>--%>
-<%--    const contextPath = '${pageContext.request.contextPath}';--%>
-<%--</script>--%>
-<main>
     <script src="${pageContext.request.contextPath}/static/style-page/auth/auth.js"></script>
-</main>
+
 
 <% if (request.getAttribute("errorMessage") != null) { %>
 <p style="color: red;"><%= request.getAttribute("errorMessage") %></p>
 <% } %>
-<script>
+<script >
     document.getElementById("signInForm").addEventListener("submit", function(e) {
         e.preventDefault(); // Ngăn việc tải lại trang
 
@@ -211,9 +189,8 @@
         })
             .then(response => response.json())
             .then(result => {
-                if (result.status === 200) {
-                    // Thành công: Reload hoặc về trang chủ
-                    window.location.reload();
+                if (Number(result.status) === 200) {
+                    window.location.href = "${pageContext.request.contextPath}/home";
                 } else {
                     // Thất bại: Hiện thông báo lỗi từ ResponseWrapper (message)
                     errorBox.innerText = result.message;
@@ -232,5 +209,3 @@
             });
     });
 </script>
-</body>
-</html>

@@ -1,6 +1,6 @@
 const registerButton = document.querySelector(".register-button");
 const loginButton = document.querySelector(".login-button");
-const container = document.querySelector(".container");
+const container = document.querySelector(".auth-container");
 const togglePasswords = document.querySelectorAll(".toggle-password");
 
 // Chuyển đổi giao diện giữa đăng ký và đăng nhập

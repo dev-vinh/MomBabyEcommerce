@@ -38,7 +38,10 @@
 
                                         <div class="btn row">
                                             <button class="btn_shopping">Tiếp tục mua sắm</button>
-                                            <button class="btn_login">Đăng nhập</button>
+<%--                                            <button class="btn_login">Đăng nhập</button>--%>
+                                            <a class="btn_login" href="#" id="login-link">
+                                                Đăng nhập
+                                            </a>
                                         </div>
                                     </div>
                                 </c:if>

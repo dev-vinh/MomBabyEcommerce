@@ -20,7 +20,7 @@
         #container{
             display: flex;
             flex-direction: column;
-            padding-top: 85px;
+            /*padding-top: 85px;*/
         }
 
         #home_header{

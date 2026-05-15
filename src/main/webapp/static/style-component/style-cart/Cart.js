@@ -1,9 +1,5 @@
 $(document).ready(function () {
-    const loginButton = $('.btn_login');
 
-    loginButton.on('click', function () {
-        window.location.href = "login";
-    });
 
     const userId = sessionStorage.getItem("userId");
     const sessionId = sessionStorage.getItem("sessionId");
