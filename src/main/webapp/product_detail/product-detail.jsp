@@ -19,7 +19,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
 
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 
 </head>
 
@@ -31,7 +31,6 @@
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-
     <a href="${pageContext.request.contextPath}/home">
         Trang chủ
     </a>
@@ -420,12 +419,11 @@
 <div id="footer">
     <jsp:include page="/home/footer.jsp" />
 </div>
-<script>
-    const contextPath = "${pageContext.request.contextPath}";
-</script>
 
 <script
         src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
 </body>
+<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js?v=1"></script>
 
 </html>

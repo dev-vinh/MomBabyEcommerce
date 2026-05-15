@@ -15,6 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
 </head>
 
 <body>

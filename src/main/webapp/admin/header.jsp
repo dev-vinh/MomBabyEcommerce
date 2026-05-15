@@ -9,9 +9,8 @@
 <html>
 <head>
   <title>Header</title>
-<%--  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/header/header.css">--%>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-toast.css?v=1">
   <style>
 
     #header {
@@ -163,8 +162,9 @@
     </div>
   </div>
 </div>
-
-
+<script>
+  window.contextPath = "${pageContext.request.contextPath}";
+</script>
 
 <script>
   const userPopup = document.querySelector(".user-popup");

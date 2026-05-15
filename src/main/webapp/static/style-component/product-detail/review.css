@@ -1,5 +1,4 @@
 body {
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     margin: 0 auto;
     padding: 0;
     background-color: #FFFFFF;
@@ -389,7 +388,6 @@ body > div.filter-section > h2{
     font-size: 14px;
 }
 .review-container {
-    font-family: Arial, sans-serif;
     margin-top: 20px;
     padding-left: 40px;
 }

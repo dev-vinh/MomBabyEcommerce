@@ -5,15 +5,10 @@
 }
 
 body {
-    font-family: 'Quicksand', sans-serif;
     background-color: #fff;
     color: #333;
     line-height: 1.5;
     overflow-x: hidden;
-}
-
-h1, h2, h3, button, input, select, textarea {
-    font-family: 'Quicksand', sans-serif;
 }
 
 .container {
@@ -325,7 +320,7 @@ h1, h2, h3, button, input, select, textarea {
 
 #cart-notification {
     position: fixed;
-    top: 20px;
+    top: 80px;
     right: 20px;
     background: #10b981;
     color: #fff;

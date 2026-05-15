@@ -63,7 +63,7 @@ $(document).ready(function () {
             currentOptionId = optionId;
             const qty = qtyInput.val() || 1;
             if (buy_now.length > 0) {
-                buy_now.attr('href', `${contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
+                buy_now.attr('href', `${window.contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
             }
         }
 
@@ -144,33 +144,32 @@ $(document).ready(function () {
 });
 
 function addToCart(productId, optionId, quantity) {
-    if (typeof contextPath === 'undefined') return;
-    fetch(`${contextPath}/add-cart`, {
+    if (typeof window.contextPath === 'undefined') {
+        showToast("Không tìm thấy contextPath!", "error");
+        return;
+    }
+
+    fetch(`${window.contextPath}/add-cart`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `productId=${productId}&optionId=${optionId}&quantity=${quantity}`
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `productId=${encodeURIComponent(productId)}&optionId=${encodeURIComponent(optionId)}&quantity=${encodeURIComponent(quantity)}`
     })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showCartToast();
+                showToast(data.message || "Thêm sản phẩm vào giỏ hàng thành công!", "success");
             } else {
-                alert(data.message || 'Không thể thêm vào giỏ hàng');
+                showToast(data.message || "Không thể thêm vào giỏ hàng!", "error");
             }
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            console.error(error);
+            showToast("Có lỗi xảy ra khi thêm vào giỏ hàng!", "error");
+        });
 }
 
-function showCartToast() {
-    const toast = document.getElementById('cart-notification');
-    if (!toast) return;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.classList.add('hidden'), 500);
-    }, 3000);
-}
 let productImagesList = [];
 let currentImgIdx = 0;
 

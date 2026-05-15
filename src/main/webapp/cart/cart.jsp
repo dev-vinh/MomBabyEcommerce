@@ -17,6 +17,7 @@
                     <script src="${pageContext.request.contextPath}/static/style-component/style-cart/Cart.js"></script>
                     <link rel="stylesheet"
                         href="${pageContext.request.contextPath}/static/style-component/style-cart/CartItem.css">
+                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
                 </head>
 
                 <body>
@@ -66,7 +67,7 @@
                                                             <div class="image">
                                                                 <c:choose>
                                                                     <c:when test="${empty p.imageUrl}">
-                                                                        <img src="${pageContext.request.contextPath}static/image/default_img.jpg"
+                                                                        <img src="${pageContext.request.contextPath}/static/image/default_img.jpg"
                                                                             alt="" />
                                                                     </c:when>
                                                                     <c:otherwise>

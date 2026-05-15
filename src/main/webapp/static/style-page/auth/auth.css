@@ -3,7 +3,6 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 .auth-wrapper {
     --linear-grad: linear-gradient(to right, #141e30, #243b55);
@@ -33,18 +32,6 @@
     --grad-clr2: #243b55;
 }
 
-/*body {*/
-/*    height: 100vh;*/
-
-/*    background-size: 400% 400%;*/
-/*    animation: gradient 15s ease infinite;*/
-/*    display: grid;*/
-/*    place-content: center;*/
-/*    font-family: "Poppins", sans-serif;*/
-/*    color: #0b1c2f;*/
-
-/*}*/
-/**/
 
 .auth-wrapper .auth-container {
     position: relative;

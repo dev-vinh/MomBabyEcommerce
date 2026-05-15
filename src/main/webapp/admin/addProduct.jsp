@@ -17,7 +17,7 @@
   <title>Title</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/products/addProduct.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
 <div class="wrap_header">

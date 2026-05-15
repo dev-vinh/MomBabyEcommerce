@@ -2,7 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Quicksand', sans-serif;
 }
 
 html{
@@ -12,9 +11,9 @@ html{
 
 body {
     height: 100vh;
-    /*overflow: hidden;*/
 
 }
+
 /*!*đoạn này để test chức năng poup đăng ký đăng nhập*!*/
 .my-custom-modal {
     display: none;

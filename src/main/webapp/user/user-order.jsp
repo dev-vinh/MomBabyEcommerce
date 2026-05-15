@@ -19,6 +19,8 @@
     <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/UserOrder.js"></script>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
     <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.js"></script>
 
 

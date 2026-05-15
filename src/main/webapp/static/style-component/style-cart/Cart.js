@@ -184,10 +184,6 @@ function updateQuantity(optionId, quantity, onSuccess) {
 }
 
 function removeItem(optionId, productItem) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-        return;
-    }
-
     $.ajax({
         url: 'cart/remove',
         method: 'POST',
@@ -265,81 +261,4 @@ function updateBill() {
     total.text(new Intl.NumberFormat('vi-VN').format(totalPrice) + ' VND');
     VAT.text(new Intl.NumberFormat('vi-VN').format(tax) + ' VND');
     beforeTax.text(new Intl.NumberFormat('vi-VN').format(beforeTaxValue) + ' VND');
-}
-
-function showToast(message, type) {
-    let toast = $('#cart-toast');
-
-    if (toast.length === 0) {
-        $('body').append(`
-            <div id="cart-toast" class="cart-toast hidden">
-                <span id="cart-toast-message"></span>
-            </div>
-        `);
-
-        $('head').append(`
-            <style>
-                .cart-toast {
-                    position: fixed;
-                    top: 24px;
-                    right: 24px;
-                    z-index: 9999;
-                    min-width: 260px;
-                    max-width: 380px;
-                    padding: 14px 18px;
-                    border-radius: 8px;
-                    color: #fff;
-                    font-size: 14px;
-                    line-height: 1.4;
-                    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-                    opacity: 0;
-                    transform: translateY(-12px);
-transition: all 0.3s ease;
-                }
-
-                .cart-toast.show {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-
-                .cart-toast.hidden {
-                    display: none;
-                }
-
-                .cart-toast.success {
-                    background-color: #2e7d32;
-                }
-
-                .cart-toast.error {
-                    background-color: #d32f2f;
-                }
-
-                .cart-toast.warning {
-                    background-color: #f57c00;
-                }
-            </style>
-        `);
-
-        toast = $('#cart-toast');
-    }
-
-    const toastMessage = $('#cart-toast-message');
-
-    toast.removeClass('hidden success error warning show');
-    toast.addClass(type || 'error');
-    toastMessage.text(message);
-
-    setTimeout(function () {
-        toast.addClass('show');
-    }, 10);
-
-    clearTimeout(window.cartToastTimeout);
-
-    window.cartToastTimeout = setTimeout(function () {
-        toast.removeClass('show');
-
-        setTimeout(function () {
-            toast.addClass('hidden');
-        }, 300);
-    }, 3000);
 }

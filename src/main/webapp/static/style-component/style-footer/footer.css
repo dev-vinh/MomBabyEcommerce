@@ -20,7 +20,6 @@
     --clr-text-muted:    #a0a0a0;
     --clr-text-light:    #d4d4d4;
     --clr-white:         #ffffff;
-    font-family: 'Quicksand', sans-serif;
     font-weight: 500;
 }
 
@@ -60,7 +59,6 @@
 }
 
 .mebe-footer__nav-col ul li a {
-    font-family: 'Quicksand', sans-serif;
     font-size: 0.87rem;
     font-weight: 500;
     color: var(--clr-nav-link);
@@ -90,7 +88,6 @@
 }
 
 .mebe-footer__brand h3 {
-    font-family: 'Quicksand', sans-serif;
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--clr-white);
@@ -133,7 +130,6 @@
 }
 
 .mebe-footer__section-title {
-    font-family: 'Quicksand', sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     color: var(--clr-white);
@@ -176,7 +172,6 @@
 }
 
 .mebe-footer__contact a {
-    font-family: 'Quicksand', sans-serif;
     color: var(--clr-text-muted);
     text-decoration: none;
     transition: color 0.2s;
@@ -195,7 +190,6 @@
 }
 
 .mebe-footer__support a {
-    font-family: 'Quicksand', sans-serif;
     font-size: 0.87rem;
     color: var(--clr-text-muted);
     text-decoration: none;
@@ -233,7 +227,6 @@
 }
 
 .mebe-footer__bottom p {
-    font-family: 'Quicksand', sans-serif;
     font-size: 0.78rem;
     font-weight: 500;
     color: #6b6b6b;
