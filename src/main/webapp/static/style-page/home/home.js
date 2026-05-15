@@ -65,21 +65,46 @@ document.addEventListener("DOMContentLoaded", () => {
     // Xử lý trạng thái đăng nhập
     const loginLink = document.getElementById("login-link");
     if (loginLink) {
+        // if (isLoggedIn) {
+        //     loginLink.textContent = "Đăng xuất";
+        //     loginLink.addEventListener("click", (event) => {
+        //         event.preventDefault();
+        //         sessionStorage.removeItem("userId");
+        //         sessionStorage.removeItem("sessionId");
+        //         sessionStorage.removeItem("role");
+        //         // alert("Bạn đã đăng xuất!");
+        //         window.location.href = 'login';
+        //     });
+        // }
         if (isLoggedIn) {
             loginLink.textContent = "Đăng xuất";
+
             loginLink.addEventListener("click", (event) => {
                 event.preventDefault();
-                sessionStorage.removeItem("userId");
-                sessionStorage.removeItem("sessionId");
-                sessionStorage.removeItem("role");
-                // alert("Bạn đã đăng xuất!");
-                window.location.href = 'login';
+
+                // gọi server logout
+                fetch("logout", {
+                    method: "GET"
+                }).then(() => {
+                    // xóa client
+                    sessionStorage.clear();
+
+                    window.location.href = "home";
+                });
             });
-        } else {
+
+        }
+        else {
             loginLink.textContent = "Đăng nhập/Đăng ký";
             loginLink.addEventListener("click", (event) => {
                 event.preventDefault();
-                window.location.href = 'login';
+
+                if (modal) {
+                    modal.style.display = "block";
+                    console.log("Đã hiện popup thay vì chuyển trang");
+                } else {
+                    window.location.href = 'login';
+                }
             });
         }
     }
