@@ -61,6 +61,15 @@ public class UpdateUserInforController extends HttpServlet {
         Map<String, Object> res = new HashMap<>();
 
         if (success) {
+            User sessionUser = (User) session.getAttribute("user");
+
+            sessionUser.setFullName(fullName);
+            sessionUser.setDisplayName(displayName);
+            sessionUser.setGender(gender);
+            sessionUser.setPhoneNumber(phoneNumber);
+
+            session.setAttribute("user", sessionUser);
+
             response.setStatus(HttpServletResponse.SC_OK);
             res.put("success", true);
         } else {

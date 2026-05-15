@@ -38,48 +38,42 @@ public interface ProductDao {
     List<Product> getProductsByCategory(@Bind("categoryId") int categoryId);
 
     @SqlQuery("""
-            SELECT p.id, p.name, p.description, p.sku, p.isActive,
-                   p.brandId, p.noOfViews, p.noOfSold,
-                   p.categoryId, p.imageId,
-                   ops.id as optionId,
-                   ops.price,
-                   inv.quantity as stock,
-                   img.url as imageUrl
-            FROM products p
-            JOIN option_variant ops ON ops.productId = p.id
-            JOIN inventory inv ON inv.optionVariantId = ops.id
-            JOIN image img ON p.imageId = img.id
-            WHERE p.id = :id
-            AND ops.price = (
-                SELECT MIN(o.price)
-                FROM option_variant o
-                JOIN inventory i ON i.optionVariantId = o.id
-                WHERE o.productId = p.id AND i.quantity > 0
-            )
-            """)
+        SELECT p.id, p.name, p.description, p.sku, p.isActive,
+               p.brandId, p.noOfViews, p.noOfSold,
+               p.categoryId, p.imageId,
+               ops.id as optionId,
+               ops.price,
+               COALESCE(inv.quantity, 0) as stock,
+               img.url as imageUrl
+        FROM products p
+        JOIN option_variant ops ON ops.productId = p.id
+        LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+        JOIN image img ON p.imageId = img.id
+        WHERE p.id = :id
+          AND p.isActive = true
+        ORDER BY
+          CASE WHEN COALESCE(inv.quantity, 0) > 0 THEN 0 ELSE 1 END,
+          ops.price ASC
+        LIMIT 1
+        """)
     Product getProductById(@Bind("id") int id);
 
-    @SqlQuery(value = "SELECT p.id as id, p.name as name, p.description as description, " +
-            "       p.sku as sku, " +
-            "       p.isActive as isActive, " +
-            "       p.categoryId as categoryId, " +
-            "       p.brandId as brandId, " +
-            "       p.noOfViews as noOfViews, p.noOfSold as noOfSold, " +
+    @SqlQuery("SELECT p.id, p.name, p.description, p.sku, p.isActive, " +
+            "       p.categoryId, p.brandId, p.noOfViews, p.noOfSold, " +
             "       p.imageId as imageId, " +
             "       ops.id as optionId, ops.price as price, " +
-            "       inv.quantity as stock, " +
+            "       COALESCE(inv.quantity, 0) as stock, " +
             "       img.url as imageUrl, " +
             "       GROUP_CONCAT(CONCAT(v.name, ': ', v.value) SEPARATOR ' | ') as variantText " +
             "FROM products as p " +
             "INNER JOIN categories as cate on cate.id = p.categoryId " +
             "INNER JOIN option_variant as ops on ops.productId = p.id " +
-            "INNER JOIN inventory inv ON inv.optionVariantId = ops.id " +
+            "LEFT JOIN inventory inv ON inv.optionVariantId = ops.id " +
             "INNER JOIN image as img on p.imageId = img.id " +
             "LEFT JOIN variant v ON v.optionId = ops.id " +
             "WHERE p.id = :productId " +
             "AND ops.id = :optionId " +
             "AND p.isActive = true " +
-            "AND inv.quantity > 0 " +
             "GROUP BY p.id, p.name, p.description, p.sku, p.isActive, " +
             "p.categoryId, p.brandId, p.noOfViews, p.noOfSold, p.imageId, " +
             "ops.id, ops.price, inv.quantity, img.url")
@@ -102,20 +96,22 @@ public interface ProductDao {
     List<Product> getAllProducts();
 
     @SqlQuery("""
-            SELECT o.price
-            FROM option_variant o
-            JOIN inventory i ON i.optionVariantId = o.id
-            WHERE o.productId = :productId AND i.quantity > 0
-            ORDER BY o.price ASC LIMIT 1
-            """)
+        SELECT o.price
+        FROM option_variant o
+        LEFT JOIN inventory i ON i.optionVariantId = o.id
+        WHERE o.productId = :productId
+        ORDER BY 
+          CASE WHEN COALESCE(i.quantity, 0) > 0 THEN 0 ELSE 1 END,
+          o.price ASC
+        LIMIT 1
+        """)
     Integer getMinimumPriceForProduct(@Bind("productId") int productId);
 
     @SqlQuery("""
-            SELECT o.price
-            FROM option_variant o
-            JOIN inventory i ON i.optionVariantId = o.id
-            WHERE o.id = :optionId AND i.quantity > 0
-            """)
+        SELECT o.price
+        FROM option_variant o
+        WHERE o.id = :optionId
+        """)
     Integer getPriceForOption(@Bind("optionId") int optionId);
 
     @SqlUpdate("INSERT INTO products (name,description, isActive, categoryId, brandId, noOfViews, noOfSold, imageId, sku) "

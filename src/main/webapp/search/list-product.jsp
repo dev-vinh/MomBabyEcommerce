@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <html>
 
 <head>
@@ -100,6 +101,10 @@
         <div class="sp-pagination" id="sp-pagination"></div>
     </main>
 </div>
+<div id="footer">
+    <jsp:include page="/home/footer.jsp" />
+</div>
+
 
 </body>
 <script>
