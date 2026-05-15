@@ -19,7 +19,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
 
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 
 </head>
 

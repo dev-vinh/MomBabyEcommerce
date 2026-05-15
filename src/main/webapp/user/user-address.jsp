@@ -7,6 +7,8 @@
     <title>Địa Chỉ</title>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_profile/Address.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
 </head>
 <body>
 

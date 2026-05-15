@@ -5,8 +5,7 @@
     box-sizing: border-box;
 }
 
-body1 {
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+body{
     display: flex;
     flex-direction: column;
     align-items: center;

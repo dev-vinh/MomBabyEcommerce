@@ -184,10 +184,6 @@ function updateQuantity(optionId, quantity, onSuccess) {
 }
 
 function removeItem(optionId, productItem) {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-        return;
-    }
-
     $.ajax({
         url: 'cart/remove',
         method: 'POST',
@@ -310,10 +306,9 @@ transition: all 0.3s ease;
                     background-color: #2e7d32;
                 }
 
-                .cart-toast.error {
+               .cart-toast.error {
                     background-color: #d32f2f;
                 }
-
                 .cart-toast.warning {
                     background-color: #f57c00;
                 }
@@ -341,5 +336,5 @@ transition: all 0.3s ease;
         setTimeout(function () {
             toast.addClass('hidden');
         }, 300);
-    }, 3000);
+    }, 2000);
 }

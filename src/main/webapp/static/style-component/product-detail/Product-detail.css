@@ -5,15 +5,10 @@
 }
 
 body {
-    font-family: 'Quicksand', sans-serif;
     background-color: #fff;
     color: #333;
     line-height: 1.5;
     overflow-x: hidden;
-}
-
-h1, h2, h3, button, input, select, textarea {
-    font-family: 'Quicksand', sans-serif;
 }
 
 .container {

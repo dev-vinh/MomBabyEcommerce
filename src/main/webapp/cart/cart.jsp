@@ -17,6 +17,7 @@
                     <script src="${pageContext.request.contextPath}/static/style-component/style-cart/Cart.js"></script>
                     <link rel="stylesheet"
                         href="${pageContext.request.contextPath}/static/style-component/style-cart/CartItem.css">
+                    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
                 </head>
 
                 <body>
