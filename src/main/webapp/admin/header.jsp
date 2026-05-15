@@ -163,11 +163,9 @@
   </div>
 </div>
 <script>
-    window.contextPath = "${pageContext.request.contextPath}";
+  window.contextPath = "${pageContext.request.contextPath}";
 </script>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
 <script>
   const userPopup = document.querySelector(".user-popup");
   const avatar = document.querySelector(".avatar");

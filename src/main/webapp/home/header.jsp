@@ -12,13 +12,14 @@
 <html lang="en">
 
 <head>
-  <title>Header</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-toast.css?v=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/home/Home.css" />
-  <link rel="stylesheet"
-        href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
 
 </head>
 
@@ -235,7 +236,9 @@
         }
     }
 </script>
-<script> const contextPath = "${pageContext.request.contextPath}"; </script>
+<script>
+  window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-home/search.js"></script>
 

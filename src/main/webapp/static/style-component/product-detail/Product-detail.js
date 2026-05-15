@@ -63,7 +63,7 @@ $(document).ready(function () {
             currentOptionId = optionId;
             const qty = qtyInput.val() || 1;
             if (buy_now.length > 0) {
-                buy_now.attr('href', `${contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
+                buy_now.attr('href', `${window.contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
             }
         }
 

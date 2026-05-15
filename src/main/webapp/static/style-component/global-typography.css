@@ -141,7 +141,7 @@ h6 {
 
 #cart-toast.cart-toast {
     position: fixed !important;
-    top: 80px !important;
+    top: 70px !important;
     right: 24px !important;
     z-index: 99999 !important;
 

@@ -423,5 +423,7 @@
 <script
         src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
 </body>
+<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js?v=1"></script>
 
 </html>
