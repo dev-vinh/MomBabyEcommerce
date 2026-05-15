@@ -138,3 +138,55 @@ h6 {
     font-size: var(--font-base) !important;
     font-weight: var(--weight-medium) !important;
 }
+
+#cart-toast.cart-toast {
+    position: fixed !important;
+    top: 80px !important;
+    right: 24px !important;
+    z-index: 99999 !important;
+
+    min-width: 280px;
+    max-width: 420px;
+    padding: 14px 18px;
+
+    border-radius: 10px;
+    border-left: 5px solid transparent;
+
+    font-family: var(--font-main) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.4;
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: all 0.3s ease;
+}
+
+#cart-toast.cart-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#cart-toast.cart-toast.hidden {
+    display: none;
+}
+
+#cart-toast.cart-toast.success {
+    background-color: #ecfdf3 !important;
+    color: #027a48 !important;
+    border-left-color: #12b76a !important;
+}
+
+#cart-toast.cart-toast.error {
+    background-color: #fff4f4 !important;
+    color: #b42318 !important;
+    border-left-color: #f04438 !important;
+}
+
+#cart-toast.cart-toast.warning {
+    background-color: #fffaeb !important;
+    color: #b54708 !important;
+    border-left-color: #f79009 !important;
+}

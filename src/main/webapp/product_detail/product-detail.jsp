@@ -31,7 +31,6 @@
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-
     <a href="${pageContext.request.contextPath}/home">
         Trang chủ
     </a>
@@ -420,9 +419,6 @@
 <div id="footer">
     <jsp:include page="/home/footer.jsp" />
 </div>
-<script>
-    const contextPath = "${pageContext.request.contextPath}";
-</script>
 
 <script
         src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
