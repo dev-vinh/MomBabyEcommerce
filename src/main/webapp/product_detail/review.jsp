@@ -1,189 +1,283 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: vinhp
-  Date: 12/27/2025
-  Time: 10:28 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đánh giá sản phẩm</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/product-detail/review.css"/>
-</head>
-<body>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-<div class="write-review-section">
-    <h2>Viết đánh giá của bạn</h2>
-    <form id="review-form" method="post" action="<%=request.getContextPath()%>/submitReview">
-        <div class="input-group">
-            <label for="rating-value">Đánh giá:</label>
-            <div id="user-rating" class="stars">
-                <span data-value="1">☆</span>
-                <span data-value="2">☆</span>
-                <span data-value="3">☆</span>
-                <span data-value="4">☆</span>
-                <span data-value="5">☆</span>
+<div class="review-wrapper">
+    <div class="review-title-row">
+        <h2>Đánh giá sản phẩm</h2>
+
+        <form method="get"
+              action="${pageContext.request.contextPath}/product-detail"
+              class="review-sort-form">
+
+            <input type="hidden" name="id" value="${product.id}">
+
+            <select name="sort" onchange="this.form.submit()">
+                <option value="newest" ${reviewSort == 'newest' ? 'selected' : ''}>
+                    Mới nhất
+                </option>
+
+                <option value="oldest" ${reviewSort == 'oldest' ? 'selected' : ''}>
+                    Cũ nhất
+                </option>
+
+                <option value="rating_desc" ${reviewSort == 'rating_desc' ? 'selected' : ''}>
+                    Sao cao nhất
+                </option>
+
+                <option value="rating_asc" ${reviewSort == 'rating_asc' ? 'selected' : ''}>
+                    Sao thấp nhất
+                </option>
+            </select>
+        </form>
+    </div>
+
+    <div class="rating-overview">
+        <div class="rating-score-box">
+            <div class="rating-score">
+                <fmt:formatNumber value="${reviewStats.averageRating}" pattern="0.0"/>
             </div>
-            <input type="hidden" id="rating-value" name="rating" value="0">
-        </div>
 
-        <div class="input-group">
-            <label for="review-text">Viết đánh giá:</label>
-            <textarea id="review-text" name="review" rows="4" placeholder="Chia sẻ suy nghĩ của bạn" required></textarea>
-        </div>
-        <div class="custom-file-upload">
-            <label for="review-photo" class="file-label">+ Chọn hình ảnh</label>
-            <input type="file" id="review-photo" name="photo" accept="image/*" multiple>
-        </div>
-        <div id="photo-preview" class="photo-preview"></div>
+            <div class="rating-stars">★★★★★</div>
 
-        <button type="submit">Gửi đánh giá</button>
-    </form>
-</div>
-
-<div class="rating-section">
-    <div class="rating-details">
-        <h1>Đánh giá</h1>
-        <p>Kết xuất nhanh xếp loại</p>
-        <div class="rating-bar">
-            <span>5 sao</span>
-            <div><span style="width: 10%;"></span></div>
-            <span>1</span>
-        </div>
-        <div class="rating-bar">
-            <span>4 sao</span>
-            <div><span style="width: 0%;"></span></div>
-            <span>0</span>
-        </div>
-        <div class="rating-bar">
-            <span>3 sao</span>
-            <div><span style="width: 0%;"></span></div>
-            <span>0</span>
-        </div>
-        <div class="rating-bar">
-            <span>2 sao</span>
-            <div><span style="width: 0%;"></span></div>
-            <span>0</span>
-        </div>
-        <div class="rating-bar">
-            <span>1 sao</span>
-            <div><span style="width: 90%;"></span></div>
-            <span>6</span>
-        </div>
-    </div>
-    <div class="rating-summary">
-        <div class="overall-rating">Xếp hạng tổng thể</div>
-        <div class="stars">4.6 ★★★★☆</div>
-        <a href="#">7 đánh giá</a>
-        <p>0 trong số 6 (0%) người đánh giá giới thiệu sản phẩm này</p>
-    </div>
-    <div class="rating-input">
-        <p>Đánh giá sản phẩm này</p>
-        <div class="stars">
-            <span>☆</span>
-            <span>☆</span>
-            <span>☆</span>
-            <span>☆</span>
-            <span>☆</span>
-        </div>
-        <p>Thêm đánh giá sẽ yêu cầu một email hợp lệ để xác minh</p>
-    </div>
-</div>
-
-<div class="detailed-rating-section">
-    <h2>Xếp loại khách hàng trung bình</h2>
-    <div class="criteria">
-        <div class="criteria-item">
-            <span>Tính năng</span>
-            <div class="criteria-bar">
-                <span style="width: 10%;"></span>
+            <div class="rating-count">
+                ${reviewStats.totalReviews} đánh giá
             </div>
         </div>
-        <div class="criteria-item">
-            <span>Hiệu năng</span>
-            <div class="criteria-bar">
-                <span style="width: 20%;"></span>
+
+        <div class="rating-bars">
+            <c:set var="total"
+                   value="${reviewStats.totalReviews == 0 ? 1 : reviewStats.totalReviews}"/>
+
+            <div class="rating-bar-row">
+                <span>5 sao</span>
+                <div class="bar">
+                    <span style="width:${reviewStats.fiveStar * 100 / total}%"></span>
+                </div>
+                <b>${reviewStats.fiveStar}</b>
             </div>
-        </div>
-        <div class="criteria-item">
-            <span>Thiết kế</span>
-            <div class="criteria-bar">
-                <span style="width: 30%;"></span>
+
+            <div class="rating-bar-row">
+                <span>4 sao</span>
+                <div class="bar">
+                    <span style="width:${reviewStats.fourStar * 100 / total}%"></span>
+                </div>
+                <b>${reviewStats.fourStar}</b>
+            </div>
+
+            <div class="rating-bar-row">
+                <span>3 sao</span>
+                <div class="bar">
+                    <span style="width:${reviewStats.threeStar * 100 / total}%"></span>
+                </div>
+                <b>${reviewStats.threeStar}</b>
+            </div>
+
+            <div class="rating-bar-row">
+                <span>2 sao</span>
+                <div class="bar">
+                    <span style="width:${reviewStats.twoStar * 100 / total}%"></span>
+                </div>
+                <b>${reviewStats.twoStar}</b>
+            </div>
+
+            <div class="rating-bar-row">
+                <span>1 sao</span>
+                <div class="bar">
+                    <span style="width:${reviewStats.oneStar * 100 / total}%"></span>
+                </div>
+                <b>${reviewStats.oneStar}</b>
             </div>
         </div>
     </div>
-</div>
 
-<h2>Hình ảnh và video của khách hàng</h2>
-<div class="customer-images">
-    <img src="<%=request.getContextPath()%>/static/image/img-detail/img_slide1.jpg" alt="Ảnh khách hàng">
-    <img src="<%=request.getContextPath()%>/static/image/img-detail/img_slide1.jpg" alt="Ảnh khách hàng">
-    <img src="<%=request.getContextPath()%>/static/image/img-detail/img_slide1.jpg" alt="Ảnh khách hàng">
-    <img src="<%=request.getContextPath()%>/static/image/img-detail/img_slide1.jpg" alt="Ảnh khách hàng">
-    <img src="<%=request.getContextPath()%>/static/image/img-detail/img_slide1.jpg" alt="Ảnh khách hàng">
-</div>
-<div class="filter-section">
-    <h2>Lọc Đánh Giá</h2>
-    <input type="text" placeholder="Tìm kiếm chủ đề và đánh giá">
-    <div class="filter-controls">
-        <select>
-            <option>Xếp hạng</option>
-            <option>1 sao</option>
-            <option>2 sao</option>
-            <option>3 sao</option>
-            <option>4 sao</option>
-            <option>5 sao</option>
-        </select>
-        <select>
-            <option>Bản địa</option>
-            <option>Tiếng Việt</option>
-            <option>Tiếng Anh</option>
-        </select>
-    </div>
-</div>
+    <c:choose>
+        <c:when test="${canReview}">
+            <div class="review-form-box">
+                <h3>
+                    <c:choose>
+                        <c:when test="${not empty myReview}">
+                            Sửa đánh giá của bạn
+                        </c:when>
+                        <c:otherwise>
+                            Viết đánh giá của bạn
+                        </c:otherwise>
+                    </c:choose>
+                </h3>
 
-<div class="review-header">
-    <p>1 - 6 / 7 Đánh giá</p>
-    <div class="sort-section">
-        <span>Đánh giá theo khu vực</span>
-        <select>
-            <option>Sắp xếp theo</option>
-            <option>Khu vực</option>
-            <option>Thời gian</option>
-            <option>Đánh giá cao nhất</option>
-            <option>Đánh giá thấp nhất</option>
-        </select>
-    </div>
-</div>
+                <form id="review-form"
+                      enctype="multipart/form-data"
+                      data-product-id="${product.id}">
 
-<div class="review-container">
-    <h2>Đánh giá theo khu vực</h2>
-    <!-- Ví dụ Đánh giá -->
-    <div class="review-item">
-        <div class="review">
-<%--            sua anh cho nay--%>
-            <img class="avatar" src="<%=request.getContextPath()%>/resource/image/medium%20(1).png" alt="User Avatar">
-            <div class="review-info">
-                <div class="star-rating">★★★★</div>
-                <span class="reviewer-name">Ngoc Vinh</span>
-                <span class="time">24 ngày trước</span>
+                    <input type="hidden"
+                           id="rating-value"
+                           name="rating"
+                           value="${empty myReview ? 0 : myReview.rating}">
+
+                    <div class="user-rating-row">
+                        <span>Chọn số sao:</span>
+
+                        <div id="user-rating"
+                             class="user-rating-stars"
+                             data-current-rating="${empty myReview ? 0 : myReview.rating}">
+
+                            <span data-value="1">☆</span>
+                            <span data-value="2">☆</span>
+                            <span data-value="3">☆</span>
+                            <span data-value="4">☆</span>
+                            <span data-value="5">☆</span>
+                        </div>
+                    </div>
+
+                    <textarea id="review-description"
+                              name="description"
+                              rows="4"
+                              maxlength="1000"
+                              placeholder="Chia sẻ cảm nhận thật của bạn về sản phẩm..."><c:out value="${myReview.description}"/></textarea>
+
+                    <div class="review-upload-row">
+                        <label for="review-photo">
+                            Thêm ảnh thực tế, tối đa 5 ảnh
+                        </label>
+
+                        <input type="file"
+                               id="review-photo"
+                               name="images"
+                               accept="image/*"
+                               multiple>
+                    </div>
+
+                    <div id="photo-preview" class="photo-preview"></div>
+
+                    <button type="submit" class="review-submit-btn">
+                        <c:choose>
+                            <c:when test="${not empty myReview}">
+                                Cập nhật đánh giá
+                            </c:when>
+                            <c:otherwise>
+                                Gửi đánh giá
+                            </c:otherwise>
+                        </c:choose>
+                    </button>
+                </form>
             </div>
-        </div>
-        <p>Sữa này rất ngon và giao hàng nhanh chống</p>
-        <div class="image">
-            <img src="<%=request.getContextPath()%>/resource/image/1440x640_disclaimer.webp" alt="Product issue photo">
-        </div>
-        <div class="review-footer">
-            <button>Hữu ích? (0)</button>
-            <button>Không (0)</button>
-            <button>Báo cáo</button>
-        </div>
-    </div>
-</div>
+        </c:when>
 
-</body>
-</html>
+        <c:otherwise>
+            <div class="review-note">
+                Bạn cần mua sản phẩm và đơn hàng phải hoàn thành thì mới có thể đánh giá.
+            </div>
+        </c:otherwise>
+    </c:choose>
+
+    <div class="review-list">
+        <c:choose>
+            <c:when test="${empty reviews}">
+                <div class="empty-review">
+                    Chưa có đánh giá nào cho sản phẩm này.
+                </div>
+            </c:when>
+
+            <c:otherwise>
+                <c:forEach var="review" items="${reviews}">
+                    <div class="review-item">
+                        <div class="review-user-row">
+                            <div class="review-avatar">
+                                <c:choose>
+                                    <c:when test="${not empty review.avatarUrl}">
+                                        <img src="${review.avatarUrl}" alt="avatar">
+                                    </c:when>
+
+                                    <c:otherwise>
+                                        <div class="avatar-placeholder">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+
+                            <div class="review-user-info">
+                                <strong>
+                                    <c:out value="${review.userName}"/>
+                                </strong>
+
+                                <div class="review-stars">
+                                    <c:forEach begin="1" end="5" var="i">
+                                        <c:choose>
+                                            <c:when test="${i <= review.rating}">
+                                                ★
+                                            </c:when>
+                                            <c:otherwise>
+                                                ☆
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                </div>
+
+                                <div class="review-date">
+                                        ${review.createdAt}
+                                </div>
+                            </div>
+
+                            <c:if test="${review.verifiedPurchase}">
+                                <span class="verified-badge">
+                                    Đã mua hàng
+                                </span>
+                            </c:if>
+                        </div>
+
+                        <div class="review-content">
+                            <c:out value="${review.description}"/>
+                        </div>
+
+                        <c:if test="${not empty review.imageUrls}">
+                            <div class="review-images">
+                                <c:forEach var="img" items="${review.imageUrls}">
+                                    <img src="${img}" alt="review image">
+                                </c:forEach>
+                            </div>
+                        </c:if>
+
+                        <div class="review-action-row">
+                            <button type="button"
+                                    class="review-like-btn ${review.likedByCurrentUser ? 'liked' : ''}"
+                                    data-review-id="${review.id}">
+
+                                <i class="fa-regular fa-thumbs-up"></i>
+
+                                <span class="like-text">
+                                        ${review.likedByCurrentUser ? 'Đã thích' : 'Thích'}
+                                </span>
+
+                                <span class="like-count">
+                                        ${review.likeCount}
+                                </span>
+                            </button>
+                        </div>
+
+                        <c:if test="${not empty review.adminReply}">
+                            <div class="shop-reply">
+                                <strong>Phản hồi từ shop</strong>
+                                <p>
+                                    <c:out value="${review.adminReply}"/>
+                                </p>
+                                <small>${review.repliedAt}</small>
+                            </div>
+                        </c:if>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+    <c:if test="${reviewTotalPages > 1}">
+        <div class="review-pagination">
+            <c:forEach begin="1" end="${reviewTotalPages}" var="p">
+                <a class="${p == reviewPage ? 'active' : ''}"
+                   href="${pageContext.request.contextPath}/product-detail?id=${product.id}&sort=${reviewSort}&reviewPage=${p}">
+                        ${p}
+                </a>
+            </c:forEach>
+        </div>
+    </c:if>
+</div>
