@@ -6,8 +6,11 @@ import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
 import hcmuaf.fit.mombabyecommerce.controller.GHNApiCaller;
 import hcmuaf.fit.mombabyecommerce.model.Order;
+import hcmuaf.fit.mombabyecommerce.request.GHNCancelOrderRequest;
+import hcmuaf.fit.mombabyecommerce.response.APIResponse;
 import hcmuaf.fit.mombabyecommerce.service.OrderService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
-
+@WebServlet(name = "CancelOrderController", value = "/cancel-order")
 public class CancelOrderController extends HttpServlet {
     OrderService orderSerivce = new OrderService(DBConnection.getJdbi());
     GHNApiCaller apiCaller = new GHNApiCaller();
@@ -65,5 +68,5 @@ public class CancelOrderController extends HttpServlet {
 
 
     }
-    }
+
 }

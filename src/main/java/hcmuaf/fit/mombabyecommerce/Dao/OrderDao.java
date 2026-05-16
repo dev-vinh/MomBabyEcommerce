@@ -67,7 +67,7 @@ public interface OrderDao {
             "    sum(od.total) as total\n" +
             "from orders as o inner join order_detail as od\n" +
             "                            on o.id = od.orderId\n" +
-            "where o.user_id = :userId and o.id = :orderId\n" +
+            "where o.userId = :userId and o.id = :orderId\n" +
             "group by\n" +
             "    o.id, o.createAt, o.paymentStatus, o.orderStatus,\n" +
             "    o.userId, o.addressId, o.cardId, o.isCOD " +
