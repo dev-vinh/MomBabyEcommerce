@@ -111,4 +111,11 @@ public interface OrderDao {
             "order by o.createAt desc")
     List<Order> getAllOrders();
 
+
+    @SqlUpdate("UPDATE orders " +
+            "SET orderStatus = :orderStatus "+
+            "WHERE id = :orderId ")
+
+    void updateOrderStatus(@Bind("orderId") Integer orderId, @Bind("orderStatus") OrderStatus orderStatus);
+
 }
