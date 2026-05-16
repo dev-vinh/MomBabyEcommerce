@@ -1,16 +1,24 @@
 function cancelOrder(orderId) {
+    if (!confirm("Bạn có chắc muốn hủy đơn hàng này không?")) {
+        return;
+    }
     fetch('cancel-order?orderId=' + orderId, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    }).then(r => r.json())
-
+        method: 'POST'
+    })
+        .then(r => r.json())
         .then(data => {
-            console.log(data);
-            alert("Đơn hàng đã được hủy thành công!")
-            window.location.reload();
-        })
-        .catch(err => console.log(err));
 
+            console.log(data);
+
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            alert("Có lỗi xảy ra!");
+        });
 }

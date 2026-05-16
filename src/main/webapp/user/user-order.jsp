@@ -16,12 +16,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_order/UserOrder.css">
-    <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/UserOrder.js"></script>
+
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 
-    <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.js"></script>
+
 
 
 </head>
@@ -115,7 +115,11 @@
                                 <a href="user-order-detail?orderId=${o.id}">
                                     <button class="btn_detail">Xem chi tiết</button>
                                 </a>
-                                <button class="btn_support">Hỗ trợ</button>
+                                <button type="button"
+                                        class="btn_support"
+                                        onclick="cancelOrder(${o.id})">
+                                    Hủy đơn
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -127,6 +131,7 @@
 
     </div>
 
-
+    <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/UserOrder.js"></script>
+    <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.js"></script>
 </body>
 </html>
