@@ -14,6 +14,8 @@
     <meta charset="UTF-8">
     <title>Quản lí Khách Hàng</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/customer/customer.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
 </head>
 <body>
 

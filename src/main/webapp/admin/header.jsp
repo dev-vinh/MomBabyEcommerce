@@ -9,9 +9,8 @@
 <html>
 <head>
   <title>Header</title>
-<%--  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/header/header.css">--%>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-toast.css?v=1">
   <style>
 
     #header {
@@ -153,14 +152,19 @@
                 class="nav_item"
                 href="profile">Trang của tôi</a
         >
-        <a href="Trang_Web_ban_hang_san_pham_cho_me_va_be_war_exploded/login">Đăng xuất</a>
-        <%--                <a href="Trang_Web_ban_hang_san_pham_cho_me_va_be_war/login">Đăng xuất</a>--%>
+<%--        <a href="Trang_Web_ban_hang_san_pham_cho_me_va_be_war_exploded/login">Đăng xuất</a>--%>
+
+<%--          sửa chỗ này--%>
+          <a href="${pageContext.request.contextPath}/logout">
+              Đăng xuất
+          </a>
       </div>
     </div>
   </div>
 </div>
-
-
+<script>
+  window.contextPath = "${pageContext.request.contextPath}";
+</script>
 
 <script>
   const userPopup = document.querySelector(".user-popup");

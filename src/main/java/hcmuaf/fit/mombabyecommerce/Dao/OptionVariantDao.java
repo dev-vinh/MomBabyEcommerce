@@ -22,10 +22,37 @@ public interface OptionVariantDao {
     @SqlUpdate("INSERT INTO inventory (optionVariantId, quantity) VALUES (:optionVariantId, :quantity)")
     void createInventory(@Bind("optionVariantId") Integer optionVariantId, @Bind("quantity") Integer quantity);
 
-    @SqlQuery(value = "select *\n" +
-            "from option_variant\n" +
-            "where id = :id;")
+    @SqlQuery("""
+        SELECT
+            o.id as id,
+            o.productId,
+            o.price,
+            COALESCE(inv.quantity, 0) as stock,
+            CAST(NULL AS SIGNED) as variantId,
+            CAST(NULL AS CHAR) as variantName,
+            CAST(NULL AS CHAR) as variantValue
+        FROM option_variant o
+        LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+        WHERE o.id = :id
+        """)
     OptionVariant getOptionById(@Bind("id") Integer id);
+
+    @SqlQuery("""
+        SELECT COALESCE(quantity, 0)
+        FROM inventory
+        WHERE optionVariantId = :optionVariantId
+        """)
+    Integer getStockByOptionId(@Bind("optionVariantId") Integer optionVariantId);
+
+
+    @SqlUpdate("""
+        UPDATE inventory
+        SET quantity = quantity - :quantity
+        WHERE optionVariantId = :optionVariantId
+          AND quantity >= :quantity
+        """)
+    boolean decreaseStockIfEnough(@Bind("optionVariantId") Integer optionVariantId,
+                                  @Bind("quantity") Integer quantity);
 
     @SqlUpdate("update inventory\n" +
             "set\n" +
@@ -68,4 +95,22 @@ public interface OptionVariantDao {
             """)
     boolean updateOptionStock(@Bind("optionVariantId") Integer optionVariantId,
                               @Bind("quantity") Integer quantity);
+
+
+    @SqlQuery("""
+    SELECT
+        o.id as id,
+        o.productId,
+        o.price,
+        COALESCE(inv.quantity, 0) as stock,
+        v.id as variantId,
+        v.name as variantName,
+        v.value as variantValue
+    FROM option_variant o
+    LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+    LEFT JOIN variant v ON v.optionId = o.id
+    WHERE o.productId = :productId
+    ORDER BY o.id, v.id
+""")
+    List<OptionVariant> getOptionDetailsByProductId(@Bind("productId") Integer productId);
 }

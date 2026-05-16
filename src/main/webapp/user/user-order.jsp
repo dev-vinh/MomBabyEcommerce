@@ -19,6 +19,8 @@
     <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/UserOrder.js"></script>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
     <script src="${pageContext.request.contextPath}/static/style-component/style-user_order/OrderHistoryItem.js"></script>
 
 
@@ -40,14 +42,18 @@
 
         <div id="order_header" class="mid_align row">
             <div class="no_of_order col mid_align">
-                <span class="num">39</span>
+                <span class="num">
+                    ${count}
+                </span>
                 <span>Đơn hàng</span>
             </div>
 
             <div class="rec_vertical"></div>
 
             <div class="total mid align col">
-                <span class="num">198 Tr</span>
+                <span class="num">
+                    ${savings}Tr
+                </span>
                 <span>Tổng tiền tích lũy</span>
             </div>
 

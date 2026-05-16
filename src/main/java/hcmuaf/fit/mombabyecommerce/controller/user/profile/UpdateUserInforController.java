@@ -47,18 +47,29 @@ public class UpdateUserInforController extends HttpServlet {
         String fullName = requestData.get("fullName");
         String displayName = requestData.get("displayName");
         String gender = requestData.get("gender");
+        String phoneNumber = requestData.get("phoneNumber");
 
         User user = new User();
         user.setId(userId);
         user.setFullName(fullName);
         user.setDisplayName(displayName);
         user.setGender(gender);
+        user.setPhoneNumber(phoneNumber);
 
         boolean success = userService.updateUser(user);
 
         Map<String, Object> res = new HashMap<>();
 
         if (success) {
+            User sessionUser = (User) session.getAttribute("user");
+
+            sessionUser.setFullName(fullName);
+            sessionUser.setDisplayName(displayName);
+            sessionUser.setGender(gender);
+            sessionUser.setPhoneNumber(phoneNumber);
+
+            session.setAttribute("user", sessionUser);
+
             response.setStatus(HttpServletResponse.SC_OK);
             res.put("success", true);
         } else {

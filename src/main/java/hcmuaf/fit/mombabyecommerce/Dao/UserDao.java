@@ -205,6 +205,7 @@ public interface UserDao {
     SELECT
         u.*,
         r.id AS r_id,
+        r.id AS r_id,
         r.roleType AS r_roleType,
         r.name AS r_name,
         r.description AS r_description,
@@ -223,14 +224,21 @@ public interface UserDao {
     @SqlQuery("""
     SELECT
         u.*,
+        i.url AS avatarUrl,
+
         r.id AS r_id,
         r.roleType AS r_roleType,
         r.name AS r_name,
         r.description AS r_description,
         r.isActive AS r_isActive
+
     FROM users u
+
+    LEFT JOIN image i ON u.avatarId = i.id
+
     LEFT JOIN user_role ur ON u.id = ur.userId
     LEFT JOIN roles r ON ur.roleId = r.id
+
     WHERE u.id = :id
 """)
     @RegisterBeanMapper(value = User.class)

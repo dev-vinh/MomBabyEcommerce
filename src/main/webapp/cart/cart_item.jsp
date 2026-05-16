@@ -16,7 +16,7 @@
     <div class="wrap mid_align row">
     <input type="checkbox">
     <div class="image">
-        <img src="${pageContext.request.contextPath}static/image/default_img.jpg" alt=""/>
+        <img src="${pageContext.request.contextPath}/static/image/default_img.jpg" alt=""/>
 
     </div>
 

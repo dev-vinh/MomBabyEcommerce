@@ -9,38 +9,49 @@ $(document).ready(function () {
     })
 
     upload_avatar.on('change', function (event) {
+
+        console.log("change triggered");
+
         const file = event.target.files[0];
+
+        console.log(file);
+
         if (file){
 
             const formData = new FormData();
             formData.append("file", file);
-            fetch(`admin/uploadImage`, {
+
+            fetch(`${window.contextPath}/api/uploadImage`, {
                 method: "POST",
                 body: formData,
             })
-                .then(
-                    response => response.json()
-                ).then(data => {
-                if (data.statusCode === 200) {
-                    const imageId = data.data[0].id;
+                .then(response => response.json())
+                .then(data => {
 
-                    fetch(`update-avatar`,{
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({imageId: imageId}),
-                    })
-                }
-            })
+                    console.log("upload response:", data);
 
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                avatar.attr('src', e.target.result);
-            }
-            reader.readAsDataURL(file);
+                    if (data.statusCode === 200) {
 
+                        const imageId = data.data[0].id;
 
+                        console.log("imageId:", imageId);
+
+                        return fetch(`update-avatar`,{
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({imageId: imageId}),
+                        });
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("update avatar:", data);
+                })
+                .catch(err => {
+                    console.error(err);
+                });
         }
     })
 
@@ -91,51 +102,54 @@ $(document).ready(function () {
 function update_profile() {
     const name = $('#name').val().trim();
     const displayName = $('#displayName').val().trim();
+
     const gender = $('input[name="gender"]:checked');
     const genderValue = gender.length > 0 ? gender.val() : null;
 
     const phone = $('#phone').val().trim();
-    if (!isValidPhoneNumber(phone)) {
-        alert("Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng.");
+
+    if (phone && !isValidPhoneNumber(phone)) {
+        alert("Số điện thoại không hợp lệ.");
         return;
     }
-    const formData = new FormData();
-    formData.append("fullName", name);
-    formData.append("displayName", displayName);
-    formData.append("gender", genderValue);
-    formData.append("phoneNumber", phone);
 
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
+    const jsonObject = {
+        fullName: name,
+        displayName: displayName,
+        gender: genderValue,
+        phoneNumber: phone
+    };
 
-
-    const jsonObject = {};
-    formData.forEach((value, key) => {
-        jsonObject[key] = value;
-    });
-
-    console.log("Request data:", jsonObject);
     fetch(`updateUser`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(jsonObject),
-    }).then(response => {
-        return  response.json()
-    }).then(data => {
-        console.log(data)
-        if (data.success) {
-            alert("Update success! ");
-        }
-        else{
-            alert("Update fall! ");
-        }
     })
+        .then(response => response.json())
+        .then(data => {
+
+            console.log(data);
+
+            if (data.success) {
+
+                $('#name').val(name);
+                $('#displayName').val(displayName);
+                $('#phone').val(phone);
+                $('.nav_item').text("Xin chào " + displayName);
+
+                alert("Update success!");
+            } else {
+                alert("Update fail!");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 function isValidPhoneNumber(phone) {
-    const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+    const phoneRegex = /^(0)\d{9}$/;
     return phoneRegex.test(phone);
 }

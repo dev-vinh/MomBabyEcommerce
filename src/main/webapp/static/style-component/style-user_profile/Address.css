@@ -2,7 +2,6 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: Helvetica Neue, Helvetica, Arial, serif;
 }
 
 html{
@@ -64,14 +63,15 @@ i{
     display: flex;
     flex-direction: row;
     height: 100%;
-    padding: 10px 20px;
+    padding-top: 100px;
+
 }
 
 
 .content{
     width: 100%;
     padding-left:20px;
-    padding-top: 20px;
+    padding-top: 100px;
 }
 
 /*Header*/
@@ -86,26 +86,24 @@ i{
     font-size: 22px;
 }
 
-.add_btn{
-    margin-left: auto;
-    border: 1px solid #cfcfcf;
-    width: 100px;
-    height: 40px;
-    justify-content: center;
-    background-color: #3665F3;
-    border-radius: 20px;
+button.add_btn {
+    display: inline-flex !important;
+    background-color: #3665F3 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 20px !important;
+    min-width: 150px !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+    gap: 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 15px !important;
+    margin-left: auto !important;
 }
-
-.add_btn a{
-    text-decoration: none;
-    color: white;
-    padding-left: 10px;
-}
-
-.add_btn i {
-    color: white;
-}
-
+button.add_btn:hover { background-color: #274bb3 !important; }
+button.add_btn i, button.add_btn span { color: white !important; }
 /*Body*/
 .card_body{
     width: 100%;
@@ -315,19 +313,24 @@ i{
 
 
 #addAddressFormContainer {
-    display: none; /* Ẩn form theo mặc định */
-    padding: 20px 50px;
-    border: 1px solid #cfcfcf;
-    border-radius: 8px;
-    margin-top: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: absolute; /* Hiển thị nổi */
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -20%);
+    display: none;
+    position: fixed !important;
+
+    top: 55% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
     z-index: 1000;
-    background: #fff;
-    width: 450px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -455,5 +458,67 @@ i{
 }
 
 #address_header {
-    position: relative;  /* cần cho form popup absolute */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    min-height: 80px !important;
+    overflow: visible !important;
+}
+
+#openAddAddressBtn,
+.add_btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+
+    min-width: 150px !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+
+    margin-left: auto !important;
+    border: none !important;
+    border-radius: 20px !important;
+    background-color: #3665F3 !important;
+    color: white !important;
+
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+    font-size: 15px !important;
+}
+#openAddAddressBtn span,
+#openAddAddressBtn i,
+.add_btn span,
+.add_btn i {
+    color: white !important;
+    display: inline-block !important;
+}
+
+#openAddAddressBtn:hover,
+.add_btn:hover {
+    background-color: #274bb3 !important;
+}
+
+.empty_address_box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.empty_address_box .no_address {
+    padding: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #757575;
+    font-size: 16px;
+}
+
+.empty_address_box .add_btn {
+    margin-left: 0 !important;
 }

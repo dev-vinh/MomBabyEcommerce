@@ -7,11 +7,23 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-toast.css?v=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/home/Home.css" />
-  <link rel="stylesheet"
-        href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
+
+</head>
+
+<body>
 
 <div id="main_header">
 
@@ -110,12 +122,13 @@
                         <a class="nav_item" href="user-profile" >
                             Xin chào ${sessionScope.user.displayName}
                         </a>
-                        <a class="nav_item" href="user-profile">Trang của tôi</a>
+<%--                        <a class="nav_item" href="user-profile">Trang của tôi</a>--%>
                         <a class="nav_item" href="logout">Đăng xuất</a>
                     </c:when>
 
                     <c:otherwise>
-                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>
+<%--                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>--%>
+                        <span id="login-link" style="cursor: pointer; color: inherit; font-size: 12px">Đăng nhập/Đăng ký</span>
                     </c:otherwise>
 
                 </c:choose>
@@ -177,12 +190,59 @@
 
 </div>
 
+<%--<div id="loginModal" class="modal">--%>
+<%--    <div class="modal-content">--%>
+<%--        <span class="close-btn">&times;</span>--%>
+<%--&lt;%&ndash;                <jsp:include page="../auth/auth.jsp" />&ndash;%&gt;--%>
+<%--    </div>--%>
+<%--</div>--%>
+<div id="loginModal" class="my-custom-modal">
+    <div class="my-modal-content">
+        <span class="close-btn-auth">&times;</span>
+        <jsp:include page="/auth/auth.jsp" />
+    </div>
+</div>
+<script>
+    const modal = document.getElementById("loginModal");
+    const btn = document.getElementById("login-link");
+    const span = document.querySelector(".close-btn-auth");
+    document.addEventListener('click', function (e) {
+        // Kiểm tra xem phần tử bị click có phải là nút login không
+        if (e.target && e.target.id === 'login-link') {
+            // Ngăn chặn hành động chuyển trang hoặc nhảy lên đầu trang của href="#"
+            e.preventDefault();
 
-  <script>  window.contextPath = "${pageContext.request.contextPath}"; </script>
-  <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
+            const modal = document.getElementById("loginModal");
+            if (modal) {
+                modal.style.display = "block";
+                console.log("Mở popup login");
+            }
+        }
+    });
+    // Khi nhấn vào chữ Đăng nhập trên Header
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // Khi nhấn vào dấu (x)
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Khi nhấn chuột ra ngoài vùng Popup
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+<script>
+  window.contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-home/search.js"></script>
 
 
-<%--</body>--%>
+</body>
 
-<%--</html>--%>
+</html>

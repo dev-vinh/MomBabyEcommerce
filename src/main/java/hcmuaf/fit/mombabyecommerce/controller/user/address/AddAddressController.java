@@ -48,12 +48,27 @@ public class AddAddressController extends HttpServlet {
             ObjectMapper mapper = new ObjectMapper();
 
             Address newAddress = mapper.readValue(jsonData, Address.class);
+
+            newAddress.setUserId(userId);
+
             Address addressDefault = addressService.findDefautlByUserId(userId);
 
             if (addressDefault == null) {
                 newAddress.setDefault(true);
             }
+
             int resultId = addressService.addAddress(newAddress);
+
+            String validationError = validateAddress(newAddress);
+            if (validationError != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write(new JSONObject()
+                        .put("status", "error")
+                        .put("message", validationError)
+                        .toString());
+                return;
+            }
+
             if (resultId > 0) {
                 newAddress.setId(resultId);
 
@@ -73,6 +88,38 @@ public class AddAddressController extends HttpServlet {
             log.error(e.getMessage());
             response.getWriter().println("Lỗi khi thêm địa chỉ.");
         }
+    }
+
+    private String validateAddress(Address address) {
+        if (address.getFullName() == null || address.getFullName().isBlank()) {
+            return "Tên người nhận không được để trống.";
+        }
+
+        if (address.getPhoneNumber() == null || !address.getPhoneNumber().matches("0\\d{9}")) {
+            return "Số điện thoại phải gồm 10 số và bắt đầu bằng 0.";
+        }
+
+        if (address.getStreet() == null || address.getStreet().isBlank()) {
+            return "Địa chỉ chi tiết không được để trống.";
+        }
+
+        if (address.getCity() == null || address.getCity().isBlank()) {
+            return "Quận/Huyện không được để trống.";
+        }
+
+        if (address.getState() == null || address.getState().isBlank()) {
+            return "Tỉnh/Thành phố không được để trống.";
+        }
+
+        if (address.getCountry() == null || address.getCountry().isBlank()) {
+            address.setCountry("Việt Nam");
+        }
+
+        if (address.getAddressType() == null || address.getAddressType().isBlank()) {
+            address.setAddressType("shipping");
+        }
+
+        return null;
     }
 
 }

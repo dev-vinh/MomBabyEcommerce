@@ -17,19 +17,28 @@ public class AddToCart extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Xử lý yêu cầu GET ở đây
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         try {
             Integer productId = Integer.parseInt(request.getParameter("productId"));
             Integer optionId = Integer.parseInt(request.getParameter("optionId"));
-
+            String qtyParam = request.getParameter("quantity");
+            int quantity = 1;
+            if (qtyParam != null && !qtyParam.isEmpty()) {
+                try {
+                    quantity = Integer.parseInt(qtyParam);
+                } catch (NumberFormatException e) {
+                    quantity = 1;
+                }
+            }
             System.out.println("[AddToCart] Received request - productId: " + productId + ", optionId: " + optionId);
 
             Product product = productService.getProductByIdAndOptionId(productId, optionId);
@@ -40,16 +49,28 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Product not found\"}");
                 return;
             }
+            if (product.getStock() == null || product.getStock() <= 0) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Sản phẩm đã hết hàng\"}");
+                return;
+            }
 
-            System.out.println("[AddToCart] Product retrieved: " + product.getName() +
-                    ", optionId in product: " + product.getOptionId());
+            if (quantity > product.getStock()) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
+                        + product.getStock() + " sản phẩm\"}");
+                return;
+                }
+                System.out.println("[AddToCart] Product retrieved: " + product.getName() +
+                        ", optionId in product: " + product.getOptionId());
 
             if (product.getOptionId() == null) {
                 System.err.println("[AddToCart] ERROR: Product optionId is NULL!");
                 response.getWriter().write("{\"success\": false, \"message\": \"Product optionId is null\"}");
                 return;
             }
-
+            if (quantity < 1) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Số lượng không hợp lệ\"}");
+                return;
+            }
             HttpSession session = request.getSession();
             Cart cart = (Cart) session.getAttribute("cart");
             if (cart == null) {
@@ -61,10 +82,18 @@ public class AddToCart extends HttpServlet {
                         "[AddToCart] Retrieved existing cart from session with " + cart.getData().size() + " items");
             }
 
-            boolean added = cart.addProduct(product);
+
+            if (cart.getData().containsKey(optionId)) {
+                int currentQty = cart.getData().get(optionId).getQuantity();
+                if (currentQty + quantity > product.getStock()) {
+                    response.getWriter().write("{\"success\": false, \"message\": \"Số lượng trong giỏ vượt quá tồn kho. Trong kho chỉ còn "
+                            + product.getStock() + " sản phẩm\"}");
+                    return;
+                }
+            }
+            boolean added = cart.addProduct(product, quantity);
 
             if (added) {
-                // Explicitly save cart back to session to ensure persistence
                 session.setAttribute("cart", cart);
                 System.out.println("[AddToCart] SUCCESS: Product added to cart. Cart now has " +
                         cart.getData().size() + " items");

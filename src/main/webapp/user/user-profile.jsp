@@ -11,6 +11,9 @@
           href="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserProfileDetail.css">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-page/user/UserProfile.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
+
 </head>
 
 <body>
@@ -153,7 +156,9 @@
     </div>
 </div>
 <div id="footer"></div>
-
+<script>
+    window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/static/style-page/user/UserProfile.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-user_profile/UserProfileDetail.js"></script>
 

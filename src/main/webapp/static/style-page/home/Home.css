@@ -2,7 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Quicksand', sans-serif;
 }
 
 html{
@@ -12,10 +11,47 @@ html{
 
 body {
     height: 100vh;
-    /*overflow: hidden;*/
 
 }
 
+/*!*đoạn này để test chức năng poup đăng ký đăng nhập*!*/
+.my-custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 99999; /* Ưu tiên cao nhất */
+    left: 0;
+    top: 0;
+    width: 100vw;  /* Sử dụng viewport width */
+    height: 100vh; /* Sử dụng viewport height */
+    background-color: rgba(0, 0, 0, 0.6);
+    overflow: auto; /* Cho phép cuộn nếu form dài */
+}
+
+.my-modal-content {
+    background-color: #fff;
+    margin: 5% auto; /* Cách top 5% */
+    /*padding: 25px;*/
+    width: 90%;
+    max-width: 500px; /* Giới hạn chiều rộng popup */
+    max-height: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.close-btn-auth {
+    position: absolute;
+    right: 15px; top: 10px;
+    cursor: pointer;
+    color: #333;
+    background-color: white;
+    font-size: 50px;
+    border: solid 1px black;
+}
+.close-btn-auth:hover {
+    color: #ff4d4d;
+}
 #main_header  {
     justify-content: center;
     width: 100%;

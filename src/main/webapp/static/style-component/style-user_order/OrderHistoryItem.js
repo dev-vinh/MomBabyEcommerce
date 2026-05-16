@@ -1,19 +1,16 @@
-$(document).ready(function () {
-    const viewDetail = $('.btn_detail')
+function cancelOrder(orderId) {
+    fetch('cancel-order?orderId=' + orderId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(r => r.json())
 
-    viewDetail.on('click', function () {
-        const data = $(this).data('src')
-        const message = {
-            type: 'openOrderHistory',
-            src: data
-        };
+        .then(data => {
+            console.log(data);
+            alert("Đơn hàng đã được hủy thành công!")
+            window.location.reload();
+        })
+        .catch(err => console.log(err));
 
-        // console.log(message)
-        // console.log(data)
-        window.parent.postMessage(message , '*');
-        console.log("Da goi data")
-
-
-
-    })
-})
+}

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <html>
 
 <head>
@@ -14,6 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
 </head>
 
 <body>
@@ -100,8 +103,15 @@
         <div class="sp-pagination" id="sp-pagination"></div>
     </main>
 </div>
+<div id="footer">
+    <jsp:include page="/home/footer.jsp" />
+</div>
+
 
 </body>
+<script>
+    window.contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/productCard.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style_product/ListProduct.js"></script>
 

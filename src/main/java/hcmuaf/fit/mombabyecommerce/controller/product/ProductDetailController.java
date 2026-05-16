@@ -4,6 +4,7 @@ package hcmuaf.fit.mombabyecommerce.controller.product;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.OptionVariant;
 import hcmuaf.fit.mombabyecommerce.model.Product;
+import hcmuaf.fit.mombabyecommerce.model.ProductOptionDTO;
 import hcmuaf.fit.mombabyecommerce.service.ImageService;
 import hcmuaf.fit.mombabyecommerce.service.OptionService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
@@ -14,7 +15,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @WebServlet(name = "ProductDetailController", value = "/product-detail")
@@ -30,7 +34,16 @@ public class ProductDetailController extends HttpServlet {
         int productId = Integer.parseInt(request.getParameter("id"));
         Product product = productService.getProductById(productId);
 
-        Integer productPrice = productService.getMinimumPriceForProduct(productId); // Default to minimum price
+        if (product == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
+            return;
+        }
+
+        Integer productPrice = productService.getMinimumPriceForProduct(productId);
+
+        if (product.getOptionId() != null) {
+            productPrice = productService.getPriceForOption(product.getOptionId());
+        }
         if (product.getOptionId() != null) {
             productPrice = productService.getPriceForOption(product.getOptionId());
         }
@@ -39,23 +52,51 @@ public class ProductDetailController extends HttpServlet {
         String primaryImageUrl = imageService.getImageUrlById(product.getImageId());
         List<String> descriptions = List.of(product.getDescription().split("\\n"));
 
-        // lỗi
-        List<OptionVariant> options = optionService.getOptionsByProductId(product.getId());
-        List<Integer> optionIds = options.stream().map(OptionVariant::getId).collect(Collectors.toList());
 
-        List<OptionVariant> optionVariant = optionService.getVariantByOptionId(optionIds);
-        List<String> variants = optionVariant.stream().map(OptionVariant::getVariantName).distinct()
-                .collect(Collectors.toList());
+        List<OptionVariant> optionVariant = optionService.getOptionDetailsByProductId(product.getId());
 
-        // nếu lấy chi tieets sản phẩm ra không được xem lại chỗ này
+        Map<Integer, ProductOptionDTO> optionMap = new LinkedHashMap<>();
+
+        for (OptionVariant op : optionVariant) {
+            ProductOptionDTO dto = optionMap.get(op.getId());
+
+            if (dto == null) {
+                dto = new ProductOptionDTO(
+                        op.getId(),
+                        op.getProductId(),
+                        op.getPrice(),
+                        op.getStock()
+                );
+                dto.setVariantText("");
+                optionMap.put(op.getId(), dto);
+            }
+
+            if (op.getVariantName() != null && op.getVariantValue() != null) {
+                String text = op.getVariantName() + ": " + op.getVariantValue();
+
+                if (dto.getVariantText() == null || dto.getVariantText().isEmpty()) {
+                    dto.setVariantText(text);
+                } else {
+                    dto.setVariantText(dto.getVariantText() + " | " + text);
+                }
+            }
+        }
+
+        List<ProductOptionDTO> productOptions = new ArrayList<>(optionMap.values());
+
+        for (ProductOptionDTO dto : productOptions) {
+            if (dto.getVariantText() == null || dto.getVariantText().isEmpty()) {
+                dto.setVariantText("Mặc định");
+            }
+        }
 
         request.setAttribute("images", images);
         request.setAttribute("primaryImageUrl", primaryImageUrl);
         request.setAttribute("product", product);
         request.setAttribute("descriptions", descriptions);
         request.setAttribute("productPrice", productPrice);
-        request.setAttribute("optionVariant", optionVariant);
-        request.setAttribute("variants", variants);
+        request.setAttribute("productOptions", productOptions);
+
 
         productService.increaseNoOfViews(productId);
         request.getRequestDispatcher("product_detail/product-detail.jsp").forward(request, response);

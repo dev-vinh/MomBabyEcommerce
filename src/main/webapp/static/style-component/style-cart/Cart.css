@@ -2,7 +2,6 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: Helvetica Neue, Helvetica, Arial, serif;
 }
 html{
     overflow: hidden;
@@ -133,7 +132,7 @@ a{
     background: #0170F0;
     color: white;
 }
-.btn button:hover{
+.btn button, .btn .btn_login:hover{
     transition: 0.4s;
     scale: 1.05;
     cursor: pointer;

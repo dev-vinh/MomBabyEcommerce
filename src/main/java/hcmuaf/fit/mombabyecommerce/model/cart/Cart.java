@@ -13,7 +13,11 @@ public class Cart implements Serializable {
 
     public Cart() {
     }
+
     public boolean addProduct(Product product) {
+        return addProduct(product, 1);
+    }
+    public boolean addProduct(Product product, int quantity) {
         if (product == null) {
             System.err.println("[Cart] ERROR: Cannot add null product");
             return false;
@@ -24,13 +28,19 @@ public class Cart implements Serializable {
             return false;
         }
 
-        System.out.println("[Cart] Adding product with optionId: " + product.getOptionId());
+        System.out.println("[Cart] Adding product with optionId: " + product.getOptionId() + ", quantity: " + quantity);
 
         if (data.containsKey(product.getOptionId())) {
             System.out.println("[Cart] Product already exists, updating quantity");
-            return update(product, data.get(product.getOptionId()).getQuantity() + 1);
+            // Lấy số lượng cũ + số lượng khách vừa chọn (thay vì + 1)
+            int currentQuantity = data.get(product.getOptionId()).getQuantity();
+            return update(product, currentQuantity + quantity);
         } else {
-            data.put(product.getOptionId(), new ProductCart(product));
+            // Nếu sản phẩm chưa có trong giỏ, tạo mới và set đúng số lượng khách chọn
+            ProductCart newProductCart = new ProductCart(product);
+            newProductCart.setQuantity(quantity);
+
+            data.put(product.getOptionId(), newProductCart);
             System.out.println("[Cart] Product added successfully. Total items in cart: " + data.size());
             return true;
         }
@@ -46,14 +56,20 @@ public class Cart implements Serializable {
             return false;
         }
 
+        if (quantity < 1) {
+            return false;
+        }
+
+        if (product.getStock() != null && quantity > product.getStock()) {
+            return false;
+        }
+
         if (data.containsKey(product.getOptionId())) {
             ProductCart productCart = data.get(product.getOptionId());
             productCart.setQuantity(quantity);
             data.put(product.getOptionId(), productCart);
-            System.out.println("[Cart] Updated quantity for optionId " + product.getOptionId() + " to " + quantity);
             return true;
         }
-        System.err.println("[Cart] ERROR: Product with optionId " + product.getOptionId() + " not found in cart");
         return false;
     }
 
