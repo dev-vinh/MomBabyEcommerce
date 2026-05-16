@@ -20,6 +20,8 @@
           href="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.css">
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/static/style-component/product-detail/review.css">
 
 </head>
 
@@ -104,7 +106,7 @@
                     <i class="fa-solid fa-star"></i>
 
                     <span>
-                        (128 đánh giá)//todo
+                        (${reviewStats.totalReviews} đánh giá)
                     </span>
 
                 </div>
@@ -416,14 +418,15 @@
     </div>
 
 </div>
+<div id="reviews">
+    <jsp:include page="/product_detail/review.jsp"/>
+</div>
 <div id="footer">
     <jsp:include page="/home/footer.jsp" />
 </div>
 
-<script
-        src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js"></script>
-</body>
 <script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/product-detail/Product-detail.js?v=1"></script>
-
+<script src="${pageContext.request.contextPath}/static/style-component/product-detail/review.js?v=1"></script>
+</body>
 </html>
