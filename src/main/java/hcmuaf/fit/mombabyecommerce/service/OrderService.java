@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.OrderDao;
+import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
 import hcmuaf.fit.mombabyecommerce.model.Order;
 import org.jdbi.v3.core.Jdbi;
 
@@ -43,6 +44,9 @@ public class OrderService {
 
     public List<Order> getAllOrders( ) {
         return orderDao.getAllOrders();
+    }
+    public void updateStatus(Integer orderId, OrderStatus orderStatus) {
+        orderDao.updateOrderStatus(orderId, orderStatus);
     }
 
 

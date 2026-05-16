@@ -5,7 +5,7 @@
   Time: 4:13 PM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -129,47 +129,56 @@
                                     </div>
                                 </div>
                                 <c:set var="productReview" value="${reviewMap[od.productId]}"/>
-                                <div class="review-section" style="width:100%;margin-top:8px;">
-                                    <c:choose>
-                                        <c:when test="${not empty productReview}">
-                                            <!-- Hiển thị số sao và nội dung review -->
-                                            <div class="user-rating stars">
-                                                <c:forEach begin="1" end="5" var="i">
-                                                        <span class="star">
-                                                            <i class="fa-solid fa-star"
-                                                               style="color:${i <= productReview.rating ? 'gold' : 'gray'}"></i>
-                                                        </span>
-                                                </c:forEach>
-                                            </div>
-                                            <div class="review-text"
-                                                 style="margin-top:6px;font-style:italic;color:#555;">
-                                                    ${productReview.description}
-                                            </div>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:if test="${order.orderStatus == 'DELIVERED'}">
-                                                <form class="review-form" method="post">
-                                                    <div class="user-rating stars">
-                                                        <input type="hidden" name="rating" value="0"/>
-                                                        <span class="star" data-value="1"><i
-                                                                class="fa-solid fa-star"></i></span>
-                                                        <span class="star" data-value="2"><i
-                                                                class="fa-solid fa-star"></i></span>
-                                                        <span class="star" data-value="3"><i
-                                                                class="fa-solid fa-star"></i></span>
-                                                        <span class="star" data-value="4"><i
-                                                                class="fa-solid fa-star"></i></span>
-                                                        <span class="star" data-value="5"><i
-                                                                class="fa-solid fa-star"></i></span>
-                                                    </div>
-                                                    <textarea class="review-text" name="review" rows="3"
-                                                              placeholder="Chia sẻ suy nghĩ của bạn"></textarea>
-                                                    <button type="submit" class="btn_submit">Gửi đánh giá</button>
-                                                </form>
-                                            </c:if>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
+<%--                                <div class="review-section" style="width:100%;margin-top:8px;">--%>
+<%--                                    <c:choose>--%>
+<%--                                        <c:when test="${not empty productReview}">--%>
+<%--                                            <!-- Hiển thị số sao và nội dung review -->--%>
+<%--                                            <div class="user-rating stars">--%>
+<%--                                                <c:forEach begin="1" end="5" var="i">--%>
+<%--                                                        <span class="star">--%>
+<%--                                                            <c:choose>--%>
+
+<%--                                                                <c:when test="${not empty productReview and i <= productReview.rating}">--%>
+<%--                                                                    <i class="fa-solid fa-star" style="color:gold"></i>--%>
+<%--                                                                </c:when>--%>
+
+<%--                                                                <c:otherwise>--%>
+<%--                                                                    <i class="fa-solid fa-star" style="color:gray"></i>--%>
+<%--                                                                </c:otherwise>--%>
+
+<%--                                                            </c:choose>--%>
+<%--                                                        </span>--%>
+<%--                                                </c:forEach>--%>
+<%--                                            </div>--%>
+<%--                                            <div class="review-text"--%>
+<%--                                                 style="margin-top:6px;font-style:italic;color:#555;">--%>
+<%--                                                    ${productReview.description}--%>
+<%--                                            </div>--%>
+<%--                                        </c:when>--%>
+<%--                                        <c:otherwise>--%>
+<%--                                            <c:if test="${order.orderStatus == 'DELIVERED'}">--%>
+<%--                                                <form class="review-form" method="post">--%>
+<%--                                                    <div class="user-rating stars">--%>
+<%--                                                        <input type="hidden" name="rating" value="0"/>--%>
+<%--                                                        <span class="star" data-value="1"><i--%>
+<%--                                                                class="fa-solid fa-star"></i></span>--%>
+<%--                                                        <span class="star" data-value="2"><i--%>
+<%--                                                                class="fa-solid fa-star"></i></span>--%>
+<%--                                                        <span class="star" data-value="3"><i--%>
+<%--                                                                class="fa-solid fa-star"></i></span>--%>
+<%--                                                        <span class="star" data-value="4"><i--%>
+<%--                                                                class="fa-solid fa-star"></i></span>--%>
+<%--                                                        <span class="star" data-value="5"><i--%>
+<%--                                                                class="fa-solid fa-star"></i></span>--%>
+<%--                                                    </div>--%>
+<%--                                                    <textarea class="review-text" name="review" rows="3"--%>
+<%--                                                              placeholder="Chia sẻ suy nghĩ của bạn"></textarea>--%>
+<%--                                                    <button type="submit" class="btn_submit">Gửi đánh giá</button>--%>
+<%--                                                </form>--%>
+<%--                                            </c:if>--%>
+<%--                                        </c:otherwise>--%>
+<%--                                    </c:choose>--%>
+<%--                                </div>--%>
 
                             </div>
 
@@ -275,7 +284,10 @@
                             <div class="content_item">
                                 <span class="desc">Tổng thanh toán:</span>
                                 <span id="total_charge" class="value">
-                                         <fmt:formatNumber value="${order.total + order.shippingFee}" pattern="#,###"/> VND
+                                         <fmt:formatNumber
+                                                 value="${(empty order.total ? 0 : order.total) +
+                                                            (empty order.shippingFee ? 0 : order.shippingFee)}"
+                                                 pattern="#,###"/> VND
                                     </span>
                             </div>
 
