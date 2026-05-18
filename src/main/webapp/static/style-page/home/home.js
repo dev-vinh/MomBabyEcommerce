@@ -1,10 +1,23 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",async () => {
     const menuItems = document.querySelectorAll(".navbar ul li");
     const userLoginIcon = document.querySelector(".user-login");
     const userPopup = document.querySelector(".user-popup");
     const iframe = document.querySelector("#body iframe");
 
-    let isLoggedIn = sessionStorage.getItem("userId") && sessionStorage.getItem("sessionId");
+    async function checkSession() {
+        try {
+            const res = await fetch("/api/check-session", {
+                method: "GET",
+                credentials: "include"
+            });
+            const data = await res.json();
+            return res.ok && data.status === 200 ? data.data : null;
+        } catch (err) {
+            return null;
+        }
+    }
+    const currentUser = await checkSession();
+    const isLoggedIn = currentUser !== null;
 
     // Hiệu ứng hover cho menu
     menuItems.forEach((item) => {
@@ -61,53 +74,34 @@ document.addEventListener("DOMContentLoaded", () => {
             history.pushState({ page: "checkout" }, "Thanh toán", "checkout");
         }
     });
+        const loginLink = document.getElementById("login-link");
+        if (loginLink) {
+            if (isLoggedIn) {
+                loginLink.textContent = "Đăng xuất";
 
-    // Xử lý trạng thái đăng nhập
-    const loginLink = document.getElementById("login-link");
-    if (loginLink) {
-        // if (isLoggedIn) {
-        //     loginLink.textContent = "Đăng xuất";
-        //     loginLink.addEventListener("click", (event) => {
-        //         event.preventDefault();
-        //         sessionStorage.removeItem("userId");
-        //         sessionStorage.removeItem("sessionId");
-        //         sessionStorage.removeItem("role");
-        //         // alert("Bạn đã đăng xuất!");
-        //         window.location.href = 'login';
-        //     });
-        // }
-        if (isLoggedIn) {
-            loginLink.textContent = "Đăng xuất";
-
-            loginLink.addEventListener("click", (event) => {
-                event.preventDefault();
-
-                // gọi server logout
-                fetch("logout", {
-                    method: "GET"
-                }).then(() => {
-                    // xóa client
-                    sessionStorage.clear();
-
-                    window.location.href = "home";
+                loginLink.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    fetch("logout", {
+                        method: "GET",
+                        credentials: "include"
+                    }).then(() => {
+                        sessionStorage.clear();
+                        window.location.href = "home";
+                    });
                 });
-            });
 
+            }
+            else {
+                loginLink.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    if (modal) {
+                        modal.style.display = "block";
+                    } else {
+                        window.location.href = "login";
+                    }
+                });
+            }
         }
-        else {
-            loginLink.textContent = "Đăng nhập/Đăng ký";
-            loginLink.addEventListener("click", (event) => {
-                event.preventDefault();
-
-                if (modal) {
-                    modal.style.display = "block";
-                    console.log("Đã hiện popup thay vì chuyển trang");
-                } else {
-                    window.location.href = 'login';
-                }
-            });
-        }
-    }
 });
 
 

@@ -27,7 +27,7 @@ togglePasswords.forEach((togglePassword) => {
 });
 
 // Ẩn thông báo lỗi khi người dùng nhập lại
-document.getElementById("emails").addEventListener("input", function() {
+document.getElementById("emails").addEventListener("input", function () {
     document.getElementById("email-error").style.display = "none";
 });
 
@@ -47,7 +47,6 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
     // reset lỗi
     fullNameError.innerText = "";
     displayNameError.innerText = "";
-
 
 
     let isValid = true;
@@ -75,7 +74,6 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
         alert("Mật khẩu và xác nhận mật khẩu không khớp!");
         return;
     }
-
 
 
     try {
@@ -115,35 +113,49 @@ document.querySelector(".sign-up-container form").addEventListener("submit", asy
     }
 });
 
-document.querySelector(".sign-in-container form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.querySelector(".sign-in-container form")
+    .addEventListener("submit", async (e) => {
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+        e.preventDefault();
 
-    try {
-        const response = await fetch("login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            }),
-        });
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const errorBox = document.getElementById("auth-error-message");
+        const btn = document.getElementById("signInButton");
+        btn.innerText = "Đang xử lý...";
+        btn.disabled = true;
 
-        if (response.ok) {
-                const data = await response.json();
+        try {
+            const response = await fetch("login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                sessionStorage.setItem("userId", data.data.id);
+                sessionStorage.setItem("sessionId", data.data.sessionId);
                 window.location.href = data.data.redirectUrl;
-        } else {
-            const errorData = await response.json();
+            } else {
+                errorBox.innerText = data.message;
+                errorBox.style.display = "block";
+                btn.innerText = "Đăng nhập";
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error(error);
+            errorBox.innerText = "Lỗi kết nối máy chủ!";
+            errorBox.style.display = "block";
+            btn.innerText = "Đăng nhập";
+            btn.disabled = false;
         }
-    } catch (error) {
-        console.error("Lỗi khi đăng nhập:", error);
-        alert("Đã xảy ra lỗi! Vui lòng thử lại.");
-    }
-});
+    });
 
 
 // Hàm kiểm tra mật khẩu

@@ -149,14 +149,34 @@
                                 <h3>Chi Tiết Thanh Toán</h3>
                                 <p>Giao Dịch: <span> #DU4444TO10000</span></p>
 
-                                <p>Phương Thức Thanh Toán:
-                                    <c:if test="${order.isCOD == false}">
-                                        <span> Thẻ Tín Dụng</span>
-                                    </c:if>
+<%--                                <p>Phương Thức Thanh Toán:--%>
+<%--                                    <c:if test="${order.isCOD == false}">--%>
+<%--                                        <span> Thẻ Tín Dụng</span>--%>
+<%--                                    </c:if>--%>
 
-                                    <c:if test="${order.isCOD == true}">
-                                        <span>Thanh toán khi nhận hàng</span>
-                                    </c:if>
+<%--                                    <c:if test="${order.isCOD == true}">--%>
+<%--                                        <span>Thanh toán khi nhận hàng</span>--%>
+<%--                                    </c:if>--%>
+
+<%--                                </p>--%>
+                                <p>
+                                    Phương Thức Thanh Toán:
+
+                                    <c:choose>
+
+                                        <c:when test="${order.paymentMethod == 'COD'}">
+                                            <span>Thanh toán khi nhận hàng</span>
+                                        </c:when>
+
+                                        <c:when test="${order.paymentMethod == 'VNPAY'}">
+                                            <span>VNPay</span>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <span>Không xác định</span>
+                                        </c:otherwise>
+
+                                    </c:choose>
 
                                 </p>
                                 <p>Tên khách hàng: <span>${user.fullName}</span></p>
