@@ -108,22 +108,13 @@ public class ProductDTO implements Serializable {
         this.brandId = brandId;
     }
 
-    public Integer getNoOfViews() {
-        return noOfViews;
+    public List<OptionVariant> getOptions() {
+        return options;
     }
 
-    public void setNoOfViews(Integer noOfViews) {
-        this.noOfViews = noOfViews;
+    public void setOptions(List<OptionVariant> options) {
+        this.options = options;
     }
-
-    public Integer getNoOfSold() {
-        return noOfSold;
-    }
-
-    public void setNoOfSold(Integer noOfSold) {
-        this.noOfSold = noOfSold;
-    }
-
     public Integer getImageId() {
         return imageId;
     }

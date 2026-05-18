@@ -31,10 +31,10 @@ public interface VariantDao {
                    v.value as value,
                    CAST(NULL AS SIGNED) as optionId
             FROM attributes a
-            JOIN variant v 
+            JOIN variant v
                 ON v.categoryId = a.categoryId
-               AND v.name = a.name
-            LEFT JOIN option_variant ov 
+               AND v.name COLLATE utf8mb4_unicode_ci = a.name COLLATE utf8mb4_unicode_ci
+            LEFT JOIN option_variant ov
                 ON ov.id = v.optionId
             WHERE a.id = :attributeId
               AND v.value IS NOT NULL

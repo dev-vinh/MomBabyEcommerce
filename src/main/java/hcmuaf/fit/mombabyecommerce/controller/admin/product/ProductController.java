@@ -2,7 +2,7 @@ package hcmuaf.fit.mombabyecommerce.controller.admin.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
-import hcmuaf.fit.mombabyecommerce.model.Product;
+import hcmuaf.fit.mombabyecommerce.model.ProductDTO;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import hcmuaf.fit.mombabyecommerce.util.ResponseWrapper;
 import jakarta.servlet.ServletException;
@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -33,22 +35,22 @@ public class ProductController extends HttpServlet {
             Integer brandId = getInteger(productData, "brandId");
             Integer imageId = getInteger(productData, "primaryImage");
             Boolean isActive = getBoolean(productData, "isActive", true);
+            List<Integer> imageIds = getIntegerList(productData.get("imageIds"));
+            List<Map<String, Object>> options = getMapList(productData.get("options"));
 
-            validateProductInput(name, sku, categoryId, brandId, imageId);
+            validateProductInput(name, sku, categoryId, brandId, imageId, imageIds, options);
 
-            Product product = new Product();
-            product.setName(name);
-            product.setSku(sku);
-            product.setDescription(description);
-            product.setCategoryId(categoryId);
-            product.setBrandId(brandId);
-            product.setImageId(imageId);
-            product.setActive(isActive);
-
-            Product createdProduct = productService.addProduct(product);
-            if (createdProduct == null || createdProduct.getId() == null) {
-                throw new IllegalArgumentException("Không thể thêm sản phẩm.");
-            }
+            ProductDTO createdProduct = productService.createProductForAdmin(
+                    name,
+                    sku,
+                    description,
+                    isActive,
+                    categoryId,
+                    brandId,
+                    imageId,
+                    imageIds,
+                    options
+            );
 
             writeResponse(response, new ResponseWrapper<>(
                     HttpServletResponse.SC_CREATED,
@@ -78,7 +80,9 @@ public class ProductController extends HttpServlet {
                                       String sku,
                                       Integer categoryId,
                                       Integer brandId,
-                                      Integer imageId) {
+                                      Integer imageId,
+                                      List<Integer> imageIds,
+                                      List<Map<String, Object>> options) {
         if (isBlank(name)) {
             throw new IllegalArgumentException("Tên sản phẩm không được để trống.");
         }
@@ -91,8 +95,11 @@ public class ProductController extends HttpServlet {
         if (brandId == null || brandId <= 0) {
             throw new IllegalArgumentException("Vui lòng chọn thương hiệu hợp lệ.");
         }
-        if (imageId == null || imageId <= 0) {
-            throw new IllegalArgumentException("Vui lòng upload ảnh sản phẩm.");
+        if (imageId == null || imageId <= 0 || imageIds == null || imageIds.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn ít nhất 1 ảnh sản phẩm.");
+        }
+        if (options == null || options.isEmpty()) {
+            throw new IllegalArgumentException("Sản phẩm cần ít nhất 1 phiên bản bán.");
         }
     }
 
@@ -121,6 +128,40 @@ public class ProductController extends HttpServlet {
             return (Boolean) value;
         }
         return Boolean.parseBoolean(value.toString());
+    }
+
+    private List<Integer> getIntegerList(Object value) {
+        if (!(value instanceof List<?> list)) {
+            return null;
+        }
+
+        List<Integer> result = new ArrayList<>();
+        for (Object item : list) {
+            if (item == null || item.toString().trim().isEmpty()) {
+                continue;
+            }
+            if (item instanceof Number) {
+                result.add(((Number) item).intValue());
+            } else {
+                result.add(Integer.parseInt(item.toString().trim()));
+            }
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> getMapList(Object value) {
+        if (!(value instanceof List<?> list)) {
+            return null;
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object item : list) {
+            if (item instanceof Map<?, ?> rawMap) {
+                result.add((Map<String, Object>) rawMap);
+            }
+        }
+        return result;
     }
 
     private boolean isBlank(String value) {

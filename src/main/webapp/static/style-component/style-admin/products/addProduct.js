@@ -1,5 +1,3 @@
-console.log('addProduct.js product-options-images-fixed loaded');
-
 const APP_CONTEXT = window.location.pathname.split('/admin/')[0];
 const ADMIN_BASE = `${APP_CONTEXT}/admin`;
 const API_BASE = `${APP_CONTEXT}/api`;
@@ -323,24 +321,46 @@ function getOptionRowsData(strict = true) {
         return [];
     }
 
+    const seenCombinations = new Set();
+
     return cards.map((card, index) => {
         const price = card.querySelector('.variant-price-input')?.value?.trim();
-        const variantIds = Array.from(card.querySelectorAll('.variant-value-select'))
-            .map(select => select.value)
+        const selectedRows = Array.from(card.querySelectorAll('.attribute-row'));
+        const selectedTypeIds = selectedRows
+            .map(row => row.querySelector('.variant-type-select')?.value)
+            .filter(Boolean);
+        const variantIds = selectedRows
+            .map(row => row.querySelector('.variant-value-select')?.value)
             .filter(Boolean)
             .map(value => Number(value));
+        const uniqueVariantIds = [...new Set(variantIds)];
 
         if (strict) {
             parsePositiveInteger(price, `Giá bán của phiên bản ${index + 1}`);
+
             if (variantIds.length === 0) {
                 throw new Error(`Phiên bản ${index + 1} cần ít nhất 1 thuộc tính.`);
             }
+
+            if (selectedTypeIds.length !== new Set(selectedTypeIds).size) {
+                throw new Error(`Phiên bản ${index + 1} đang chọn trùng loại thuộc tính.`);
+            }
+
+            if (variantIds.length !== uniqueVariantIds.length) {
+                throw new Error(`Phiên bản ${index + 1} đang chọn trùng giá trị biến thể.`);
+            }
+
+            const combinationKey = uniqueVariantIds.slice().sort((a, b) => a - b).join('-');
+            if (seenCombinations.has(combinationKey)) {
+                throw new Error(`Phiên bản ${index + 1} bị trùng tổ hợp thuộc tính với dòng khác.`);
+            }
+            seenCombinations.add(combinationKey);
         }
 
         return {
             optionId: card.dataset.optionId ? Number(card.dataset.optionId) : null,
             price: Number(price),
-            variantIds: [...new Set(variantIds)]
+            variantIds: uniqueVariantIds
         };
     });
 }
@@ -404,20 +424,38 @@ function renderImagePreview() {
 
         const badge = document.createElement('span');
         badge.className = index === 0 ? 'primary-icon' : 'image-order-badge';
-        badge.textContent = index === 0 ? '★' : String(index + 1);
+        badge.textContent = index === 0 ? 'Ảnh chính' : String(index + 1);
         badge.title = index === 0 ? 'Ảnh chính' : 'Bấm để chọn làm ảnh chính';
-        badge.addEventListener('click', () => setPrimaryImage(image.tempId || image.id));
+        badge.addEventListener('click', event => {
+            event.stopPropagation();
+            setPrimaryImage(image.tempId || image.id);
+        });
 
         const deleteButton = document.createElement('button');
         deleteButton.type = 'button';
         deleteButton.className = 'image-delete-button';
-        deleteButton.innerHTML = '×';
+        deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
         deleteButton.title = 'Xóa ảnh';
-        deleteButton.addEventListener('click', () => removeImage(image.tempId || image.id));
+        deleteButton.addEventListener('click', event => {
+            event.stopPropagation();
+            removeImage(image.tempId || image.id);
+        });
+
+        const caption = document.createElement('button');
+        caption.type = 'button';
+        caption.className = 'image-primary-button';
+        caption.textContent = index === 0 ? 'Đang làm ảnh chính' : 'Đặt làm ảnh chính';
+        caption.addEventListener('click', event => {
+            event.stopPropagation();
+            setPrimaryImage(image.tempId || image.id);
+        });
+
+        img.addEventListener('click', () => setPrimaryImage(image.tempId || image.id));
 
         wrapper.appendChild(img);
         wrapper.appendChild(badge);
         wrapper.appendChild(deleteButton);
+        wrapper.appendChild(caption);
         container.appendChild(wrapper);
     });
 
@@ -568,8 +606,6 @@ async function saveProduct() {
         }
 
         const created = await createProduct(productData);
-        await assignProductImages(productData.imageIds, created.id);
-        await createProductOptions(created.id, productData);
         notify('Thêm sản phẩm thành công.', 'success');
         window.location.href = `${ADMIN_BASE}/list-product`;
         return created;
@@ -642,10 +678,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         $('pageTitle').textContent = currentProductId ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm';
     }
 
-    if (uploadButton && fileInput) uploadButton.addEventListener('click', () => fileInput.click());
+    if (uploadButton && fileInput) uploadButton.addEventListener('click', event => {
+        event.stopPropagation();
+        fileInput.click();
+    });
     if (fileInput) fileInput.addEventListener('change', () => previewSelectedImages(fileInput.files));
     if (saveButton) saveButton.addEventListener('click', saveProduct);
     if (addOptionRowButton) addOptionRowButton.addEventListener('click', () => addOptionRow());
+
+    if (mediaUploadBox && fileInput) {
+        mediaUploadBox.addEventListener('click', event => {
+            if (event.target.closest('button') || event.target.closest('.image-wrapper')) return;
+            fileInput.click();
+        });
+    }
 
     if (mediaUploadBox) {
         mediaUploadBox.addEventListener('dragover', event => {

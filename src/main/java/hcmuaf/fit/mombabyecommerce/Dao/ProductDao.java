@@ -46,7 +46,7 @@ public interface ProductDao {
                COALESCE(inv.quantity, 0) as stock,
                img.url as imageUrl
         FROM products p
-        JOIN option_variant ops ON ops.productId = p.id
+        JOIN option_variant ops ON ops.productId = p.id AND ops.isActive = 1
         LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
         JOIN image img ON p.imageId = img.id
         WHERE p.id = :id
@@ -73,6 +73,7 @@ public interface ProductDao {
             "LEFT JOIN variant v ON v.optionId = ops.id " +
             "WHERE p.id = :productId " +
             "AND ops.id = :optionId " +
+            "AND ops.isActive = 1 " +
             "AND p.isActive = true " +
             "GROUP BY p.id, p.name, p.description, p.sku, p.isActive, " +
             "p.categoryId, p.brandId, p.noOfViews, p.noOfSold, p.imageId, " +
@@ -199,7 +200,7 @@ public interface ProductDao {
                COALESCE(inv.quantity, 0) as stock,
                img.url as imageUrl
         FROM products p
-        LEFT JOIN option_variant ops ON ops.productId = p.id
+        LEFT JOIN option_variant ops ON ops.productId = p.id AND ops.isActive = 1
         LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
         LEFT JOIN image img ON img.id = p.imageId
         WHERE p.id = :id
@@ -221,6 +222,7 @@ public interface ProductDao {
         FROM option_variant ops
         JOIN variant v ON v.optionId = ops.id
         WHERE ops.productId = :id
+          AND ops.isActive = 1
         ORDER BY ops.id, v.id
         """)
     @RegisterConstructorMapper(Variant.class)

@@ -12,8 +12,11 @@ import hcmuaf.fit.mombabyecommerce.model.ProductDTO;
 import hcmuaf.fit.mombabyecommerce.model.Variant;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ProductService {
     Jdbi jdbi;
@@ -71,6 +74,45 @@ public class ProductService {
         // thêm vào
         // }
         return null;
+    }
+
+    public ProductDTO createProductForAdmin(String name,
+                                            String sku,
+                                            String description,
+                                            Boolean isActive,
+                                            Integer categoryId,
+                                            Integer brandId,
+                                            Integer imageId,
+                                            List<Integer> imageIds,
+                                            List<Map<String, Object>> options) {
+        final int[] createdProductId = new int[1];
+
+        jdbi.useTransaction(handle -> {
+            ProductDao pDao = handle.attach(ProductDao.class);
+            ImageDao imageDao = handle.attach(ImageDao.class);
+            OptionVariantDao optionDao = handle.attach(OptionVariantDao.class);
+            VariantDao variantDao = handle.attach(VariantDao.class);
+
+            int productId = pDao.addProduct(
+                    name,
+                    description,
+                    isActive,
+                    categoryId,
+                    brandId,
+                    imageId,
+                    sku
+            );
+
+            if (productId <= 0) {
+                throw new IllegalArgumentException("Không thể thêm sản phẩm.");
+            }
+
+            createdProductId[0] = productId;
+            replaceProductImages(imageDao, productId, imageIds);
+            saveOptionsForProduct(optionDao, variantDao, productId, options, false);
+        });
+
+        return editProductById(createdProductId[0]);
     }
 
     public List<Product> searchProducts(String name) {
@@ -169,55 +211,105 @@ public class ProductService {
                 throw new IllegalArgumentException("Không tìm thấy sản phẩm cần cập nhật.");
             }
 
-            if (imageIds != null && !imageIds.isEmpty()) {
-                imageDao.deleteImagesByProductId(productId);
-                for (Integer imgId : imageIds) {
-                    if (imgId != null && imgId > 0) {
-                        imageDao.addImageToProduct(productId, imgId);
-                    }
-                }
-            }
-
-            if (options == null || options.isEmpty()) {
-                throw new IllegalArgumentException("Sản phẩm cần ít nhất 1 phiên bản bán.");
-            }
-
-            for (Map<String, Object> optionPayload : options) {
-                Integer price = getIntegerFromMap(optionPayload, "price");
-                if (price == null || price <= 0) {
-                    throw new IllegalArgumentException("Giá bán của phiên bản phải lớn hơn 0.");
-                }
-
-                Integer optionId = getIntegerFromMap(optionPayload, "optionId");
-                Integer finalOptionId;
-
-                if (optionId == null || optionId <= 0) {
-                    finalOptionId = optionDao.createOption(productId, price);
-                    optionDao.createInventory(finalOptionId, 0);
-                } else {
-                    finalOptionId = optionId;
-                    boolean optionUpdated = optionDao.updateOption(finalOptionId, price);
-                    if (!optionUpdated) {
-                        throw new IllegalArgumentException("Không tìm thấy phiên bản cần cập nhật.");
-                    }
-                }
-
-                variantDao.deleteOptionVariants(finalOptionId);
-
-                List<Integer> variantIds = getIntegerListFromMap(optionPayload.get("variantIds"));
-                if (variantIds == null || variantIds.isEmpty()) {
-                    throw new IllegalArgumentException("Mỗi phiên bản cần ít nhất 1 thuộc tính.");
-                }
-
-                for (Integer variantId : variantIds) {
-                    if (variantId != null && variantId > 0) {
-                        variantDao.addOptionVariantValue(finalOptionId, variantId);
-                    }
-                }
-            }
+            replaceProductImages(imageDao, productId, imageIds);
+            saveOptionsForProduct(optionDao, variantDao, productId, options, true);
         });
 
         return editProductById(productId);
+    }
+
+    private void replaceProductImages(ImageDao imageDao, Integer productId, List<Integer> imageIds) {
+        if (imageIds == null || imageIds.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn ít nhất 1 ảnh sản phẩm.");
+        }
+
+        imageDao.deleteImagesByProductId(productId);
+        Set<Integer> inserted = new HashSet<>();
+        for (Integer imgId : imageIds) {
+            if (imgId != null && imgId > 0 && inserted.add(imgId)) {
+                imageDao.addImageToProduct(productId, imgId);
+            }
+        }
+    }
+
+    private void saveOptionsForProduct(OptionVariantDao optionDao,
+                                       VariantDao variantDao,
+                                       Integer productId,
+                                       List<Map<String, Object>> options,
+                                       boolean deactivateMissingOptions) {
+        if (options == null || options.isEmpty()) {
+            throw new IllegalArgumentException("Sản phẩm cần ít nhất 1 phiên bản bán.");
+        }
+
+        List<Integer> submittedExistingOptionIds = new ArrayList<>();
+        for (Map<String, Object> optionPayload : options) {
+            Integer optionId = getIntegerFromMap(optionPayload, "optionId");
+            if (optionId != null && optionId > 0) {
+                submittedExistingOptionIds.add(optionId);
+            }
+        }
+
+        if (deactivateMissingOptions) {
+            if (submittedExistingOptionIds.isEmpty()) {
+                optionDao.deactivateAllOptionsByProductId(productId);
+            } else {
+                optionDao.deactivateOptionsNotIn(productId, submittedExistingOptionIds);
+            }
+        }
+
+        Set<String> seenCombinations = new HashSet<>();
+        for (int index = 0; index < options.size(); index++) {
+            Map<String, Object> optionPayload = options.get(index);
+
+            Integer price = getIntegerFromMap(optionPayload, "price");
+            if (price == null || price <= 0) {
+                throw new IllegalArgumentException("Giá bán của phiên bản " + (index + 1) + " phải lớn hơn 0.");
+            }
+
+            List<Integer> variantIds = getIntegerListFromMap(optionPayload.get("variantIds"));
+            if (variantIds == null || variantIds.isEmpty()) {
+                throw new IllegalArgumentException("Phiên bản " + (index + 1) + " cần ít nhất 1 thuộc tính.");
+            }
+
+            List<Integer> distinctVariantIds = variantIds.stream()
+                    .filter(id -> id != null && id > 0)
+                    .distinct()
+                    .sorted()
+                    .toList();
+
+            if (distinctVariantIds.isEmpty()) {
+                throw new IllegalArgumentException("Phiên bản " + (index + 1) + " cần ít nhất 1 thuộc tính hợp lệ.");
+            }
+
+            String combinationKey = distinctVariantIds.toString();
+            if (!seenCombinations.add(combinationKey)) {
+                throw new IllegalArgumentException("Có phiên bản bị trùng thuộc tính. Vui lòng kiểm tra lại dòng " + (index + 1) + ".");
+            }
+
+            Integer optionId = getIntegerFromMap(optionPayload, "optionId");
+            Integer finalOptionId;
+
+            if (optionId == null || optionId <= 0) {
+                finalOptionId = optionDao.createOption(productId, price);
+                optionDao.createInventory(finalOptionId, 0);
+            } else {
+                if (optionDao.countOptionBelongsToProduct(productId, optionId) == 0) {
+                    throw new IllegalArgumentException("Phiên bản " + optionId + " không thuộc sản phẩm hiện tại.");
+                }
+
+                finalOptionId = optionId;
+                boolean optionUpdated = optionDao.updateOption(finalOptionId, price);
+                if (!optionUpdated) {
+                    throw new IllegalArgumentException("Không tìm thấy phiên bản cần cập nhật.");
+                }
+            }
+
+            variantDao.deleteOptionVariants(finalOptionId);
+
+            for (Integer variantId : distinctVariantIds) {
+                variantDao.addOptionVariantValue(finalOptionId, variantId);
+            }
+        }
     }
 
     private Integer getIntegerFromMap(Map<String, Object> data, String key) {
