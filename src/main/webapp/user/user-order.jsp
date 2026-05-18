@@ -51,12 +51,37 @@
 
 
         <div id="order_menu" class="mid_align row">
-            <div class="menu_item">Tất cả</div>
-            <div class="menu_item">Chờ xác nhận</div>
-            <div class="menu_item">Đã xác nhận</div>
-            <div class="menu_item">Đang vận chuyển</div>
-            <div class="menu_item">Đã giao hàng</div>
-            <div class="menu_item">Đã hủy</div>
+
+            <a class="menu_item ${empty param.status ? 'active' : ''}"
+               href="user-order">
+                Tất cả
+            </a>
+
+            <a class="menu_item ${param.status == 'PENDING' ? 'active' : ''}"
+               href="user-order?status=PENDING">
+                Chờ xác nhận
+            </a>
+
+            <a class="menu_item ${param.status == 'CONFIRMED' ? 'active' : ''}"
+               href="user-order?status=CONFIRMED">
+                Đã xác nhận
+            </a>
+
+            <a class="menu_item ${param.status == 'SHIPPING' ? 'active' : ''}"
+               href="user-order?status=SHIPPING">
+                Đang vận chuyển
+            </a>
+
+            <a class="menu_item ${param.status == 'DELIVERED' ? 'active' : ''}"
+               href="user-order?status=DELIVERED">
+                Đã giao hàng
+            </a>
+
+            <a class="menu_item ${param.status == 'CANCELLED' ? 'active' : ''}"
+               href="user-order?status=CANCELLED">
+                Đã hủy
+            </a>
+
         </div>
 
 
@@ -79,12 +104,53 @@
                                 <span class="color_name">Số lượng: <span>${o.quantity}</span></span>
                             </div>
                             <div class="status">
-                                <c:if  test="${o.orderStatus =='DELIVERY'}">
-                                    <span style="color: #0a7cff">Đang giao hàng</span>
+
+                                <c:if test="${o.orderStatus == 'PENDING'}">
+                                    <span style="color: orange;">Chờ xác nhận</span>
                                 </c:if>
 
-                                <c:if  test="${o.orderStatus =='DELIVERED'}">
-                                    <span >Đã giao hàng</span>
+                                <c:if test="${o.orderStatus == 'CONFIRMED'}">
+                                    <span style="color: #17a2b8;">Đã xác nhận</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'PROCESSING'}">
+                                    <span style="color: #6f42c1;">Đang xử lý</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'SHIPPED'}">
+                                    <span style="color: #20c997;">Đã bàn giao vận chuyển</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'SHIPPING'}">
+                                    <span style="color: #0d6efd;">Đang vận chuyển</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'DELIVERY'}">
+                                    <span style="color: #0a7cff;">Đang giao hàng</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'DELIVERED'}">
+                                    <span style="color: green;">Đã giao hàng</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'CANCELLED'}">
+                                    <span style="color: red;">Đã hủy</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'RETURNED'}">
+                                    <span style="color: #dc3545;">Đã hoàn trả</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'FAILED'}">
+                                    <span style="color: #b02a37;">Thất bại</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'ORDER_CREATE_ERROR'}">
+                                    <span style="color: #e55353;">Lỗi tạo đơn</span>
+                                </c:if>
+
+                                <c:if test="${o.orderStatus == 'CANCEL_ERROR'}">
+                                    <span style="color: #ff4d4f;">Lỗi hủy đơn</span>
                                 </c:if>
 
                             </div>
