@@ -30,7 +30,12 @@ public class UserOrderController extends HttpServlet {
             try {
                 Integer userId = Integer.parseInt(userIdObj.toString());
 
-                orders = orderService.getOrdersByUserId(userId);
+                String status = request.getParameter("status");
+                if (status != null && !status.isEmpty()) {
+                    orders = orderService.getOrdersByUserIdAndStatus(userId, status);
+                } else {
+                    orders = orderService.getOrdersByUserId(userId);
+                }
 
                 int savings = orders.stream().mapToInt(Order::getTotal).sum();
                 roundedSavings = Math.round(savings / 1_000_000f);
