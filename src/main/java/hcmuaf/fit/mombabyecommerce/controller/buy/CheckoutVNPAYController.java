@@ -21,7 +21,7 @@ public class CheckoutVNPAYController extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
         Cart cart = (Cart) session.getAttribute("cart");
-        double totalPrice =
-                cart.getTotalPrice();
+//        double totalPrice =
+//                cart.getTotalPrice();
     }
 }
