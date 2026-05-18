@@ -1,5 +1,6 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
+import hcmuaf.fit.mombabyecommerce.contant.EPaymentMethod;
 import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
 import hcmuaf.fit.mombabyecommerce.contant.PaymentStatus;
 import jakarta.annotation.Nullable;
@@ -30,7 +31,7 @@ public class Order implements Serializable {
     private String shippingId;
 
     private Boolean isReviewed;
-
+    private EPaymentMethod paymentMethod;
 
     @JdbiConstructor
     public Order(@ColumnName("id") @Nullable Integer id,
@@ -52,7 +53,7 @@ public class Order implements Serializable {
                  @ColumnName("shippingFee") @Nullable Integer shippingFee,
                  @ColumnName("shippingId") @Nullable String shippingId,
 
-
+                 @ColumnName("paymentMethod") @Nullable EPaymentMethod paymentMethod,
                  @ColumnName("isReviewed") @Nullable Boolean isReviewed
 
     ){
@@ -71,6 +72,7 @@ public class Order implements Serializable {
         this.userName = userName;
         this.shippingFee = shippingFee;
         this.shippingId = shippingId;
+        this.paymentMethod = paymentMethod;
         this.isReviewed = false;
 
     }
@@ -190,6 +192,14 @@ public class Order implements Serializable {
         this.shippingFee = shippingFee;
     }
 
+    public EPaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(EPaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     public String getShippingId() {
         return shippingId;
     }
@@ -216,7 +226,7 @@ public class Order implements Serializable {
                 ", userId=" + userId +
                 ", cardId=" + cardId +
                 ", addressId=" + addressId +
-                ", isCOD=" + isCOD +
+//                ", isCOD=" + isCOD +
                 ", quantity=" + quantity +
                 ", total=" + total +
                 ", productName='" + productName + '\'' +
