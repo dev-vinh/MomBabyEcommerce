@@ -18,39 +18,28 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+
 @WebServlet(name = "CancelOrderController", value = "/cancel-order")
 public class CancelOrderController extends HttpServlet {
-    OrderService orderService = new OrderService(DBConnection.getJdbi());
-    GHNApiCaller apiCaller = new GHNApiCaller();
+
+    private final OrderService orderService =
+            new OrderService(DBConnection.getJdbi());
+
+    private final GHNApiCaller apiCaller = new GHNApiCaller();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-            return;
-        }
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        Integer orderId = Integer.parseInt(request.getParameter("orderId"));
-        Order order = orderService.getOrderById(orderId);
+        try {
 
-        if (order == null || !order.getUserId().equals(userId)) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Order not found");
-            return;
-        }
+            HttpSession session = request.getSession();
 
-        if (order.getShippingId() == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Shipping ID not found");
-            return;
-        }
-        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Delivered order cannot be cancelled");
-            return;
-        }
+            Integer userId = (Integer) session.getAttribute("userId");
 
         try {
             if (order.getShippingId().startsWith("GHN")) {
@@ -72,7 +61,9 @@ public class CancelOrderController extends HttpServlet {
 
             Gson gson = new Gson();
             String json = gson.toJson(
-                    new GHNCancelOrderRequest(List.of(order.getShippingId()))
+                    new GHNCancelOrderRequest(
+                            List.of(order.getShippingId())
+                    )
             );
             String ghnResponse = apiCaller.cancelOrder(json);
 
@@ -81,14 +72,13 @@ public class CancelOrderController extends HttpServlet {
             APIResponse apiResponse =
                     mapper.readValue(ghnResponse, APIResponse.class);
 
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
             if (apiResponse.getCode() == 200) {
 
-                orderService.updateStatus(orderId, OrderStatus.CANCELLED);
+                orderService.updateStatus(orderId,
+                        OrderStatus.CANCELLED);
 
-                response.setStatus(HttpServletResponse.SC_OK);
+                sendSuccess(response,
+                        "Order cancelled successfully");
 
                 response.getWriter().write("""
                 {
@@ -100,9 +90,14 @@ public class CancelOrderController extends HttpServlet {
                 return;
             }
 
-            orderService.updateStatus(orderId, OrderStatus.CANCEL_ERROR);
+            orderService.updateStatus(orderId,
+                    OrderStatus.CANCEL_ERROR);
 
-            response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+            sendError(response,
+                    HttpServletResponse.SC_BAD_GATEWAY,
+                    "Order cancel error. Please try again later.");
+
+        } catch (NumberFormatException e) {
 
             response.getWriter().write("""
             {
@@ -115,11 +110,45 @@ public class CancelOrderController extends HttpServlet {
 
             e.printStackTrace();
 
-            response.sendError(
+            sendError(response,
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "Internal server error"
-            );
+                    "Internal server error");
         }
     }
 
+    private boolean cannotCancel(OrderStatus status) {
+
+        return status == OrderStatus.DELIVERED
+                || status == OrderStatus.CANCELLED
+                || status == OrderStatus.CANCEL_ERROR
+                || status == OrderStatus.SHIPPING
+                || status == OrderStatus.DELIVERY;
+    }
+
+    private void sendSuccess(HttpServletResponse response,
+                             String message) throws IOException {
+
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        response.getWriter().write("""
+                {
+                    "success": true,
+                    "message": "%s"
+                }
+                """.formatted(message));
+    }
+
+    private void sendError(HttpServletResponse response,
+                           int status,
+                           String message) throws IOException {
+
+        response.setStatus(status);
+
+        response.getWriter().write("""
+                {
+                    "success": false,
+                    "message": "%s"
+                }
+                """.formatted(message));
+    }
 }
