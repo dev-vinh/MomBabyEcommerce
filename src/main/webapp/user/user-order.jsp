@@ -47,16 +47,6 @@
                 </span>
                 <span>Đơn hàng</span>
             </div>
-
-            <div class="rec_vertical"></div>
-
-            <div class="total mid align col">
-                <span class="num">
-                    ${savings}Tr
-                </span>
-                <span>Tổng tiền tích lũy</span>
-            </div>
-
         </div>
 
 

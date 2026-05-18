@@ -68,7 +68,7 @@
                             <c:when test="${order.orderStatus == 'PROCESSING'}">
                                 <span style="color: #17a2b8">Đang sử lý</span>
                             </c:when>
-                            <c:when test="${order.orderStatus == 'SHIPPED'}">
+                            <c:when test="${order.orderStatus == 'SHIPPING'}">
                                 <span style="color: #6f42c1">Đang vận chuyển</span>
                             </c:when>
                             <c:when test="${order.orderStatus == 'DELIVERED'}">
@@ -193,7 +193,7 @@
                                 <c:when test="${order.orderStatus == 'PENDING'}">1</c:when>
                                 <c:when test="${order.orderStatus == 'CONFIRMED'}">2</c:when>
                                 <c:when test="${order.orderStatus == 'PROCESSING'}">2</c:when>
-                                <c:when test="${order.orderStatus == 'SHIPPED'}">3</c:when>
+                                <c:when test="${order.orderStatus == 'SHIPPING'}">3</c:when>
                                 <c:when test="${order.orderStatus == 'DELIVERED'}">4</c:when>
                                 <c:when test="${order.orderStatus == 'CANCELLED'}">-1</c:when>
                                 <c:when test="${order.orderStatus == 'RETURNED'}">99</c:when>
