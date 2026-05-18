@@ -41,67 +41,30 @@ public class CancelOrderController extends HttpServlet {
 
             Integer userId = (Integer) session.getAttribute("userId");
 
-            if (userId == null) {
-                sendError(response,
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "User not logged in");
-                return;
-            }
-
-            String orderIdParam = request.getParameter("orderId");
-
-            if (orderIdParam == null || orderIdParam.isBlank()) {
-                sendError(response,
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        "Order ID is required");
-                return;
-            }
-
-            Integer orderId = Integer.parseInt(orderIdParam);
-
-            Order order = orderService.getOrderById(orderId);
-
-            if (order == null || !order.getUserId().equals(userId)) {
-                sendError(response,
-                        HttpServletResponse.SC_NOT_FOUND,
-                        "Order not found");
-                return;
-            }
-
-            if (cannotCancel(order.getOrderStatus())) {
-                sendError(response,
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        "This order cannot be cancelled");
-                return;
-            }
-
-            if (order.getShippingId() == null
-                    || order.getShippingId().isBlank()) {
-
-                sendError(response,
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        "Shipping ID not found");
-                return;
-            }
+        try {
             if (order.getShippingId().startsWith("GHN")) {
 
-                orderService.updateStatus(orderId,
-                        OrderStatus.CANCELLED);
+                orderService.updateStatus(orderId, OrderStatus.CANCELLED);
 
-                sendSuccess(response,
-                        "Mock cancel success");
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                response.getWriter().write("""
+        {
+            "success": true,
+            "message": "Mock cancel success"
+        }
+        """);
 
                 return;
             }
 
             Gson gson = new Gson();
-
             String json = gson.toJson(
                     new GHNCancelOrderRequest(
                             List.of(order.getShippingId())
                     )
             );
-
             String ghnResponse = apiCaller.cancelOrder(json);
 
             ObjectMapper mapper = new ObjectMapper();
@@ -117,6 +80,13 @@ public class CancelOrderController extends HttpServlet {
                 sendSuccess(response,
                         "Order cancelled successfully");
 
+                response.getWriter().write("""
+                {
+                    "success": true,
+                    "message": "Order cancelled successfully"
+                }
+                """);
+
                 return;
             }
 
@@ -129,9 +99,12 @@ public class CancelOrderController extends HttpServlet {
 
         } catch (NumberFormatException e) {
 
-            sendError(response,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    "Invalid order ID");
+            response.getWriter().write("""
+            {
+                "success": false,
+                "message": "Order cancel error. Please try again later."
+            }
+            """);
 
         } catch (Exception e) {
 

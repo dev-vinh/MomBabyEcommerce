@@ -154,7 +154,8 @@
         </div>
     </div>
 </div>
-    <script src="${pageContext.request.contextPath}/static/style-page/auth/auth.js"></script>
+</div>
+<script src="${pageContext.request.contextPath}/static/style-page/auth/auth.js"></script>
 
 
 <% if (request.getAttribute("errorMessage") != null) { %>
