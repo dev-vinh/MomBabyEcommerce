@@ -13,14 +13,21 @@ import java.util.List;
 @RegisterConstructorMapper(OptionVariant.class)
 public interface OptionVariantDao {
 
-
-    @SqlUpdate("INSERT INTO option_variant (productId, price) VALUES (:productId, :price)")
+    @SqlUpdate("""
+        INSERT INTO option_variant (productId, price, isActive)
+        VALUES (:productId, :price, 1)
+        """)
     @GetGeneratedKeys
-    int createOption(@Bind("productId") Integer productId, @Bind("price") Integer price);
+    int createOption(@Bind("productId") Integer productId,
+                     @Bind("price") Integer price);
 
-
-    @SqlUpdate("INSERT INTO inventory (optionVariantId, quantity) VALUES (:optionVariantId, :quantity)")
-    void createInventory(@Bind("optionVariantId") Integer optionVariantId, @Bind("quantity") Integer quantity);
+    @SqlUpdate("""
+        INSERT INTO inventory (optionVariantId, quantity)
+        VALUES (:optionVariantId, :quantity)
+        ON DUPLICATE KEY UPDATE quantity = quantity
+        """)
+    void createInventory(@Bind("optionVariantId") Integer optionVariantId,
+                         @Bind("quantity") Integer quantity);
 
     @SqlQuery("""
         SELECT
@@ -34,6 +41,7 @@ public interface OptionVariantDao {
         FROM option_variant o
         LEFT JOIN inventory inv ON inv.optionVariantId = o.id
         WHERE o.id = :id
+          AND o.isActive = 1
         """)
     OptionVariant getOptionById(@Bind("id") Integer id);
 
@@ -44,7 +52,6 @@ public interface OptionVariantDao {
         """)
     Integer getStockByOptionId(@Bind("optionVariantId") Integer optionVariantId);
 
-
     @SqlUpdate("""
         UPDATE inventory
         SET quantity = quantity - :quantity
@@ -54,63 +61,106 @@ public interface OptionVariantDao {
     boolean decreaseStockIfEnough(@Bind("optionVariantId") Integer optionVariantId,
                                   @Bind("quantity") Integer quantity);
 
-    @SqlUpdate("update inventory\n" +
-            "set\n" +
-            "    quantity = :quantity " +
-            "where optionVariantId = :optionVariantId")
-    Boolean updateStock(@Bind("optionVariantId") Integer optionVariantId, @Bind("quantity") Integer quantity);
+    @SqlUpdate("""
+        UPDATE inventory
+        SET quantity = :quantity
+        WHERE optionVariantId = :optionVariantId
+        """)
+    Boolean updateStock(@Bind("optionVariantId") Integer optionVariantId,
+                        @Bind("quantity") Integer quantity);
 
-    @SqlQuery(value = "select *\n" +
-            "from option_variant\n" +
-            "where productId = :productId")
+    @SqlQuery("""
+        SELECT
+            o.id as id,
+            o.productId,
+            o.price,
+            COALESCE(inv.quantity, 0) as stock,
+            CAST(NULL AS SIGNED) as variantId,
+            CAST(NULL AS CHAR) as variantName,
+            CAST(NULL AS CHAR) as variantValue
+        FROM option_variant o
+        LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+        WHERE o.productId = :productId
+          AND o.isActive = 1
+        ORDER BY o.id
+        """)
     List<OptionVariant> getOptionsByProductId(@Bind("productId") Integer productId);
 
-    @SqlQuery(value = "select\n" +
-            "    o.id as id, o.productId, o.price,\n" +
-            "    SUM(inv.quantity) as stock,\n" +
-            "    v.id as variantId, v.name as variantName,\n" +
-            "    v.value as variantValue \n" +
-            "from\n" +
-            "    option_variant as o\n" +
-            "    inner join variant as v\n" +
-            "        on o.id = v.optionId\n" +
-            "    inner join inventory as inv\n" +
-            "        on inv.optionVariantId = o.id\n" +
-            "where o.id in (<optionIds>)\n" +
-            "GROUP BY o.id, o.productId, o.price, v.id, v.name, v.value\n")
+    @SqlQuery("""
+        SELECT
+            o.id as id,
+            o.productId,
+            o.price,
+            COALESCE(inv.quantity, 0) as stock,
+            v.id as variantId,
+            v.name as variantName,
+            v.value as variantValue
+        FROM option_variant as o
+        LEFT JOIN inventory as inv ON inv.optionVariantId = o.id
+        LEFT JOIN variant as v ON o.id = v.optionId
+        WHERE o.id in (<optionIds>)
+          AND o.isActive = 1
+        ORDER BY o.id, v.id
+        """)
     List<OptionVariant> getVariantByOptionId(@BindList("optionIds") List<Integer> optionIds);
 
     @SqlUpdate("""
-            UPDATE option_variant 
-            SET price = :price
-            WHERE id = :id
-            """)
+        UPDATE option_variant
+        SET price = :price,
+            isActive = 1
+        WHERE id = :id
+        """)
     boolean updateOption(@Bind("id") Integer id,
                          @Bind("price") Integer price);
 
     @SqlUpdate("""
-            UPDATE inventory
-            SET quantity = :quantity
-            WHERE optionVariantId = :optionVariantId
-            """)
+        UPDATE inventory
+        SET quantity = :quantity
+        WHERE optionVariantId = :optionVariantId
+        """)
     boolean updateOptionStock(@Bind("optionVariantId") Integer optionVariantId,
                               @Bind("quantity") Integer quantity);
 
+    @SqlUpdate("""
+        UPDATE option_variant
+        SET isActive = 0
+        WHERE productId = :productId
+          AND id NOT IN (<keepOptionIds>)
+        """)
+    int deactivateOptionsNotIn(@Bind("productId") Integer productId,
+                               @BindList("keepOptionIds") List<Integer> keepOptionIds);
+
+    @SqlUpdate("""
+        UPDATE option_variant
+        SET isActive = 0
+        WHERE productId = :productId
+        """)
+    int deactivateAllOptionsByProductId(@Bind("productId") Integer productId);
 
     @SqlQuery("""
-    SELECT
-        o.id as id,
-        o.productId,
-        o.price,
-        COALESCE(inv.quantity, 0) as stock,
-        v.id as variantId,
-        v.name as variantName,
-        v.value as variantValue
-    FROM option_variant o
-    LEFT JOIN inventory inv ON inv.optionVariantId = o.id
-    LEFT JOIN variant v ON v.optionId = o.id
-    WHERE o.productId = :productId
-    ORDER BY o.id, v.id
-""")
+        SELECT COUNT(*)
+        FROM option_variant
+        WHERE id = :optionId
+          AND productId = :productId
+        """)
+    int countOptionBelongsToProduct(@Bind("productId") Integer productId,
+                                    @Bind("optionId") Integer optionId);
+
+    @SqlQuery("""
+        SELECT
+            o.id as id,
+            o.productId,
+            o.price,
+            COALESCE(inv.quantity, 0) as stock,
+            v.id as variantId,
+            v.name as variantName,
+            v.value as variantValue
+        FROM option_variant o
+        LEFT JOIN inventory inv ON inv.optionVariantId = o.id
+        LEFT JOIN variant v ON v.optionId = o.id
+        WHERE o.productId = :productId
+          AND o.isActive = 1
+        ORDER BY o.id, v.id
+        """)
     List<OptionVariant> getOptionDetailsByProductId(@Bind("productId") Integer productId);
 }

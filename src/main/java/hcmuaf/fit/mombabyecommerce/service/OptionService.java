@@ -53,6 +53,9 @@ public class OptionService {
     public boolean decreaseStockIfEnough(Integer optionVariantId, Integer quantity) {
         return optionDao.decreaseStockIfEnough(optionVariantId, quantity);
     }
+    public void createInventory(Integer optionVariantId, Integer quantity) {
+        optionDao.createInventory(optionVariantId, quantity);
+    }
     public static void main(String[] args) {
         OptionService  optionService = new OptionService(DBConnection.getJdbi());
 
