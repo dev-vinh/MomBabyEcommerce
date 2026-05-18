@@ -1,6 +1,8 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.OptionVariantDao;
 import hcmuaf.fit.mombabyecommerce.Dao.ProductDao;
+import hcmuaf.fit.mombabyecommerce.Dao.VariantDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.ProductDTO;
@@ -46,8 +48,10 @@ public class ProductService {
 
     public Product addProduct(Product product) {
 
-        String generatedSku = "PRD-" + System.currentTimeMillis();
-        product.setSku(generatedSku);
+        if (product.getSku() == null || product.getSku().trim().isEmpty()) {
+            String generatedSku = "PRD-" + System.currentTimeMillis();
+            product.setSku(generatedSku);
+        }
 
         int productId = productDao.addProduct(
                 product.getName(), product.getDescription(),
@@ -120,7 +124,66 @@ public class ProductService {
                               Integer brandId) {
         return productDao.countProducts(categoryId, minPrice, maxPrice, brandId);
     }
+    public ProductDTO updateProductForAdmin(Integer productId,
+                                            String name,
+                                            String sku,
+                                            String description,
+                                            Boolean isActive,
+                                            Integer categoryId,
+                                            Integer brandId,
+                                            Integer imageId,
+                                            Integer optionId,
+                                            Integer price,
+                                            Integer stock,
+                                            List<Integer> variantIds) {
+        jdbi.useTransaction(handle -> {
+            ProductDao pDao = handle.attach(ProductDao.class);
+            OptionVariantDao optionDao = handle.attach(OptionVariantDao.class);
+            VariantDao variantDao = handle.attach(VariantDao.class);
 
+            boolean updated = pDao.updateProduct(
+                    productId,
+                    name,
+                    sku,
+                    description,
+                    isActive,
+                    categoryId,
+                    brandId,
+                    imageId
+            );
+
+            if (!updated) {
+                throw new IllegalArgumentException("Không tìm thấy sản phẩm cần cập nhật.");
+            }
+
+            Integer finalOptionId = optionId;
+            if (finalOptionId == null || finalOptionId <= 0) {
+                finalOptionId = optionDao.createOption(productId, price);
+                optionDao.createInventory(finalOptionId, stock);
+            } else {
+                boolean optionUpdated = optionDao.updateOption(finalOptionId, price);
+                if (!optionUpdated) {
+                    throw new IllegalArgumentException("Không tìm thấy biến thể giá cần cập nhật.");
+                }
+
+                boolean stockUpdated = optionDao.updateOptionStock(finalOptionId, stock);
+                if (!stockUpdated) {
+                    optionDao.createInventory(finalOptionId, stock);
+                }
+            }
+
+            if (variantIds != null) {
+                variantDao.deleteOptionVariants(finalOptionId);
+                for (Integer variantId : variantIds) {
+                    if (variantId != null && variantId > 0) {
+                        variantDao.addOptionVariantValue(finalOptionId, variantId);
+                    }
+                }
+            }
+        });
+
+        return editProductById(productId);
+    }
     public static void main(String[] args) {
         ProductService productService = new ProductService(DBConnection.getJdbi());
         // System.out.println(productService.suggestProducts( ).size());

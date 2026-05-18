@@ -52,7 +52,7 @@
             <div class="form-row">
               <div class="form-group half-width">
                 <label for="sku">Mã SKU</label>
-                <input type="text" id="sku"  disabled>
+                <input type="text" id="sku" placeholder="VD: SKU-001">
               </div>
 
               <div class="form-group half-width">
@@ -107,7 +107,7 @@
             <p id="dragDropText">Kéo và thả tệp của bạn vào đây</p>
             <span>hoặc</span>
             <form id="uploadForm" enctype="multipart/form-data">
-              <input type="file" id="fileInput" name="file" style="display: none;" accept=".png, .jpg, .jpeg" multiple />
+              <input type="file" id="fileInput" name="file" style="display: none;" accept=".png, .jpg, .jpeg, .webp, .gif" multiple />
               <button type="button" class="browse-files" id="uploadButton">Tải ảnh lên</button>
             </form>
           </div>
@@ -134,12 +134,12 @@
 
               <label for="productName">Thuộc tính</label>
               <div class="option-group">
-                <select class="option-select" id="variant-select" onchange="fetchVariantValues(this.value)">
+                <select class="option-select variant-select" id="variant-select">
                   <option value="">Chọn danh mục</option>
                 </select>
 
                 <!-- Variant Value Dropdown -->
-                <select class="option-select" id="variant-value-select">
+                <select class="option-select variant-value-select" id="variant-value-select">
                   <option value="">Chọn giá trị</option>
                 </select>
 
@@ -161,14 +161,15 @@
           <select id="vendor"  data-url="<%= request.getContextPath() %>categories">
             <option value="winter">Chọn nhà cung cấp</option>
           </select>
-
-          <%--                    <label for="tags">Thẻ</label>--%>
-          <%--                    <input type="text" id="tags" placeholder="Nhập thẻ tại đây">--%>
         </div>
-
+        <label for="statusSelect">Trạng thái hoạt động <span class="required">*</span></label>
+        <select id="statusSelect">
+          <option value="true">Hoạt động</option>
+          <option value="false">Không hoạt động</option>
+        </select>
 
         <div class="save">
-          <button id="saveButton" onclick="saveProductDetails()"> Lưu</button>
+          <button type="button" id="saveButton">Lưu</button>
         </div>
 
       </div>

@@ -26,7 +26,11 @@ import java.util.List;
 import java.util.Properties;
 
 @WebServlet("/api/uploadImage")
-@MultipartConfig
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 3 * 1024 * 1024,
+        maxRequestSize = 20 * 1024 * 1024
+)
 public class UploadImageController extends HttpServlet {
     private ImageService imageService;
 

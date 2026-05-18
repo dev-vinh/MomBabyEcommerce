@@ -161,9 +161,8 @@
                     <i class="fa-solid fa-chevron-down" style="padding: 5px;"></i>
                   </button>
                   <div class="dropdown-content">
-
-                                        <span class="icon edit-icon">
-    <a href="addProduct.jsp?id=${p.id}">
+                 <span class="icon edit-icon">
+            <a href="${pageContext.request.contextPath}/admin/add-product?id=${p.id}">
         <i class="fa-solid fa-pen-to-square" style="padding: 5px;"></i> Chỉnh sửa
     </a>
 </span>

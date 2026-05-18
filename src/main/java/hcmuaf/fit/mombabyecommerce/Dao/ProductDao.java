@@ -318,30 +318,24 @@ public interface ProductDao {
     );
 
     @SqlUpdate("""
-            UPDATE products 
-            SET name = :name,
-                description = :description,
-                sku = :sku,
-                categoryId = :categoryId,
-                brandId = :brandId,
-                primaryImage = COALESCE(:primaryImage, primaryImage),
-                height = :height,
-                length = :length,
-                width = :width,
-                weight = :weight
-            WHERE id = :id
-            """)
+        UPDATE products
+        SET name = :name,
+            sku = :sku,
+            description = :description,
+            isActive = :isActive,
+            categoryId = :categoryId,
+            brandId = :brandId,
+            imageId = COALESCE(:imageId, imageId)
+        WHERE id = :id
+        """)
     boolean updateProduct(@Bind("id") Integer id,
                           @Bind("name") String name,
-                          @Bind("description") String description,
                           @Bind("sku") String sku,
+                          @Bind("description") String description,
+                          @Bind("isActive") Boolean isActive,
                           @Bind("categoryId") Integer categoryId,
                           @Bind("brandId") Integer brandId,
-                          @Bind("primaryImage") Integer primaryImage,
-                          @Bind("height") Integer height,
-                          @Bind("length") Integer length,
-                          @Bind("width") Integer width,
-                          @Bind("weight") Integer weight);
+                          @Bind("imageId") Integer imageId);
 
     @SqlQuery("""
     SELECT COUNT(DISTINCT p.id)
