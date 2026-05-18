@@ -120,25 +120,33 @@ public class GoogleCallbackServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/login?error=Account%20is%20disabled");
                 return;
             }
-            HttpSession session = request.getSession();
+
+
+            if (user.getRole() == null) {
+                throw new RuntimeException("User chưa có role");
+            }
+
+            List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
+            List<String> permissionTypes = permissions.stream()
+                    .map(p -> p.getType().toString())
+                    .collect(Collectors.toList());
+            HttpSession oldSession = request.getSession(false);
+
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+            HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("sessionId", session.getId());
+            session.setAttribute("roleType", user.getRole().getRoleType().name());
+            session.setAttribute("permissions", permissionTypes);
 
             try {
                 emailService.sendLoginNotification(user.getEmail(), user.getFullName());
             } catch (Exception e) {
                 System.err.println("Email notification failed: " + e.getMessage());
             }
-            if (user.getRole() == null) {
-                throw new RuntimeException("User chưa có role");
-            }
-            List<Permission> permissions = authService.getPermissionsByRoleId(user.getRole().getId());
-            List<String> permissionTypes = permissions.stream()
-                    .map(p -> p.getType().toString())
-                    .collect(Collectors.toList());
-            session.setAttribute("user", user);
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("roleType", user.getRole().getRoleType().name());
-            session.setAttribute("permissions", permissionTypes);
 
             String roleType = user.getRole().getRoleType().name();
             String redirectUrl;
