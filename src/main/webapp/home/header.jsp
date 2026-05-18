@@ -203,38 +203,29 @@
     </div>
 </div>
 <script>
-    const modal = document.getElementById("loginModal");
-    const btn = document.getElementById("login-link");
-    const span = document.querySelector(".close-btn-auth");
-    document.addEventListener('click', function (e) {
-        // Kiểm tra xem phần tử bị click có phải là nút login không
-        if (e.target && e.target.id === 'login-link') {
-            // Ngăn chặn hành động chuyển trang hoặc nhảy lên đầu trang của href="#"
-            e.preventDefault();
+    document.addEventListener("DOMContentLoaded", function () {
 
-            const modal = document.getElementById("loginModal");
-            if (modal) {
+        const modal = document.getElementById("loginModal");
+        const btn = document.getElementById("login-link");
+        const span = document.querySelector(".close-btn-auth");
+        if (btn && modal) {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
                 modal.style.display = "block";
-                console.log("Mở popup login");
+            });
+        }
+        if (span && modal) {
+            span.addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+        }
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
             }
-        }
+        });
+
     });
-    // Khi nhấn vào chữ Đăng nhập trên Header
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-
-    // Khi nhấn vào dấu (x)
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // Khi nhấn chuột ra ngoài vùng Popup
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
 </script>
 <script>
   window.contextPath = "${pageContext.request.contextPath}";

@@ -23,7 +23,8 @@ public class OrderService {
                 order.getUserId(),
                 order.getAddressId(),
                 order.getCardId(),
-                order.getCOD()
+                order.getCOD(),
+                order.getShippingFee()
         );
     }
 
