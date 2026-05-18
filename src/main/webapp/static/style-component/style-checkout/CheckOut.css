@@ -1,0 +1,447 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica Neue, Helvetica, Arial, serif;
+}
+html{
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+body{
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+
+/*Reuse*/
+.mid_align{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.rec_horizontal{
+    width: 100%;
+    height: 1px;
+    background-color: #cfcfcf;
+    margin-top: 20px;
+}
+
+.rec_vertical{
+    height: 70%;
+    width: 1px;
+    background-color: #cfcfcf;
+    margin:  0 10px;
+    min-height: 20px;
+}
+
+
+
+
+
+i{
+    color: #616060;
+}
+
+a{
+    text-decoration: none;
+    color: #000000;
+}
+
+
+.f12{
+    font-size: 12px;
+}
+
+
+.f16{
+    font-size: 16px;
+}
+.f18{
+    font-size: 18px;
+}
+
+.f22{
+    font-size: 22px;
+
+}
+
+.bold{
+    font-weight: 500;
+}
+
+/*Header*/
+#header{
+    width: 100%;
+    height: 70px;
+    font-size: 22px;
+    justify-content: center;
+
+}
+
+#header .cart_header{
+    width: 100%;
+    height: 70px;
+}
+
+
+
+.nav{
+    padding: 20px 100px;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+
+/*Body*/
+#body{
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+
+}
+
+.container{
+    width: 80%;
+    height: 100%;
+
+}
+
+.container .left-side{
+    width: 60%;
+
+}
+
+.container .left-side iframe{
+    width: 100%;
+    height: 160px;
+    padding-top: 10px;
+
+}
+
+
+/*Address*/
+.address{
+    margin-top: 10px;
+    width: 100%;
+
+
+}
+.address_title, .payment_title{
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 10px;
+}
+
+.address_title span   {
+    font-size: 18px;
+    color: #333333;
+}
+
+.address_title button{
+    border: none;
+    background-color: transparent;
+}
+
+
+.address_body {
+    width: 100%;
+    background-color: rgba(241, 241, 241, 0.6);
+    border-radius: 10px;
+    padding: 20px ;
+    font-size: 14px;
+
+}
+
+
+.address_body .item_header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.address_body .address_detail{
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    padding-left: 10px;
+    color: #494949;
+}
+
+
+
+
+
+.payment{
+    padding-top: 20px;
+}
+
+.payment_title{
+    font-size: 18px;
+    color: #333333;
+}
+
+.payment_body{
+    width: 100%;
+    background-color: rgba(241, 241, 241, 0.6);
+    border-radius: 10px;
+    padding: 20px 20px 5px 20px  ;
+    font-size: 14px;
+    justify-content: flex-start;
+}
+
+
+.payment_body .cod{
+
+}
+
+
+.payment_body  i{
+    margin-right: 10px;
+
+}
+
+.banking input, .payment_body input{
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+}
+
+.payment_body .item{
+}
+
+
+.payment_body .cod{
+    padding-bottom: 10px;
+
+}
+.payment_body .banking{
+    display: flex;
+    align-items:flex-start;
+}
+
+.payment_body .card_list{
+    padding-top: 10px;
+    padding-left: 30px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+}
+.payment_body .card_item{
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.payment_body .card_list .wrap_card{
+    display: flex;
+    width: 100%;
+}
+
+.wrap_card input{
+    margin-left: auto;
+    cursor: pointer;
+}
+.banking .title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*right-side*/
+.right-side{
+    width: 40%;
+    padding: 10px 20px;
+}
+.right-side .bill{
+    width: 100%;
+    height: 520px;
+    border: 1px solid gray;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.bill .discount{
+    width: 100%;
+    /*padding-bottom: 10px;*/
+    border-bottom: 1px solid #bcbcbc;
+
+}
+
+
+.discount .title{
+    font-size: 14px;
+    color: #616060;
+    width: 100%;
+    display: flex;
+
+    text-align: left;
+}
+
+.wrap_input{
+    height:50px;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+.wrap_input input{
+    width: 60%;
+    height: 100%;
+    padding-left: 5px;
+    outline: none;
+    border: none;
+
+    /*border-bottom: 1px solid gray;*/
+}
+
+.wrap_input button{
+    width: 30%;
+    height:80%;
+    border: 1px solid gray;
+    border-radius: 20px;
+    color: white;
+    margin-left: 20px;
+    background-color: #0a7cff;
+}
+
+
+.summary{
+    padding: 20px 0;
+    width: 100%;
+    border-bottom: 1px solid #bcbcbc;
+}
+
+.summary .title{
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    text-align: left;
+    padding-bottom: 5px;
+}
+
+.summary .item_price{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 14px;
+}
+
+
+.summary .item_price .value{
+    font-weight: bold;
+}
+
+
+/*Total*/
+.wrap_total{
+    width: 100%;
+    padding: 20px 0;
+
+}
+.wrap_total .total_label{
+    width: 100%;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.wrap_total .note {
+    width: 100%;
+    display: flex;
+    text-align: left;
+    font-size: 10px ;
+    padding-top: 5px;
+}
+
+#pay   {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid gray;
+    background-color: #0170F0;
+    font-weight: 400;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+
+}
+#pay:hover {
+    transition: 0.4s;
+    scale: 1.025;
+}
+
+.term_condition{
+    padding: 20px 0;
+    font-size: 10px;
+}
+
+
+.term_condition a{
+    color: #0077ff;
+    text-decoration: underline;
+}
+
+
+.ads{
+    width: 100%;
+    padding-top: 0;
+}
+.ads .ads_item{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 12px;
+    line-height: 2;
+    text-align: center;
+    align-items: center;
+    color: #555555;
+}
+
+.ads i{
+    font-size: 16px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+
+}
+
+.ads span{
+    padding-left:5px;
+}
