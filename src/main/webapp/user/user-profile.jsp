@@ -68,7 +68,7 @@
                                            value="${user.fullName}" placeholder="Full Name">
 
                                     <span class="name_title">Tên hiển thị :</span>
-                                    <input id="displayName" name="displayName" type="text"
+                                    <input id="profileDisplayName" name="displayName" type="text"
                                            value="${user.displayName}" placeholder="Display name">
 
                                     <div class="gender row">

@@ -101,8 +101,7 @@ $(document).ready(function () {
 
 function update_profile() {
     const name = $('#name').val().trim();
-    const displayName = $('#displayName').val().trim();
-
+    const displayName = $('#profileDisplayName').val().trim();
     const gender = $('input[name="gender"]:checked');
     const genderValue = gender.length > 0 ? gender.val() : null;
 
@@ -135,9 +134,9 @@ function update_profile() {
             if (data.success) {
 
                 $('#name').val(name);
-                $('#displayName').val(displayName);
+                $('#profileDisplayName').val(displayName);
                 $('#phone').val(phone);
-                $('.nav_item').text("Xin chào " + displayName);
+                $('#headerDisplayName').text("Xin chào " + displayName);
 
                 alert("Update success!");
             } else {
