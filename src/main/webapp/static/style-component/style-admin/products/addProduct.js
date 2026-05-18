@@ -7,9 +7,23 @@ let currentOptionId = null;
 let currentImageId = null;
 let currentImageUrl = null;
 let allVariants = [];
-
+console.log('addProduct.js fixed version loaded');
 function $(id) {
     return document.getElementById(id);
+}
+function setInputValue(id, value) {
+    const element = $(id);
+
+    if (!element) {
+        console.warn(`Không tìm thấy element có id="${id}" trong addProduct.jsp`);
+        return;
+    }
+
+    element.value = value ?? '';
+}
+function getInputValue(id) {
+    const element = $(id);
+    return element ? element.value : '';
 }
 
 function notify(message, type = 'info') {
@@ -67,14 +81,16 @@ function getSelectedVariantIds() {
 }
 
 function gatherProductData() {
-    const name = $('productName').value.trim();
-    const sku = $('sku').value.trim();
-    const categoryId = $('categoryDropdown').value;
-    const brandId = $('vendor').value;
-    const description = $('description').value.trim();
-    const price = $('price').value.trim();
-    const stock = $('total').value.trim();
-    const isActive = $('statusSelect') ? $('statusSelect').value === 'true' : true;
+    const name = getInputValue('productName').trim();
+    const sku = getInputValue('sku').trim();
+    const categoryId = getInputValue('categoryDropdown');
+    const brandId = getInputValue('vendor');
+    const description = getInputValue('description').trim();
+    const price = getInputValue('price').trim();
+    const stock = getInputValue('total').trim();
+
+    const statusElement = $('statusSelect');
+    const isActive = statusElement ? statusElement.value === 'true' : true;
 
     if (!name) throw new Error('Tên sản phẩm không được để trống.');
     if (!sku) throw new Error('SKU không được để trống.');
@@ -447,14 +463,19 @@ async function fetchProductDetails(productId) {
     const data = await fetchJson(`${ADMIN_BASE}/editProduct?id=${productId}`);
     const product = data.data;
 
-    $('productName').value = product.name || '';
-    $('sku').value = product.sku || '';
-    $('categoryDropdown').value = product.categoryId || '';
-    $('description').value = product.description || '';
-    $('price').value = product.price || '';
-    $('total').value = product.stock ?? 0;
-    $('vendor').value = product.brandId || '';
-    if ($('statusSelect')) $('statusSelect').value = String(product.active !== false);
+    setInputValue('productName', product.name || '');
+    setInputValue('sku', product.sku || '');
+    setInputValue('categoryDropdown', product.categoryId || '');
+    setInputValue('description', product.description || '');
+    setInputValue('price', product.price || '');
+    setInputValue('total', product.stock ?? 0);
+    setInputValue('vendor', product.brandId || '');
+
+    const statusValue = product.active !== undefined
+        ? product.active
+        : product.isActive;
+
+    setInputValue('statusSelect', String(statusValue !== false));
 
     currentOptionId = product.optionId || null;
     currentImageId = product.imageId || null;
@@ -550,8 +571,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (currentProductId) {
             await fetchProductDetails(currentProductId);
         } else {
-            if (!$('sku').value.trim()) {
-                $('sku').value = `PRD-${Date.now()}`;
+            if (!getInputValue('sku').trim()) {
+                setInputValue('sku', `PRD-${Date.now()}`);
             }
             await loadVariantsByCategory(categoryDropdown?.value || null);
             validateSaveButton();

@@ -24,7 +24,13 @@ public class VariantService {
         return variantDao.addOptionVariantValue(optionId, variantId);
     }
 
+    public List<Variant> getVariantsByCategoryId(Integer categoryId) {
+        return variantDao.getVariantsByCategoryId(categoryId);
+    }
 
+    public List<Variant> getVariantValuesByVariantId(Integer variantId) {
+        return variantDao.getVariantValuesByVariantId(variantId);
+    }
 
 }
 

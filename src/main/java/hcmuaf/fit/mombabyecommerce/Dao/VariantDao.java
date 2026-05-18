@@ -35,17 +35,14 @@ public interface VariantDao {
     List<Variant> getVariantValuesByVariantId(@Bind("id") Integer id);
 
     @SqlQuery("""
-        SELECT MIN(id) as id,
-               categoryId,
-               name,
+        SELECT a.id as id,
+               a.categoryId as categoryId,
+               a.name as name,
                CAST(NULL AS CHAR) as value,
                CAST(NULL AS SIGNED) as optionId
-        FROM variant
-        WHERE optionId IS NULL
-          AND (categoryId IS NULL OR categoryId = :categoryId)
-          AND name IS NOT NULL
-        GROUP BY categoryId, name
-        ORDER BY name
+        FROM attributes a
+        WHERE (:categoryId IS NULL OR a.categoryId = :categoryId)
+        ORDER BY a.name
         """)
     List<Variant> getVariantsByCategoryId(@Bind("categoryId") Integer categoryId);
 

@@ -115,6 +115,11 @@ public class ProductService {
     // mới thêm vô bởi NV
     public ProductDTO editProductById(int id) {
         Product product = productDao.editProduct(id);
+
+        if (product == null) {
+            return null;
+        }
+
         List<Variant> variants = productDao.getVariants(id);
         return new ProductDTO(product, variants);
     }

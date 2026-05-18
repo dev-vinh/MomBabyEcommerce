@@ -8,7 +8,9 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -183,6 +185,6 @@
 </div>
 
 
-<script src="${pageContext.request.contextPath}/static/style-component/style-admin/products/addProduct.js"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/style-admin/products/addProduct.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 </html>

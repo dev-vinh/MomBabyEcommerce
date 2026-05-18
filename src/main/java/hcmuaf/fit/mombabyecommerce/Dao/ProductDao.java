@@ -183,59 +183,46 @@ public interface ProductDao {
     @SqlUpdate("UPDATE products SET isActive = false WHERE id = :id")
     boolean deactivateProduct(@Bind("id") int id);
 
-    @SqlQuery(value = """
-                SELECT p.id as id, p.name as name, p.description as description,
-                       p.sku as sku, p.isActive as isActive, p.brandId as brandId,
-                       p.noOfViews as noOfViews, p.noOfSold as noOfSold,
-                       p.categoryId as categoryId, p.imageId as imageId,
-                       ops.id as optionId, ops.price as price,
-                       inv.quantity as stock,
-                       img.url as imageUrl,
-                       v.id as variantId,
-                       v.value as variantValue,
-                       v.name as variantName
-                FROM products p
-                    INNER JOIN categories cate ON cate.id = p.categoryId
-                    INNER JOIN option_variant ops ON ops.productId = p.id
-                    INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-                    INNER JOIN image img ON p.imageId = img.id
-                    INNER JOIN variant v ON ops.id = v.optionId
-                WHERE p.id = :id
-                  AND ops.price = (
-                        SELECT MIN(o.price)
-                        FROM option_variant o
-                        JOIN inventory i ON i.optionVariantId = o.id
-                        WHERE p.id = o.productId AND i.quantity > 0
-                  )
-            """)
+    @SqlQuery("""
+        SELECT p.id as id,
+               p.name as name,
+               p.description as description,
+               p.sku as sku,
+               p.isActive as isActive,
+               p.brandId as brandId,
+               p.noOfViews as noOfViews,
+               p.noOfSold as noOfSold,
+               p.categoryId as categoryId,
+               p.imageId as imageId,
+               ops.id as optionId,
+               ops.price as price,
+               COALESCE(inv.quantity, 0) as stock,
+               img.url as imageUrl
+        FROM products p
+        LEFT JOIN option_variant ops ON ops.productId = p.id
+        LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+        LEFT JOIN image img ON img.id = p.imageId
+        WHERE p.id = :id
+        ORDER BY 
+            CASE WHEN COALESCE(inv.quantity, 0) > 0 THEN 0 ELSE 1 END,
+            ops.price ASC,
+            ops.id ASC
+        LIMIT 1
+        """)
     @RegisterConstructorMapper(Product.class)
     Product editProduct(@Bind("id") int id);
 
     @SqlQuery("""
-                SELECT p.id as id, p.name as name, p.description as description,
-                       p.sku as sku, p.isActive as isActive, p.brandId as brandId,
-                       p.noOfViews as noOfViews, p.noOfSold as noOfSold,
-                       p.categoryId as categoryId, p.imageId as imageId,
-                       ops.id as optionId, ops.price as price,
-                       inv.quantity as stock,
-                       img.url as imageUrl,
-                       v.id as variantId,
-                       v.value as variantValue,
-                       v.name as variantName
-                FROM products p
-                    INNER JOIN categories cate ON cate.id = p.categoryId
-                    INNER JOIN option_variant ops ON ops.productId = p.id
-                    INNER JOIN inventory inv ON inv.optionVariantId = ops.id
-                    INNER JOIN image img ON p.imageId = img.id
-                    INNER JOIN variant v ON ops.id = v.optionId
-                WHERE p.id = :id
-                  AND ops.price = (
-                        SELECT MIN(o.price)
-                        FROM option_variant o
-                        JOIN inventory i ON i.optionVariantId = o.id
-                        WHERE p.id = o.productId AND i.quantity > 0
-                  )
-            """)
+        SELECT v.id as id,
+               v.categoryId as categoryId,
+               v.name as name,
+               v.value as value,
+               v.optionId as optionId
+        FROM option_variant ops
+        JOIN variant v ON v.optionId = ops.id
+        WHERE ops.productId = :id
+        ORDER BY ops.id, v.id
+        """)
     @RegisterConstructorMapper(Variant.class)
     List<Variant> getVariants(@Bind("id") int id);
 

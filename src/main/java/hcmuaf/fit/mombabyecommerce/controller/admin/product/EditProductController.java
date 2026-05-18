@@ -28,13 +28,20 @@ public class EditProductController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         try {
             int productId = Integer.parseInt(request.getParameter("id"));
             ProductDTO productDTO = productService.editProductById(productId);
 
             if (productDTO == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write("{\"message\": \"Product not found\"}");
+                response.getWriter().write(new ResponseWrapper<>(
+                        HttpServletResponse.SC_NOT_FOUND,
+                        "error",
+                        "Không tìm thấy sản phẩm.",
+                        null
+                ).toJson());
                 return;
             }
 
