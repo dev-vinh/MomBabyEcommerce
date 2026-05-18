@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "VariantController", urlPatterns = {"/admin/api/variants/*"})
+@WebServlet(name = "VariantController", urlPatterns = {"/admin/api/variants", "/admin/api/variants/*"})
 public class VariantController extends HttpServlet {
 
     private final VariantService variantService = new VariantService(DBConnection.getJdbi());
@@ -23,12 +23,19 @@ public class VariantController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         try {
             String pathInfo = request.getPathInfo();
 
+            // URL dạng: /admin/api/variants/1
+            // 1 ở đây là attributes.id
             if (pathInfo != null && pathInfo.length() > 1) {
-                Integer variantId = Integer.parseInt(pathInfo.substring(1));
-                List<Variant> values = variantService.getVariantValuesByVariantId(variantId);
+                Integer attributeId = Integer.parseInt(pathInfo.substring(1));
+
+                List<Variant> values = variantService.getVariantValuesByAttributeId(attributeId);
 
                 writeResponse(response, new ResponseWrapper<>(
                         HttpServletResponse.SC_OK,
@@ -39,6 +46,7 @@ public class VariantController extends HttpServlet {
                 return;
             }
 
+            // URL dạng: /admin/api/variants?categoryId=1
             Integer categoryId = null;
             String categoryIdParam = request.getParameter("categoryId");
 
@@ -51,7 +59,7 @@ public class VariantController extends HttpServlet {
             writeResponse(response, new ResponseWrapper<>(
                     HttpServletResponse.SC_OK,
                     "success",
-                    "Lấy danh sách biến thể thành công.",
+                    "Lấy danh sách thuộc tính thành công.",
                     variants
             ));
 
@@ -59,7 +67,7 @@ public class VariantController extends HttpServlet {
             writeResponse(response, new ResponseWrapper<>(
                     HttpServletResponse.SC_BAD_REQUEST,
                     "error",
-                    "Mã biến thể hoặc danh mục không hợp lệ.",
+                    "Mã thuộc tính không hợp lệ.",
                     null
             ));
         } catch (Exception e) {
@@ -73,19 +81,7 @@ public class VariantController extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        writeResponse(response, new ResponseWrapper<>(
-                HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-                "error",
-                "API này chưa hỗ trợ POST.",
-                null
-        ));
-    }
-
     private void writeResponse(HttpServletResponse response, ResponseWrapper<?> responseWrapper) throws IOException {
-        response.setContentType("application/json;charset=UTF-8");
         response.setStatus(responseWrapper.getStatusCode());
         response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
     }

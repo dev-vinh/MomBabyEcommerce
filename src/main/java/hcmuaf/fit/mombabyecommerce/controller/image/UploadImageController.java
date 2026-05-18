@@ -3,11 +3,11 @@ package hcmuaf.fit.mombabyecommerce.controller.image;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import hcmuaf.fit.mombabyecommerce.Dao.ImageDao;
+import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Image;
-import hcmuaf.fit.mombabyecommerce.service.ImageService;
 import hcmuaf.fit.mombabyecommerce.util.ResponseWrapper;
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,15 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 @WebServlet("/api/uploadImage")
 @MultipartConfig(
@@ -32,109 +30,164 @@ import java.util.Properties;
         maxRequestSize = 20 * 1024 * 1024
 )
 public class UploadImageController extends HttpServlet {
-    private ImageService imageService;
+    private Cloudinary cloudinary;
+    private ImageDao imageDao;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void init() throws ServletException {
-        super.init();
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Properties properties = new Properties();
-            try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-                if (input == null) {
-                    throw new ServletException("Không tìm thấy file application.properties");
-                }
-                properties.load(input);
-            }
-
-            String dbUrl = properties.getProperty("db.url");
-            String dbUsername = properties.getProperty("db.username");
-            String dbPassword = properties.getProperty("db.password");
-
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                    "cloud_name", "dqvztmq3e",
-                    "api_key", "762487298112211",
-                    "api_secret", "YXeS3WUg2HJ-1Pk1tfoePQotfXk"
-            ));
-
-            Jdbi jdbi = Jdbi.create(dbUrl, dbUsername, dbPassword);
-            jdbi.installPlugin(new SqlObjectPlugin());
-
-            ImageDao imageDao = jdbi.onDemand(ImageDao.class);
-            imageService = new ImageService(cloudinary, imageDao);
-
-        } catch (ClassNotFoundException e) {
-            throw new ServletException("MySQL  Driver không tìm thấy", e);
-        } catch (Exception e) {
-            throw new ServletException("Lỗi khi khởi tạo", e);
-        }
+        cloudinary = initCloudinary();
+        imageDao = DBConnection.getJdbi().onDemand(ImageDao.class);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        try {
+            List<Part> imageParts = getImageParts(request);
 
-        Collection<Part> fileParts = request.getParts();
-        List<Image> uploadedImages = new ArrayList<>();
+            if (imageParts.isEmpty()) {
+                throw new IllegalArgumentException("Không tìm thấy file để upload.");
+            }
 
-        if (fileParts != null && !fileParts.isEmpty()) {
-            for (Part filePart : fileParts) {
-                String fileName = filePart.getSubmittedFileName();
-                String contentType = filePart.getContentType();
-                if (contentType != null && fileName != null &&
-                        (contentType.equals("image/png") || contentType.equals("image/jpeg")) &&
-                        (fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))) {
+            if (imageParts.size() > 10) {
+                throw new IllegalArgumentException("Chỉ được upload tối đa 10 ảnh sản phẩm mỗi lần.");
+            }
 
-                    if (filePart.getSize() > 0) {
-                        try (InputStream inputStream = filePart.getInputStream()) {
-                            byte[] fileBytes = inputStream.readAllBytes();
-                            String imageUrl = imageService.uploadImage(fileBytes);
-                            int generatedId = imageService.saveImage(imageUrl);
-                            uploadedImages.add(new Image(generatedId, imageUrl));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            List<Image> uploadedImages = new ArrayList<>();
+
+            for (Part part : imageParts) {
+                validateImage(part);
+
+                try (InputStream inputStream = part.getInputStream()) {
+                    byte[] fileBytes = inputStream.readAllBytes();
+
+                    Map uploadResult = cloudinary.uploader().upload(
+                            fileBytes,
+                            ObjectUtils.asMap(
+                                    "folder", "mom-baby/products",
+                                    "resource_type", "image"
+                            )
+                    );
+
+                    String imageUrl = (String) uploadResult.get("secure_url");
+                    if (imageUrl == null || imageUrl.isBlank()) {
+                        imageUrl = (String) uploadResult.get("url");
                     }
-                } else {
-                    System.out.println("File không hợp lệ: " + fileName + " (Loại: " + contentType + ")");
+                    if (imageUrl == null || imageUrl.isBlank()) {
+                        throw new IllegalArgumentException("Upload ảnh sản phẩm lên Cloudinary thất bại.");
+                    }
+
+                    int generatedId = imageDao.saveImage(imageUrl);
+                    uploadedImages.add(new Image(generatedId, imageUrl));
                 }
             }
 
-            if (!uploadedImages.isEmpty()) {
-                ResponseWrapper<Object> responseWrapper = new ResponseWrapper<>(
-                        HttpServletResponse.SC_OK,
-                        "Thành công",
-                        "Tất cả ảnh đã được upload thành công!",
-                        uploadedImages
-                );
-                response.setStatus(HttpServletResponse.SC_OK); // 200
-                response.getWriter().println(objectMapper.writeValueAsString(responseWrapper));
-            } else {
-                ResponseWrapper<Object> errorResponse = new ResponseWrapper<>(
-                        HttpServletResponse.SC_BAD_REQUEST,
-                        "Lỗi",
-                        "Chỉ chấp nhận ảnh PNG hoặc JPG hợp lệ để upload.",
-                        null
-                );
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-                response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
-            }
-        } else {
-            ResponseWrapper<Object> errorResponse = new ResponseWrapper<>(
+            writeResponse(response, new ResponseWrapper<>(
+                    HttpServletResponse.SC_OK,
+                    "success",
+                    "Upload ảnh sản phẩm thành công.",
+                    uploadedImages
+            ));
+        } catch (IllegalArgumentException e) {
+            writeResponse(response, new ResponseWrapper<>(
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "Lỗi",
-                    "Không tìm thấy file để upload.",
+                    "error",
+                    e.getMessage(),
                     null
-            );
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            response.getWriter().println(objectMapper.writeValueAsString(errorResponse));
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            writeResponse(response, new ResponseWrapper<>(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "error",
+                    "Không thể upload ảnh sản phẩm lên Cloudinary.",
+                    null
+            ));
         }
     }
 
+    private Cloudinary initCloudinary() throws ServletException {
+        try {
+            Dotenv dotenv = Dotenv.configure()
+                    .ignoreIfMissing()
+                    .load();
 
+            String cloudName = dotenv.get("CLOUDINARY_CLOUD_NAME");
+            String apiKey = dotenv.get("CLOUDINARY_API_KEY");
+            String apiSecret = dotenv.get("CLOUDINARY_API_SECRET");
 
+            if (isBlank(cloudName) || isBlank(apiKey) || isBlank(apiSecret)) {
+                throw new ServletException("Thiếu cấu hình Cloudinary trong file .env");
+            }
+
+            return new Cloudinary(ObjectUtils.asMap(
+                    "cloud_name", cloudName,
+                    "api_key", apiKey,
+                    "api_secret", apiSecret,
+                    "secure", true
+            ));
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ServletException("Lỗi khi khởi tạo Cloudinary", e);
+        }
+    }
+
+    private List<Part> getImageParts(HttpServletRequest request) throws IOException, ServletException {
+        Collection<Part> parts = request.getParts();
+        List<Part> imageParts = new ArrayList<>();
+
+        for (Part part : parts) {
+            if (part.getSize() > 0 && part.getSubmittedFileName() != null) {
+                imageParts.add(part);
+            }
+        }
+
+        return imageParts;
+    }
+
+    private void validateImage(Part part) {
+        String contentType = part.getContentType();
+        String fileName = part.getSubmittedFileName();
+
+        if (contentType == null || fileName == null) {
+            throw new IllegalArgumentException("File ảnh không hợp lệ.");
+        }
+
+        boolean validContentType = contentType.equals("image/jpeg")
+                || contentType.equals("image/png")
+                || contentType.equals("image/webp")
+                || contentType.equals("image/gif");
+
+        if (!validContentType) {
+            throw new IllegalArgumentException("Chỉ chấp nhận ảnh JPG, PNG, WEBP hoặc GIF.");
+        }
+
+        String lowerFileName = fileName.toLowerCase();
+        boolean validExtension = lowerFileName.endsWith(".jpg")
+                || lowerFileName.endsWith(".jpeg")
+                || lowerFileName.endsWith(".png")
+                || lowerFileName.endsWith(".webp")
+                || lowerFileName.endsWith(".gif");
+
+        if (!validExtension) {
+            throw new IllegalArgumentException("Định dạng ảnh không hợp lệ.");
+        }
+
+        if (part.getSize() > 3 * 1024 * 1024) {
+            throw new IllegalArgumentException("Mỗi ảnh tối đa 3MB.");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private void writeResponse(HttpServletResponse response, ResponseWrapper<?> responseWrapper) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(responseWrapper.getStatusCode());
+        response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
+    }
 }

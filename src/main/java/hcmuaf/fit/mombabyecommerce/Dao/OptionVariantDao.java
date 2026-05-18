@@ -14,9 +14,13 @@ import java.util.List;
 public interface OptionVariantDao {
 
 
-    @SqlUpdate("INSERT INTO option_variant (productId, price) VALUES (:productId, :price)")
+    @SqlUpdate("""
+        INSERT INTO option_variant (productId, price, isActive)
+        VALUES (:productId, :price, 1)
+        """)
     @GetGeneratedKeys
-    int createOption(@Bind("productId") Integer productId, @Bind("price") Integer price);
+    int createOption(@Bind("productId") Integer productId,
+                     @Bind("price") Integer price);
 
 
     @SqlUpdate("INSERT INTO inventory (optionVariantId, quantity) VALUES (:optionVariantId, :quantity)")
