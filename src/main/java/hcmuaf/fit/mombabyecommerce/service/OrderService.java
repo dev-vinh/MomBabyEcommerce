@@ -50,5 +50,11 @@ public class OrderService {
         orderDao.updateOrderStatus(orderId, orderStatus);
     }
 
+    public List<Order> getOrdersByUserIdAndStatus(Integer userId, String status) {
+        return orderDao.getOrdersByUserIdAndStatus(
+                userId,
+                OrderStatus.valueOf(status)
+        );
+    }
 
 }

@@ -33,32 +33,39 @@ public interface OrderDao {
 
 
     @SqlQuery(value = """
-            SELECT
-                o.id,
-                o.createAt,
-                o.paymentStatus,
-                o.orderStatus,
-                o.userId,
-                o.addressId,
-                o.cardId,
-                o.isCOD,
-                o.shippingFee,
-                SUM(od.quantity) AS quantity,
-                (SUM(od.total) + o.shippingFee)AS total,
-                MIN(p.name) AS product_name,
-                i.url AS product_image
-            FROM
-                orders o
-                    INNER JOIN order_detail od ON o.id = od.orderId
-                    INNER JOIN products p ON p.id = od.productId
-                    INNER JOIN image i ON i.id = p.imageId
-            WHERE
-                o.userId = :userId
-            GROUP BY
-                o.id, o.createAt, o.paymentStatus, o.orderStatus,
-                o.userId, o.addressId, o.cardId, o.isCOD,o.shippingFee, i.url
-            ORDER BY
-                o.createAt DESC;
+        SELECT
+            o.id,
+            o.createAt,
+            o.paymentStatus,
+            o.orderStatus,
+            o.userId,
+            o.addressId,
+            o.cardId,
+            o.isCOD,
+            o.shippingFee,
+            SUM(od.quantity) AS quantity,
+            (SUM(od.total) + o.shippingFee) AS total,
+            MIN(p.name) AS product_name,
+            MIN(i.url) AS product_image
+        FROM
+            orders o
+                INNER JOIN order_detail od ON o.id = od.orderId
+                INNER JOIN products p ON p.id = od.productId
+                INNER JOIN image i ON i.id = p.imageId
+        WHERE
+            o.userId = :userId
+        GROUP BY
+            o.id,
+            o.createAt,
+            o.paymentStatus,
+            o.orderStatus,
+            o.userId,
+            o.addressId,
+            o.cardId,
+            o.isCOD,
+            o.shippingFee
+        ORDER BY
+            o.createAt DESC
 """)
     List<Order> getOrdersByUserId(@Bind("userId") Integer userId);
 
@@ -135,4 +142,44 @@ public interface OrderDao {
 
     void updateOrderShippingId(@Bind("orderId") Integer orderId, @Bind("shippingId") String shippingId);
 
+    @SqlQuery(value = """
+    SELECT
+        o.id,
+        o.createAt,
+        o.paymentStatus,
+        o.orderStatus,
+        o.userId,
+        o.addressId,
+        o.cardId,
+        o.isCOD,
+        o.shippingFee,
+        SUM(od.quantity) AS quantity,
+        (SUM(od.total) + o.shippingFee) AS total,
+        MIN(p.name) AS product_name,
+        MIN(i.url) AS product_image
+    FROM
+        orders o
+            INNER JOIN order_detail od ON o.id = od.orderId
+            INNER JOIN products p ON p.id = od.productId
+            INNER JOIN image i ON i.id = p.imageId
+    WHERE
+        o.userId = :userId
+        AND o.orderStatus = :status
+    GROUP BY
+        o.id,
+        o.createAt,
+        o.paymentStatus,
+        o.orderStatus,
+        o.userId,
+        o.addressId,
+        o.cardId,
+        o.isCOD,
+        o.shippingFee
+    ORDER BY
+        o.createAt DESC
+""")
+    List<Order> getOrdersByUserIdAndStatus(
+            @Bind("userId") Integer userId,
+            @Bind("status") OrderStatus status
+    );
 }
