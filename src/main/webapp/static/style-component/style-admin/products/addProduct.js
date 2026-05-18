@@ -1,29 +1,16 @@
+console.log('addProduct.js product-options-images-fixed loaded');
+
 const APP_CONTEXT = window.location.pathname.split('/admin/')[0];
 const ADMIN_BASE = `${APP_CONTEXT}/admin`;
 const API_BASE = `${APP_CONTEXT}/api`;
 
 let currentProductId = null;
-let currentOptionId = null;
-let currentImageId = null;
-let currentImageUrl = null;
 let allVariants = [];
-console.log('addProduct.js fixed version loaded');
+let productImages = [];
+let tempImageCounter = 1;
+
 function $(id) {
     return document.getElementById(id);
-}
-function setInputValue(id, value) {
-    const element = $(id);
-
-    if (!element) {
-        console.warn(`Không tìm thấy element có id="${id}" trong addProduct.jsp`);
-        return;
-    }
-
-    element.value = value ?? '';
-}
-function getInputValue(id) {
-    const element = $(id);
-    return element ? element.value : '';
 }
 
 function notify(message, type = 'info') {
@@ -34,11 +21,25 @@ function notify(message, type = 'info') {
     }
 }
 
+function setInputValue(id, value) {
+    const element = $(id);
+    if (!element) {
+        console.warn(`Không tìm thấy element có id="${id}" trong addProduct.jsp`);
+        return;
+    }
+    element.value = value ?? '';
+}
+
+function getInputValue(id) {
+    const element = $(id);
+    return element ? element.value : '';
+}
+
 async function fetchJson(url, options = {}) {
     const response = await fetch(url, options);
     const data = await response.json().catch(() => ({}));
 
-    if (!response.ok || (data.status && data.status === 'error')) {
+    if (!response.ok || data.status === 'error') {
         throw new Error(data.message || 'Có lỗi xảy ra khi gọi API.');
     }
 
@@ -53,80 +54,42 @@ function parsePositiveInteger(value, fieldName) {
     return number;
 }
 
-function parseNonNegativeInteger(value, fieldName) {
-    const number = Number(value);
-    if (!Number.isInteger(number) || number < 0) {
-        throw new Error(`${fieldName} không được âm.`);
-    }
-    return number;
-}
-
 function getProductIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     return id ? Number(id) : null;
 }
 
-function getSelectedVariantIds() {
-    const ids = [];
-    document.querySelectorAll('.variant-group').forEach(group => {
-        group.querySelectorAll('.option-group').forEach(optionGroup => {
-            const valueSelect = optionGroup.querySelector('.variant-value-select, #variant-value-select');
-            if (valueSelect && valueSelect.value) {
-                ids.push(Number(valueSelect.value));
-            }
-        });
-    });
-    return [...new Set(ids)].filter(id => Number.isInteger(id) && id > 0);
+function getActiveImages() {
+    return productImages.filter(image => !image.removed);
 }
 
-function gatherProductData() {
-    const name = getInputValue('productName').trim();
-    const sku = getInputValue('sku').trim();
-    const categoryId = getInputValue('categoryDropdown');
-    const brandId = getInputValue('vendor');
-    const description = getInputValue('description').trim();
-    const price = getInputValue('price').trim();
-    const stock = getInputValue('total').trim();
+function getPrimaryImage() {
+    return getActiveImages()[0] || null;
+}
 
-    const statusElement = $('statusSelect');
-    const isActive = statusElement ? statusElement.value === 'true' : true;
-
-    if (!name) throw new Error('Tên sản phẩm không được để trống.');
-    if (!sku) throw new Error('SKU không được để trống.');
-    if (!categoryId) throw new Error('Vui lòng chọn danh mục.');
-    if (!brandId) throw new Error('Vui lòng chọn thương hiệu.');
-
-    return {
-        name,
-        sku,
-        description,
-        categoryId: parsePositiveInteger(categoryId, 'Danh mục'),
-        brandId: parsePositiveInteger(brandId, 'Thương hiệu'),
-        price: parsePositiveInteger(price, 'Giá bán'),
-        stock: parseNonNegativeInteger(stock, 'Số lượng tồn kho'),
-        isActive,
-        optionId: currentOptionId,
-        primaryImage: currentImageId,
-        variantIds: getSelectedVariantIds()
-    };
+function getOptionCards() {
+    return Array.from(document.querySelectorAll('.variant-card'));
 }
 
 function validateSaveButton() {
+    const saveButton = $('saveButton');
+    if (!saveButton) return;
+
     try {
-        const data = gatherProductData();
-        const hasImage = currentProductId ? true : Boolean(data.primaryImage || $('fileInput').files.length > 0);
-        $('saveButton').disabled = !hasImage;
+        gatherProductData(false);
+        saveButton.disabled = false;
     } catch (error) {
-        $('saveButton').disabled = true;
+        saveButton.disabled = true;
     }
 }
 
 async function loadCategories() {
     const data = await fetchJson(`${ADMIN_BASE}/api/categories`);
     const dropdown = $('categoryDropdown');
-    dropdown.innerHTML = '<option value="">Chọn danh mục</option>';
+    if (!dropdown) return;
 
+    dropdown.innerHTML = '<option value="">Chọn danh mục</option>';
     (data.data || []).forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
@@ -138,8 +101,9 @@ async function loadCategories() {
 async function loadBrands() {
     const data = await fetchJson(`${ADMIN_BASE}/api/brand`);
     const dropdown = $('vendor');
-    dropdown.innerHTML = '<option value="">Chọn nhà cung cấp</option>';
+    if (!dropdown) return;
 
+    dropdown.innerHTML = '<option value="">Chọn nhà cung cấp</option>';
     (data.data || []).forEach(brand => {
         const option = document.createElement('option');
         option.value = brand.id;
@@ -149,49 +113,44 @@ async function loadBrands() {
 }
 
 async function loadVariantsByCategory(categoryId) {
-    const variantSelects = document.querySelectorAll('.variant-select, #variant-select');
     const url = categoryId ? `${ADMIN_BASE}/api/variants?categoryId=${categoryId}` : `${ADMIN_BASE}/api/variants`;
+    const data = await fetchJson(url);
+    allVariants = data.data || [];
 
-    try {
-        const data = await fetchJson(url);
-        allVariants = data.data || [];
-        variantSelects.forEach(select => populateVariantSelect(select, allVariants));
-    } catch (error) {
-        console.error(error);
-        variantSelects.forEach(select => {
-            select.innerHTML = '<option value="">Không tải được biến thể</option>';
-        });
-    }
+    document.querySelectorAll('.variant-type-select').forEach(select => {
+        const selected = select.value;
+        populateVariantTypeSelect(select);
+        if (selected) select.value = selected;
+    });
 }
 
-function populateVariantSelect(select, variants) {
-    const selectedValue = select.value;
-    select.innerHTML = '<option value="">Chọn biến thể</option>';
-
-    variants.forEach(variant => {
+function populateVariantTypeSelect(select) {
+    select.innerHTML = '<option value="">Chọn thuộc tính</option>';
+    allVariants.forEach(variant => {
         const option = document.createElement('option');
         option.value = variant.id;
+        option.dataset.name = variant.name;
         option.textContent = variant.name;
         select.appendChild(option);
     });
-
-    if (selectedValue) {
-        select.value = selectedValue;
-    }
 }
 
-async function loadVariantValues(variantSelect, selectedValueId = null, selectedValueText = null) {
-    const optionGroup = variantSelect.closest('.option-group');
-    const valueSelect = optionGroup.querySelector('.variant-value-select, #variant-value-select');
+async function loadVariantValues(typeSelect, selectedValueId = null, selectedValueText = null) {
+    const attributeRow = typeSelect.closest('.attribute-row');
+    if (!attributeRow) return;
 
+    const valueSelect = attributeRow.querySelector('.variant-value-select');
     if (!valueSelect) return;
 
     valueSelect.innerHTML = '<option value="">Chọn giá trị</option>';
 
-    if (!variantSelect.value) return;
+    if (!typeSelect.value) {
+        validateSaveButton();
+        return;
+    }
 
     try {
-        const data = await fetchJson(`${ADMIN_BASE}/api/variants/${variantSelect.value}`);
+        const data = await fetchJson(`${ADMIN_BASE}/api/variants/${typeSelect.value}`);
         (data.data || []).forEach(value => {
             const option = document.createElement('option');
             option.value = value.id;
@@ -202,26 +161,27 @@ async function loadVariantValues(variantSelect, selectedValueId = null, selected
         if (selectedValueId) {
             valueSelect.value = String(selectedValueId);
         }
+
         if (selectedValueText && !valueSelect.value) {
             const matchedOption = Array.from(valueSelect.options)
                 .find(option => option.textContent.trim() === String(selectedValueText).trim());
-            if (matchedOption) {
-                valueSelect.value = matchedOption.value;
-            }
+            if (matchedOption) valueSelect.value = matchedOption.value;
         }
     } catch (error) {
         console.error(error);
         valueSelect.innerHTML = '<option value="">Không tải được giá trị</option>';
     }
+
+    validateSaveButton();
 }
 
-function createOptionGroup(selectedVariantId = null, selectedValueId = null, selectedValueText = null) {
-    const optionGroup = document.createElement('div');
-    optionGroup.className = 'option-group';
+function createAttributeRow(card, selectedTypeId = null, selectedValueId = null, selectedValueText = null) {
+    const row = document.createElement('div');
+    row.className = 'attribute-row';
 
-    const variantSelect = document.createElement('select');
-    variantSelect.className = 'option-select variant-select';
-    populateVariantSelect(variantSelect, allVariants);
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'option-select variant-type-select';
+    populateVariantTypeSelect(typeSelect);
 
     const valueSelect = document.createElement('select');
     valueSelect.className = 'option-select variant-value-select';
@@ -229,142 +189,307 @@ function createOptionGroup(selectedVariantId = null, selectedValueId = null, sel
 
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = 'remove-option-button';
+    removeButton.className = 'remove-attribute-button';
     removeButton.innerHTML = '×';
-    removeButton.addEventListener('click', () => optionGroup.remove());
+    removeButton.title = 'Xóa thuộc tính';
+    removeButton.addEventListener('click', () => {
+        row.remove();
+        validateSaveButton();
+    });
 
-    variantSelect.addEventListener('change', () => loadVariantValues(variantSelect));
+    typeSelect.addEventListener('change', () => loadVariantValues(typeSelect));
+    valueSelect.addEventListener('change', validateSaveButton);
 
-    optionGroup.appendChild(variantSelect);
-    optionGroup.appendChild(valueSelect);
-    optionGroup.appendChild(removeButton);
+    row.appendChild(typeSelect);
+    row.appendChild(valueSelect);
+    row.appendChild(removeButton);
 
-    if (selectedVariantId) {
-        variantSelect.value = String(selectedVariantId);
-        loadVariantValues(variantSelect, selectedValueId, selectedValueText);
+    card.querySelector('.attributes-list').appendChild(row);
+
+    if (selectedTypeId) {
+        typeSelect.value = String(selectedTypeId);
+        loadVariantValues(typeSelect, selectedValueId, selectedValueText);
     }
 
-    return optionGroup;
+    return row;
 }
 
-function addOptionGroup(containerId = 'optionsContainer') {
-    const container = $(containerId);
+function createOptionCard(option = {}) {
+    const card = document.createElement('div');
+    card.className = 'variant-card';
+    if (option.optionId) card.dataset.optionId = option.optionId;
+
+    const stockText = option.optionId ? `Tồn kho hiện tại: ${option.stock ?? 0}` : 'Tồn kho hiện tại: 0';
+
+    card.innerHTML = `
+        <div class="variant-card-header">
+            <div>
+                <strong>Phiên bản bán</strong>
+                <div class="stock-readonly">${stockText}</div>
+            </div>
+            <button type="button" class="remove-variant-button">Xóa dòng</button>
+        </div>
+
+        <div class="variant-price-row">
+            <label>Giá bán <span class="required">*</span></label>
+            <input type="number" min="1" step="1000" class="variant-price-input" placeholder="VD: 450000" value="${option.price ?? ''}">
+        </div>
+
+        <div class="attributes-list"></div>
+
+        <button type="button" class="add-attribute-button">+ Thêm thuộc tính cho phiên bản này</button>
+    `;
+
+    card.querySelector('.variant-price-input').addEventListener('input', validateSaveButton);
+
+    card.querySelector('.remove-variant-button').addEventListener('click', () => {
+        if (getOptionCards().length <= 1) {
+            notify('Sản phẩm cần ít nhất 1 phiên bản bán.', 'error');
+            return;
+        }
+        card.remove();
+        validateSaveButton();
+    });
+
+    card.querySelector('.add-attribute-button').addEventListener('click', () => {
+        createAttributeRow(card);
+        validateSaveButton();
+    });
+
+    if (option.attributes && option.attributes.length > 0) {
+        option.attributes.forEach(attr => createAttributeRow(card, attr.typeId, attr.valueId, attr.valueText));
+    } else {
+        createAttributeRow(card);
+    }
+
+    return card;
+}
+
+function addOptionRow(option = {}) {
+    const container = $('optionRows');
     if (!container) return;
-    container.appendChild(createOptionGroup());
+    const card = createOptionCard(option);
+    container.appendChild(card);
+    validateSaveButton();
 }
 
-function addVariant() {
-    const optionsContainer = $('optionsContainer1');
-    const template = document.querySelector('.variant-group');
-    if (!optionsContainer || !template) return;
+function groupOptionsFromApi(options) {
+    const grouped = new Map();
 
-    const clone = template.cloneNode(true);
-    clone.querySelectorAll('input').forEach(input => input.value = '');
-    clone.querySelectorAll('.option-group').forEach((group, index) => {
-        if (index > 0) group.remove();
-    });
-    clone.querySelectorAll('.variant-select, #variant-select').forEach(select => {
-        select.value = '';
-        select.addEventListener('change', () => loadVariantValues(select));
-    });
-    clone.querySelectorAll('.variant-value-select, #variant-value-select').forEach(select => {
-        select.innerHTML = '<option value="">Chọn giá trị</option>';
+    (options || []).forEach(row => {
+        const optionId = row.id;
+        if (!optionId) return;
+
+        if (!grouped.has(optionId)) {
+            grouped.set(optionId, {
+                optionId,
+                price: row.price,
+                stock: row.stock ?? 0,
+                attributes: []
+            });
+        }
+
+        if (row.variantId) {
+            const type = allVariants.find(item => item.name === row.variantName);
+            grouped.get(optionId).attributes.push({
+                typeId: type ? type.id : null,
+                valueId: row.variantId,
+                valueText: row.variantValue
+            });
+        }
     });
 
-    optionsContainer.appendChild(clone);
+    return Array.from(grouped.values());
 }
 
-function removeOptionGroup(button) {
-    const optionGroup = button.closest('.option-group');
-    if (optionGroup) optionGroup.remove();
+function renderOptionRows(options) {
+    const container = $('optionRows');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const groupedOptions = groupOptionsFromApi(options);
+    if (groupedOptions.length === 0) {
+        addOptionRow();
+        return;
+    }
+
+    groupedOptions.forEach(option => addOptionRow(option));
 }
 
-function renderImagePreview(src) {
-    const previewImage = $('previewImage');
+function getOptionRowsData(strict = true) {
+    const cards = getOptionCards();
+    if (!cards.length) {
+        if (strict) throw new Error('Vui lòng thêm ít nhất 1 phiên bản bán.');
+        return [];
+    }
+
+    return cards.map((card, index) => {
+        const price = card.querySelector('.variant-price-input')?.value?.trim();
+        const variantIds = Array.from(card.querySelectorAll('.variant-value-select'))
+            .map(select => select.value)
+            .filter(Boolean)
+            .map(value => Number(value));
+
+        if (strict) {
+            parsePositiveInteger(price, `Giá bán của phiên bản ${index + 1}`);
+            if (variantIds.length === 0) {
+                throw new Error(`Phiên bản ${index + 1} cần ít nhất 1 thuộc tính.`);
+            }
+        }
+
+        return {
+            optionId: card.dataset.optionId ? Number(card.dataset.optionId) : null,
+            price: Number(price),
+            variantIds: [...new Set(variantIds)]
+        };
+    });
+}
+
+function gatherProductData(strict = true) {
+    const name = getInputValue('productName').trim();
+    const sku = getInputValue('sku').trim();
+    const categoryId = getInputValue('categoryDropdown');
+    const brandId = getInputValue('vendor');
+    const description = getInputValue('description').trim();
+    const isActive = $('statusSelect') ? $('statusSelect').value === 'true' : true;
+    const primaryImage = getPrimaryImage();
+
+    if (strict) {
+        if (!name) throw new Error('Tên sản phẩm không được để trống.');
+        if (!sku) throw new Error('SKU không được để trống.');
+        if (!categoryId) throw new Error('Vui lòng chọn danh mục.');
+        if (!brandId) throw new Error('Vui lòng chọn thương hiệu.');
+        if (!primaryImage) throw new Error('Vui lòng upload ít nhất 1 ảnh sản phẩm.');
+    }
+
+    return {
+        name,
+        sku,
+        description,
+        categoryId: categoryId ? Number(categoryId) : null,
+        brandId: brandId ? Number(brandId) : null,
+        isActive,
+        primaryImage: primaryImage?.id || null,
+        imageIds: getActiveImages().filter(image => image.id).map(image => image.id),
+        options: getOptionRowsData(strict)
+    };
+}
+
+function renderImagePreview() {
+    const container = $('imagePreviewContainer');
     const uploadIcon = $('uploadIcon');
     const dragDropText = $('dragDropText');
-    const imagePreviewContainer = $('imagePreviewContainer');
+    const previewImage = $('previewImage');
 
-    if (previewImage) previewImage.src = src;
-    if (uploadIcon) uploadIcon.style.display = 'block';
-    if (dragDropText) dragDropText.style.display = 'none';
-    if (imagePreviewContainer) imagePreviewContainer.innerHTML = '';
+    if (!container) return;
+    container.innerHTML = '';
+
+    const activeImages = getActiveImages();
+
+    if (uploadIcon) uploadIcon.style.display = activeImages.length ? 'none' : 'block';
+    if (dragDropText) dragDropText.style.display = activeImages.length ? 'none' : 'block';
+
+    if (previewImage && activeImages[0]?.url) {
+        previewImage.src = activeImages[0].url;
+    }
+
+    activeImages.forEach((image, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'image-wrapper';
+
+        const img = document.createElement('img');
+        img.src = image.url;
+        img.className = 'preview-image';
+        img.alt = `Ảnh sản phẩm ${index + 1}`;
+
+        const badge = document.createElement('span');
+        badge.className = index === 0 ? 'primary-icon' : 'image-order-badge';
+        badge.textContent = index === 0 ? '★' : String(index + 1);
+        badge.title = index === 0 ? 'Ảnh chính' : 'Bấm để chọn làm ảnh chính';
+        badge.addEventListener('click', () => setPrimaryImage(image.tempId || image.id));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'image-delete-button';
+        deleteButton.innerHTML = '×';
+        deleteButton.title = 'Xóa ảnh';
+        deleteButton.addEventListener('click', () => removeImage(image.tempId || image.id));
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(badge);
+        wrapper.appendChild(deleteButton);
+        container.appendChild(wrapper);
+    });
+
+    validateSaveButton();
+}
+
+function setPrimaryImage(identifier) {
+    const index = productImages.findIndex(image => !image.removed && (image.tempId === identifier || image.id === identifier));
+    if (index <= 0) return;
+    const [selected] = productImages.splice(index, 1);
+    productImages.unshift(selected);
+    renderImagePreview();
+}
+
+function removeImage(identifier) {
+    const image = productImages.find(item => !item.removed && (item.tempId === identifier || item.id === identifier));
+    if (!image) return;
+    image.removed = true;
+    renderImagePreview();
 }
 
 function previewSelectedImages(files) {
-    const imagePreviewContainer = $('imagePreviewContainer');
-    const uploadIcon = $('uploadIcon');
-    const dragDropText = $('dragDropText');
-
-    if (!files.length) return;
-
-    if (uploadIcon) uploadIcon.style.display = 'none';
-    if (dragDropText) dragDropText.style.display = 'none';
-    imagePreviewContainer.innerHTML = '';
-
-    Array.from(files).slice(0, 10).forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = event => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'image-wrapper';
-
-            const img = document.createElement('img');
-            img.src = event.target.result;
-            img.className = 'preview-image';
-
-            const overlay = document.createElement('div');
-            overlay.className = 'image-overlay';
-            const deleteIcon = document.createElement('span');
-            deleteIcon.className = 'icon delete-icon fas fa-trash';
-            deleteIcon.onclick = () => wrapper.remove();
-            overlay.appendChild(deleteIcon);
-
-            if (index === 0) {
-                const primaryIcon = document.createElement('span');
-                primaryIcon.className = 'primary-icon';
-                primaryIcon.innerHTML = '★';
-                primaryIcon.title = 'Ảnh chính';
-                wrapper.appendChild(primaryIcon);
-                $('previewImage').src = event.target.result;
-            }
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(overlay);
-            imagePreviewContainer.appendChild(wrapper);
-        };
-        reader.readAsDataURL(file);
+    Array.from(files || []).slice(0, 10).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const tempId = `new-${tempImageCounter++}`;
+        productImages.push({
+            tempId,
+            file,
+            url: URL.createObjectURL(file),
+            isNew: true,
+            removed: false
+        });
     });
+
+    if ($('fileInput')) $('fileInput').value = '';
+    renderImagePreview();
 }
 
-async function uploadImagesIfNeeded() {
-    const files = $('fileInput').files;
-
-    if (!files || files.length === 0) {
-        return null;
-    }
+async function uploadNewImagesIfNeeded() {
+    const newImages = getActiveImages().filter(image => image.isNew && !image.id);
+    if (!newImages.length) return [];
 
     const formData = new FormData();
-    Array.from(files).forEach(file => formData.append('file', file));
+    newImages.forEach(image => formData.append('file', image.file));
 
     const uploadData = await fetchJson(`${API_BASE}/uploadImage`, {
         method: 'POST',
         body: formData
     });
 
-    if (!uploadData.data || uploadData.data.length === 0) {
-        throw new Error('Upload ảnh thất bại.');
+    const uploadedImages = uploadData.data || [];
+    if (uploadedImages.length !== newImages.length) {
+        throw new Error('Số ảnh upload thành công không khớp với số ảnh đã chọn.');
     }
 
-    return uploadData.data;
+    newImages.forEach((image, index) => {
+        image.id = uploadedImages[index].id;
+        image.url = uploadedImages[index].url;
+        image.isNew = false;
+        delete image.file;
+    });
+
+    return uploadedImages;
 }
 
-async function assignProductImages(images, productId) {
-    if (!images || images.length === 0) return;
+async function assignProductImages(imageIds, productId) {
+    if (!imageIds || imageIds.length === 0) return;
 
-    await Promise.all(images.map(image => {
+    await Promise.all(imageIds.map(imageId => {
         const body = new URLSearchParams();
         body.append('productId', productId);
-        body.append('imageId', image.id);
+        body.append('imageId', imageId);
 
         return fetchJson(`${ADMIN_BASE}/ImageDetailDao`, {
             method: 'POST',
@@ -389,26 +514,27 @@ async function createProduct(productData) {
 }
 
 async function createProductOptions(productId, productData) {
-    const option = await fetchJson(`${ADMIN_BASE}/options/create`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        body: JSON.stringify({
-            productId,
-            price: productData.price,
-            stock: productData.stock
-        })
-    });
-
-    const optionId = option.data?.id;
-    if (!optionId) return;
-
-    await Promise.all((productData.variantIds || []).map(variantId => {
-        return fetchJson(`${ADMIN_BASE}/addOptionVariantValue`, {
+    for (const optionRow of productData.options || []) {
+        const option = await fetchJson(`${ADMIN_BASE}/options/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-            body: JSON.stringify({ optionId, variantId })
+            body: JSON.stringify({
+                productId,
+                price: optionRow.price
+            })
         });
-    }));
+
+        const optionId = option.data?.id;
+        if (!optionId) continue;
+
+        for (const variantId of optionRow.variantIds || []) {
+            await fetchJson(`${ADMIN_BASE}/addOptionVariantValue`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                body: JSON.stringify({ optionId, variantId })
+            });
+        }
+    }
 }
 
 async function updateProduct(productData) {
@@ -424,29 +550,25 @@ async function updateProduct(productData) {
 }
 
 async function saveProduct() {
+    const saveButton = $('saveButton');
+
     try {
-        $('saveButton').disabled = true;
-        const productData = gatherProductData();
-        const uploadedImages = await uploadImagesIfNeeded();
+        if (saveButton) saveButton.disabled = true;
 
-        if (uploadedImages && uploadedImages.length > 0) {
-            productData.primaryImage = uploadedImages[0].id;
-        }
-
-        if (!currentProductId && !productData.primaryImage) {
-            throw new Error('Vui lòng upload ảnh sản phẩm.');
-        }
+        await uploadNewImagesIfNeeded();
+        const productData = gatherProductData(true);
+        productData.primaryImage = getPrimaryImage()?.id || null;
+        productData.imageIds = getActiveImages().map(image => image.id).filter(Boolean);
 
         if (currentProductId) {
             const updated = await updateProduct(productData);
-            await assignProductImages(uploadedImages, currentProductId);
             notify('Cập nhật sản phẩm thành công.', 'success');
             window.location.href = `${ADMIN_BASE}/list-product`;
             return updated;
         }
 
         const created = await createProduct(productData);
-        await assignProductImages(uploadedImages, created.id);
+        await assignProductImages(productData.imageIds, created.id);
         await createProductOptions(created.id, productData);
         notify('Thêm sản phẩm thành công.', 'success');
         window.location.href = `${ADMIN_BASE}/list-product`;
@@ -463,68 +585,45 @@ async function fetchProductDetails(productId) {
     const data = await fetchJson(`${ADMIN_BASE}/editProduct?id=${productId}`);
     const product = data.data;
 
+    if (!product) throw new Error('Không tìm thấy dữ liệu sản phẩm.');
+
     setInputValue('productName', product.name || '');
     setInputValue('sku', product.sku || '');
     setInputValue('categoryDropdown', product.categoryId || '');
     setInputValue('description', product.description || '');
-    setInputValue('price', product.price || '');
-    setInputValue('total', product.stock ?? 0);
     setInputValue('vendor', product.brandId || '');
+    setInputValue('statusSelect', String((product.active ?? product.isActive) !== false));
 
-    const statusValue = product.active !== undefined
-        ? product.active
-        : product.isActive;
-
-    setInputValue('statusSelect', String(statusValue !== false));
-
-    currentOptionId = product.optionId || null;
-    currentImageId = product.imageId || null;
-    currentImageUrl = product.imageUrl || null;
-
-    if (currentImageUrl) {
-        renderImagePreview(currentImageUrl);
+    productImages = [];
+    if (product.images && product.images.length > 0) {
+        productImages = product.images.map(image => ({
+            id: image.id,
+            url: image.url,
+            isNew: false,
+            removed: false
+        }));
+    } else if (product.imageId && product.imageUrl) {
+        productImages = [{
+            id: product.imageId,
+            url: product.imageUrl,
+            isNew: false,
+            removed: false
+        }];
     }
+    renderImagePreview();
 
     await loadVariantsByCategory(product.categoryId);
-    renderExistingVariants(product.variants || []);
+    renderOptionRows(product.options || []);
     validateSaveButton();
 }
 
-function renderExistingVariants(variants) {
-    const optionGroups = document.querySelectorAll('.option-group');
-    optionGroups.forEach((group, index) => {
-        if (index > 0) group.remove();
-    });
-
-    const container = $('optionsContainer');
-    if (!container) return;
-
-    const firstGroup = container.querySelector('.option-group');
-    if (!variants.length) {
-        const firstSelect = firstGroup?.querySelector('.variant-select, #variant-select');
-        if (firstSelect) {
-            populateVariantSelect(firstSelect, allVariants);
-            firstSelect.addEventListener('change', () => loadVariantValues(firstSelect));
-        }
-        return;
-    }
-
-    if (firstGroup) firstGroup.remove();
-
-    variants.forEach(variant => {
-        const variantType = allVariants.find(item => item.name === variant.name);
-        const selectedVariantId = variantType ? variantType.id : variant.id;
-        container.appendChild(createOptionGroup(selectedVariantId, variant.id, variant.value));
-    });
-}
-
-window.addVariant = addVariant;
-window.addOptionGroup = addOptionGroup;
-window.removeOptionGroup = removeOptionGroup;
+window.addVariant = () => addOptionRow();
+window.addOptionGroup = () => {};
+window.removeOptionGroup = button => button?.closest('.attribute-row')?.remove();
 window.saveProductDetails = saveProduct;
 window.fetchVariantValues = function () {
     const activeElement = document.activeElement;
-    if (activeElement && activeElement.matches('.variant-select, #variant-select')) {
+    if (activeElement && activeElement.matches('.variant-type-select')) {
         loadVariantValues(activeElement);
     }
 };
@@ -534,36 +633,48 @@ window.addEventListener('DOMContentLoaded', async () => {
     const fileInput = $('fileInput');
     const saveButton = $('saveButton');
     const categoryDropdown = $('categoryDropdown');
+    const addOptionRowButton = $('addOptionRowButton');
+    const mediaUploadBox = $('mediaUploadBox');
 
     currentProductId = getProductIdFromUrl();
 
-    if (uploadButton) uploadButton.addEventListener('click', () => fileInput.click());
-    if (fileInput) fileInput.addEventListener('change', () => {
-        previewSelectedImages(fileInput.files);
-        validateSaveButton();
-    });
-    if (saveButton) saveButton.addEventListener('click', saveProduct);
+    if ($('pageTitle')) {
+        $('pageTitle').textContent = currentProductId ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm';
+    }
 
-    ['productName', 'sku', 'price', 'total', 'vendor', 'statusSelect'].forEach(id => {
+    if (uploadButton && fileInput) uploadButton.addEventListener('click', () => fileInput.click());
+    if (fileInput) fileInput.addEventListener('change', () => previewSelectedImages(fileInput.files));
+    if (saveButton) saveButton.addEventListener('click', saveProduct);
+    if (addOptionRowButton) addOptionRowButton.addEventListener('click', () => addOptionRow());
+
+    if (mediaUploadBox) {
+        mediaUploadBox.addEventListener('dragover', event => {
+            event.preventDefault();
+            mediaUploadBox.classList.add('drag-over');
+        });
+        mediaUploadBox.addEventListener('dragleave', () => mediaUploadBox.classList.remove('drag-over'));
+        mediaUploadBox.addEventListener('drop', event => {
+            event.preventDefault();
+            mediaUploadBox.classList.remove('drag-over');
+            previewSelectedImages(event.dataTransfer.files);
+        });
+    }
+
+    ['productName', 'sku', 'vendor', 'statusSelect'].forEach(id => {
         const element = $(id);
-        if (element) element.addEventListener('input', validateSaveButton);
-        if (element) element.addEventListener('change', validateSaveButton);
+        if (element) {
+            element.addEventListener('input', validateSaveButton);
+            element.addEventListener('change', validateSaveButton);
+        }
     });
 
     if (categoryDropdown) {
         categoryDropdown.addEventListener('change', async () => {
             await loadVariantsByCategory(categoryDropdown.value);
+            renderOptionRows([]);
             validateSaveButton();
         });
     }
-
-    document.querySelectorAll('.variant-select, #variant-select').forEach(select => {
-        select.classList.add('variant-select');
-        select.addEventListener('change', () => loadVariantValues(select));
-    });
-    document.querySelectorAll('#variant-value-select').forEach(select => {
-        select.classList.add('variant-value-select');
-    });
 
     try {
         await Promise.all([loadCategories(), loadBrands()]);
@@ -575,6 +686,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 setInputValue('sku', `PRD-${Date.now()}`);
             }
             await loadVariantsByCategory(categoryDropdown?.value || null);
+            addOptionRow();
             validateSaveButton();
         }
     } catch (error) {

@@ -1,15 +1,19 @@
 package hcmuaf.fit.mombabyecommerce.service;
 
+import hcmuaf.fit.mombabyecommerce.Dao.ImageDao;
 import hcmuaf.fit.mombabyecommerce.Dao.OptionVariantDao;
 import hcmuaf.fit.mombabyecommerce.Dao.ProductDao;
 import hcmuaf.fit.mombabyecommerce.Dao.VariantDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.Image;
+import hcmuaf.fit.mombabyecommerce.model.OptionVariant;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.ProductDTO;
 import hcmuaf.fit.mombabyecommerce.model.Variant;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
+import java.util.Map;
 
 public class ProductService {
     Jdbi jdbi;
@@ -121,14 +125,19 @@ public class ProductService {
         }
 
         List<Variant> variants = productDao.getVariants(id);
-        return new ProductDTO(product, variants);
+        List<OptionVariant> options = jdbi.withExtension(OptionVariantDao.class, dao -> dao.getOptionDetailsByProductId(id));
+        List<Image> images = jdbi.withExtension(ImageDao.class, dao -> dao.getImagesByProductId(id));
+
+        return new ProductDTO(product, variants, options, images);
     }
+
     public int countProducts(int categoryId,
-                              Integer minPrice,
-                              Integer maxPrice,
-                              Integer brandId) {
+                             Integer minPrice,
+                             Integer maxPrice,
+                             Integer brandId) {
         return productDao.countProducts(categoryId, minPrice, maxPrice, brandId);
     }
+
     public ProductDTO updateProductForAdmin(Integer productId,
                                             String name,
                                             String sku,
@@ -137,14 +146,13 @@ public class ProductService {
                                             Integer categoryId,
                                             Integer brandId,
                                             Integer imageId,
-                                            Integer optionId,
-                                            Integer price,
-                                            Integer stock,
-                                            List<Integer> variantIds) {
+                                            List<Integer> imageIds,
+                                            List<Map<String, Object>> options) {
         jdbi.useTransaction(handle -> {
             ProductDao pDao = handle.attach(ProductDao.class);
             OptionVariantDao optionDao = handle.attach(OptionVariantDao.class);
             VariantDao variantDao = handle.attach(VariantDao.class);
+            ImageDao imageDao = handle.attach(ImageDao.class);
 
             boolean updated = pDao.updateProduct(
                     productId,
@@ -161,24 +169,46 @@ public class ProductService {
                 throw new IllegalArgumentException("Không tìm thấy sản phẩm cần cập nhật.");
             }
 
-            Integer finalOptionId = optionId;
-            if (finalOptionId == null || finalOptionId <= 0) {
-                finalOptionId = optionDao.createOption(productId, price);
-                optionDao.createInventory(finalOptionId, stock);
-            } else {
-                boolean optionUpdated = optionDao.updateOption(finalOptionId, price);
-                if (!optionUpdated) {
-                    throw new IllegalArgumentException("Không tìm thấy biến thể giá cần cập nhật.");
-                }
-
-                boolean stockUpdated = optionDao.updateOptionStock(finalOptionId, stock);
-                if (!stockUpdated) {
-                    optionDao.createInventory(finalOptionId, stock);
+            if (imageIds != null && !imageIds.isEmpty()) {
+                imageDao.deleteImagesByProductId(productId);
+                for (Integer imgId : imageIds) {
+                    if (imgId != null && imgId > 0) {
+                        imageDao.addImageToProduct(productId, imgId);
+                    }
                 }
             }
 
-            if (variantIds != null) {
+            if (options == null || options.isEmpty()) {
+                throw new IllegalArgumentException("Sản phẩm cần ít nhất 1 phiên bản bán.");
+            }
+
+            for (Map<String, Object> optionPayload : options) {
+                Integer price = getIntegerFromMap(optionPayload, "price");
+                if (price == null || price <= 0) {
+                    throw new IllegalArgumentException("Giá bán của phiên bản phải lớn hơn 0.");
+                }
+
+                Integer optionId = getIntegerFromMap(optionPayload, "optionId");
+                Integer finalOptionId;
+
+                if (optionId == null || optionId <= 0) {
+                    finalOptionId = optionDao.createOption(productId, price);
+                    optionDao.createInventory(finalOptionId, 0);
+                } else {
+                    finalOptionId = optionId;
+                    boolean optionUpdated = optionDao.updateOption(finalOptionId, price);
+                    if (!optionUpdated) {
+                        throw new IllegalArgumentException("Không tìm thấy phiên bản cần cập nhật.");
+                    }
+                }
+
                 variantDao.deleteOptionVariants(finalOptionId);
+
+                List<Integer> variantIds = getIntegerListFromMap(optionPayload.get("variantIds"));
+                if (variantIds == null || variantIds.isEmpty()) {
+                    throw new IllegalArgumentException("Mỗi phiên bản cần ít nhất 1 thuộc tính.");
+                }
+
                 for (Integer variantId : variantIds) {
                     if (variantId != null && variantId > 0) {
                         variantDao.addOptionVariantValue(finalOptionId, variantId);
@@ -189,10 +219,30 @@ public class ProductService {
 
         return editProductById(productId);
     }
+
+    private Integer getIntegerFromMap(Map<String, Object> data, String key) {
+        Object value = data.get(key);
+        if (value == null || value.toString().trim().isEmpty()) {
+            return null;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return Integer.parseInt(value.toString().trim());
+    }
+
+    private List<Integer> getIntegerListFromMap(Object value) {
+        if (!(value instanceof List<?> list)) {
+            return null;
+        }
+
+        return list.stream()
+                .filter(item -> item != null && !item.toString().trim().isEmpty())
+                .map(item -> item instanceof Number ? ((Number) item).intValue() : Integer.parseInt(item.toString().trim()))
+                .toList();
+    }
     public static void main(String[] args) {
         ProductService productService = new ProductService(DBConnection.getJdbi());
-        // System.out.println(productService.suggestProducts( ).size());
-        // System.out.println(productService.getProductByIdAndOptionId(211, 85 ));
         System.out.println(productService.getProductById(1));
 
     }

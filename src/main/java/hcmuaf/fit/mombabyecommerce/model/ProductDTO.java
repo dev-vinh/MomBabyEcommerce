@@ -5,26 +5,33 @@ import java.util.List;
 public class ProductDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;
-    private  String name;
+    private String name;
     private String sku;
     private String description;
-    private  Boolean isActive;
+    private Boolean isActive;
     private Integer categoryId;
     private Integer brandId;
-    private  Integer noOfViews;
+    private Integer noOfViews;
     private Integer noOfSold;
     private Integer imageId;
-    private Integer price;  // option
-    private Integer stock;  //option
+    private Integer price;
+    private Integer stock;
     private Integer optionId;
-    private  String categoryName;
-    private  String imageUrl;
+    private String categoryName;
+    private String imageUrl;
     private List<Variant> variants;
+    private List<OptionVariant> options;
+    private List<Image> images;
 
     public ProductDTO() {
     }
-
     public ProductDTO(Product product, List<Variant> variants) {
+        this(product, variants, null, null);
+    }
+    public ProductDTO(Product product,
+                      List<Variant> variants,
+                      List<OptionVariant> options,
+                      List<Image> images) {
         this.id = product.getId();
         this.name = product.getName();
         this.sku = product.getSku();
@@ -41,7 +48,8 @@ public class ProductDTO implements Serializable {
         this.categoryName = product.getCategoryName();
         this.imageUrl = product.getImageUrl();
         this.variants = variants;
-
+        this.options = options;
+        this.images = images;
     }
 
     public Integer getId() {
@@ -171,4 +179,6 @@ public class ProductDTO implements Serializable {
     public void setVariants(List<Variant> variants) {
         this.variants = variants;
     }
+    public List<Image> getImages() { return images; }
+    public void setImages(List<Image> images) { this.images = images; }
 }

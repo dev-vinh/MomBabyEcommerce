@@ -3,8 +3,6 @@ package hcmuaf.fit.mombabyecommerce.controller.admin.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.ProductDTO;
-import hcmuaf.fit.mombabyecommerce.service.ImageService;
-import hcmuaf.fit.mombabyecommerce.service.OptionService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import hcmuaf.fit.mombabyecommerce.util.ResponseWrapper;
 import jakarta.servlet.ServletException;
@@ -21,37 +19,46 @@ import java.util.stream.Collectors;
 
 @WebServlet(name = "EditProductController", value = "/admin/editProduct")
 public class EditProductController extends HttpServlet {
-    ProductService productService = new ProductService(DBConnection.getJdbi());
-    ImageService imageService = new ImageService(DBConnection.getJdbi());
-    OptionService optionService = new OptionService(DBConnection.getJdbi());
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ProductService productService = new ProductService(DBConnection.getJdbi());
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
         try {
-            int productId = Integer.parseInt(request.getParameter("id"));
+            Integer productId = Integer.parseInt(request.getParameter("id"));
             ProductDTO productDTO = productService.editProductById(productId);
 
             if (productDTO == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write(new ResponseWrapper<>(
+                writeResponse(response, new ResponseWrapper<>(
                         HttpServletResponse.SC_NOT_FOUND,
                         "error",
                         "Không tìm thấy sản phẩm.",
                         null
-                ).toJson());
+                ));
                 return;
             }
 
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(new ResponseWrapper<>(200, "Success", "Success", productDTO).toJson());
+            writeResponse(response, new ResponseWrapper<>(
+                    HttpServletResponse.SC_OK,
+                    "success",
+                    "Lấy thông tin sản phẩm thành công.",
+                    productDTO
+            ));
+        } catch (NumberFormatException e) {
+            writeResponse(response, new ResponseWrapper<>(
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    "error",
+                    "Mã sản phẩm không hợp lệ.",
+                    null
+            ));
         } catch (Exception e) {
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"message\": \"Internal Server Error\", \"details\": \"" + e.getMessage() + "\"}");
+            writeResponse(response, new ResponseWrapper<>(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "error",
+                    "Lỗi lấy thông tin sản phẩm: " + e.getMessage(),
+                    null
+            ));
         }
     }
 
@@ -68,13 +75,11 @@ public class EditProductController extends HttpServlet {
             Integer categoryId = getInteger(productData, "categoryId");
             Integer brandId = getInteger(productData, "brandId");
             Integer imageId = getInteger(productData, "primaryImage");
-            Integer optionId = getInteger(productData, "optionId");
-            Integer price = getInteger(productData, "price");
-            Integer stock = getInteger(productData, "stock");
             Boolean isActive = getBoolean(productData, "isActive", true);
-            List<Integer> variantIds = getIntegerList(productData.get("variantIds"));
+            List<Integer> imageIds = getIntegerList(productData.get("imageIds"));
+            List<Map<String, Object>> options = getMapList(productData.get("options"));
 
-            validateProductInput(productId, name, sku, categoryId, brandId, price, stock);
+            validateProductInput(productId, name, sku, categoryId, brandId, imageId, imageIds, options);
 
             ProductDTO updatedProduct = productService.updateProductForAdmin(
                     productId,
@@ -85,10 +90,8 @@ public class EditProductController extends HttpServlet {
                     categoryId,
                     brandId,
                     imageId,
-                    optionId,
-                    price,
-                    stock,
-                    variantIds
+                    imageIds,
+                    options
             );
 
             writeResponse(response, new ResponseWrapper<>(
@@ -114,13 +117,15 @@ public class EditProductController extends HttpServlet {
             ));
         }
     }
+
     private void validateProductInput(Integer productId,
                                       String name,
                                       String sku,
                                       Integer categoryId,
                                       Integer brandId,
-                                      Integer price,
-                                      Integer stock) {
+                                      Integer imageId,
+                                      List<Integer> imageIds,
+                                      List<Map<String, Object>> options) {
         if (productId == null || productId <= 0) {
             throw new IllegalArgumentException("Mã sản phẩm không hợp lệ.");
         }
@@ -136,13 +141,14 @@ public class EditProductController extends HttpServlet {
         if (brandId == null || brandId <= 0) {
             throw new IllegalArgumentException("Vui lòng chọn thương hiệu hợp lệ.");
         }
-        if (price == null || price <= 0) {
-            throw new IllegalArgumentException("Giá bán phải lớn hơn 0.");
+        if (imageId == null || imageId <= 0 || imageIds == null || imageIds.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn ít nhất 1 ảnh sản phẩm.");
         }
-        if (stock == null || stock < 0) {
-            throw new IllegalArgumentException("Số lượng tồn kho không được âm.");
+        if (options == null || options.isEmpty()) {
+            throw new IllegalArgumentException("Sản phẩm cần ít nhất 1 phiên bản bán.");
         }
     }
+
     private String getString(Map<String, Object> data, String key) {
         Object value = data.get(key);
         return value == null ? "" : value.toString().trim();
@@ -189,16 +195,28 @@ public class EditProductController extends HttpServlet {
         return result;
     }
 
+    private List<Map<String, Object>> getMapList(Object value) {
+        if (!(value instanceof List<?> list)) {
+            return null;
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object item : list) {
+            if (item instanceof Map<?, ?> rawMap) {
+                result.add((Map<String, Object>) rawMap);
+            }
+        }
+        return result;
+    }
+
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 
     private void writeResponse(HttpServletResponse response, ResponseWrapper<?> responseWrapper) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(responseWrapper.getStatusCode());
         response.getWriter().write(objectMapper.writeValueAsString(responseWrapper));
     }
-
 }
-

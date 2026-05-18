@@ -122,36 +122,20 @@
             <button class="add-variant-button" onclick="addVariant()">+ Thêm biến thể</button>
           </div>
 
-          <div class="variant-group">
-            <div id="optionsContainer" class="options-container">
-              <div class="pricing-section">
-                <div class="form-group half-width">
-                  <input type="text" id="price" placeholder="Giá">
-                </div>
-                <div class="form-group half-width">
-                  <input type="text" id="total" placeholder="Số lượng" >
-                </div>
-
+          <div id="optionsContainer1" class="options-section">
+            <div class="variant-header">
+              <div>
+                <h2>Phiên bản bán và giá <span class="required">*</span></h2>
+                <p class="section-hint">
+                  Mỗi dòng là một phiên bản bán riêng. Giá do quản lý sản phẩm cập nhật;
+                  tồn kho chỉ hiển thị để xem, việc nhập/xuất kho nên xử lý ở module quản lý kho.
+                </p>
               </div>
-
-              <label for="productName">Thuộc tính</label>
-              <div class="option-group">
-                <select class="option-select variant-select" id="variant-select">
-                  <option value="">Chọn danh mục</option>
-                </select>
-
-                <!-- Variant Value Dropdown -->
-                <select class="option-select variant-value-select" id="variant-value-select">
-                  <option value="">Chọn giá trị</option>
-                </select>
-
-                <button class="remove-option-button" onclick="removeOptionGroup(this)">×</button>
-              </div>
+              <button type="button" class="add-variant-button" id="addOptionRowButton">Thêm phiên bản</button>
             </div>
-            <button class="add-option-button" onclick="addOptionGroup('optionsContainer')">+ Thêm thuộc tính
-            </button>
-          </div>
 
+            <div id="optionRows" class="option-rows"></div>
+          </div>
         </div>
       </div>
 
