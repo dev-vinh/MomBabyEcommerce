@@ -53,13 +53,27 @@ public class CancelOrderController extends HttpServlet {
         }
 
         try {
+            if (order.getShippingId().startsWith("GHN")) {
+
+                orderService.updateStatus(orderId, OrderStatus.CANCELLED);
+
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                response.getWriter().write("""
+        {
+            "success": true,
+            "message": "Mock cancel success"
+        }
+        """);
+
+                return;
+            }
 
             Gson gson = new Gson();
-
             String json = gson.toJson(
                     new GHNCancelOrderRequest(List.of(order.getShippingId()))
             );
-
             String ghnResponse = apiCaller.cancelOrder(json);
 
             ObjectMapper mapper = new ObjectMapper();
@@ -77,11 +91,12 @@ public class CancelOrderController extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
 
                 response.getWriter().write("""
-                        {
-                            "success": true,
-                            "message": "Order cancelled successfully"
-                        }
-                        """);
+                {
+                    "success": true,
+                    "message": "Order cancelled successfully"
+                }
+                """);
+
                 return;
             }
 
@@ -90,11 +105,11 @@ public class CancelOrderController extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
 
             response.getWriter().write("""
-                    {
-                        "success": false,
-                        "message": "Order cancel error. Please try again later."
-                    }
-                    """);
+            {
+                "success": false,
+                "message": "Order cancel error. Please try again later."
+            }
+            """);
 
         } catch (Exception e) {
 
