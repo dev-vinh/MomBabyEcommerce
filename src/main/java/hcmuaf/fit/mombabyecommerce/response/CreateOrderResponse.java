@@ -1,13 +1,16 @@
 package hcmuaf.fit.mombabyecommerce.response;
 
 public class CreateOrderResponse {
-    String order_code;
-    String sort_code;
-    String trans_type;
-    String ward_encode;
-    String district_encode;
-    int total_fee;
-    String expected_delivery_time;
+    private String order_code;
+    private String sort_code;
+    private String trans_type;
+    private String ward_encode;
+    private String district_encode;
+    private int total_fee;
+    private String expected_delivery_time;
+
+    public CreateOrderResponse() {
+    }
 
     public String getOrder_code() {
         return order_code;
@@ -61,7 +64,7 @@ public class CreateOrderResponse {
         return expected_delivery_time;
     }
 
-    public void setExpected_delivery_time(String     expected_delivery_time) {
+    public void setExpected_delivery_time(String expected_delivery_time) {
         this.expected_delivery_time = expected_delivery_time;
     }
 }

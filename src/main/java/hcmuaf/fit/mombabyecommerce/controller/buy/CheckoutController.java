@@ -1,5 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.controller.buy;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,11 +9,16 @@ import com.google.gson.JsonObject;
 import hcmuaf.fit.mombabyecommerce.Dao.CartDao;
 import hcmuaf.fit.mombabyecommerce.Dao.CartItemDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
-import hcmuaf.fit.mombabyecommerce.model.Address;
-import hcmuaf.fit.mombabyecommerce.model.Card;
+import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
+import hcmuaf.fit.mombabyecommerce.contant.PaymentStatus;
+import hcmuaf.fit.mombabyecommerce.controller.GHNApiCaller;
+import hcmuaf.fit.mombabyecommerce.model.*;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
 import hcmuaf.fit.mombabyecommerce.model.cart.ProductCart;
+import hcmuaf.fit.mombabyecommerce.request.GHNCreateOrderRequest;
 import hcmuaf.fit.mombabyecommerce.request.GHNItem;
+import hcmuaf.fit.mombabyecommerce.response.APIResponse;
+import hcmuaf.fit.mombabyecommerce.response.CreateOrderResponse;
 import hcmuaf.fit.mombabyecommerce.service.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,6 +30,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,9 +46,7 @@ public class CheckoutController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
-    CartDao cartDao =DBConnection.getJdbi().onDemand(CartDao.class);
-    CartItemDao cartItemDao =DBConnection.getJdbi().onDemand(CartItemDao.class);
-    private int codAmount;
+    private int codAmount = 0;
     private StringBuilder content = new StringBuilder();
     private List<GHNItem>items = new ArrayList<>();
 
@@ -51,31 +57,27 @@ public class CheckoutController extends HttpServlet {
 
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
-        List<ProductCart> productList = new ArrayList<>();
-        List<Address> addressList = new ArrayList<>();
-        List<Card> cardList = new ArrayList<>();
-
-        Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-        }
-        String productParam = request.getParameter("productIds");
-        if (productParam != null) {
-
-            String[] arrProducts = productParam.split(",");
-            for (String product : arrProducts) {
-                if (cart.getData().containsKey(Integer.parseInt(product))) {
-                    productList.add(cart.getData().get(Integer.parseInt(product)));
-                }
-            }
-
-        }
-        addressList = addressService.findByUserId(userId);
-        if (addressList == null || addressList.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/user-address?requireAddress=true");
+        if (userId == null) {
+            response.sendRedirect(
+                    request.getContextPath() + "/login"
+            );
             return;
         }
-        cardList = cardService.getCartByUserId(userId);
+        Cart cart =(Cart) session.getAttribute("cart");
+        if (cart == null || cart.getProducts().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
+        List<ProductCart> productList = new ArrayList<>();
+        List<Address> addressList =addressService.findByUserId(userId);
+        if (addressList == null || addressList.isEmpty()) {
+            response.sendRedirect(
+                    request.getContextPath()
+                            + "/user-address?requireAddress=true"
+            );
+            return;
+        }
+        List<Card> cardList =cardService.getCartByUserId(userId);
         request.setAttribute("productList", productList);
         request.setAttribute("addressList", addressList);
         request.setAttribute("cardList", cardList);
@@ -88,81 +90,186 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
     PrintWriter out = response.getWriter();
-    Gson gson = new Gson();
     Map<String, Object> jsonResponse = new HashMap<>();
 
         try {
-            // 1. Đọc dữ liệu JSON từ Client
+            HttpSession session =request.getSession();
+            Integer userId =(Integer) session.getAttribute("userId");
+
+            if (userId == null) {
+                response.getWriter().write("""
+                        {"success":false,"message":"Vui lòng đăng nhập"}
+                        """);
+                return;
+            }
+            Cart cart =(Cart) session.getAttribute("cart");
+            if (cart == null || cart.getProducts().isEmpty()) {
+                response.getWriter().write("""
+                        {"success":false,"message":"Giỏ hàng trống"}
+                        """);
+
+                return;
+            }
             BufferedReader reader = request.getReader();
-            JsonObject inputData = gson.fromJson(reader, JsonObject.class);
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+            int addressId =jsonObject.get("address_id").getAsInt();
+            String paymentMethod = jsonObject.get("payment_method").getAsString();
+            int shippingFee = jsonObject.get("ship_fee").getAsInt();
+            JsonArray products = jsonObject.getAsJsonArray("products");
+            User user = userService.getUserById(userId);
 
-            int addressId = inputData.get("address_id").getAsInt();
-            String paymentMethod = inputData.get("payment_method").getAsString();
-            JsonArray products = inputData.getAsJsonArray("products");
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
+            Address address = addressService.findById(addressId);
 
-            int userId = 1;
+            if (address == null || !address.getUserId().equals(userId)) {
+                throw new RuntimeException("Địa chỉ không hợp lệ");
+            }
+            Order order = new Order();
+            order.setCreateAt(LocalDate.now());
+            order.setOrderStatus(OrderStatus.PENDING);
+            order.setShippingFee(shippingFee);
+            order.setUserId(userId);
+            order.setAddressId(addressId);
 
-            jdbi.useTransaction(handle -> {
+            if (paymentMethod.equals("COD")) {
+                order.setCOD(true);
+                order.setPaymentStatus(PaymentStatus.PENDING);
+            } else {
+                order.setCOD(false);
+                order.setPaymentStatus(PaymentStatus.PAID);
+            }
+            Integer orderId =orderService.addOrder(order);
+            if (orderId == null) {
+                throw new RuntimeException("Không thể tạo đơn hàng");
+            }
+            order.setId(orderId);
+            codAmount = shippingFee;
+            boolean flag = false;
+            for (JsonElement element : products) {
+                JsonObject p =element.getAsJsonObject();
+                int productId =p.get("id").getAsInt();
+                int optionId =p.get("optionId").getAsInt();
+                int quantity =p.get("quantity").getAsInt();
+                Product product =productService.getProductByIdAndOptionId(productId, optionId);
 
-                int orderId = handle.createUpdate("INSERT INTO orders (user_id, address_id, payment_method, status, created_at) VALUES (:userId, :addressId, :payment, 'PENDING', NOW())")
-                        .bind("userId", userId)
-                        .bind("addressId", addressId)
-                        .bind("payment", paymentMethod)
-                        .executeAndReturnGeneratedKeys()
-                        .mapTo(Integer.class)
-                        .one();
-
-                for (JsonElement item : products) {
-                    JsonObject p = item.getAsJsonObject();
-                    int productId = p.get("id").getAsInt();
-                    int quantity = p.get("quantity").getAsInt();
-                    double price = p.get("price").getAsDouble();
-
-                    JsonElement optionIdElem = p.get("optionId");
-                    Integer optionId = (optionIdElem != null && !optionIdElem.isJsonNull() && !optionIdElem.getAsString().isEmpty()) ? optionIdElem.getAsInt() : null;
-
-                    int targetId = (optionId != null) ? optionId : productId;
-
-                    int rowsUpdated = handle.createUpdate("UPDATE products SET stock = stock - :quantity WHERE id = :targetId AND stock >= :quantity")
-                            .bind("quantity", quantity)
-                            .bind("targetId", targetId)
-                            .execute();
-
-                    if (rowsUpdated == 0) {
-                        String productName = handle.createQuery("SELECT name FROM products WHERE id = :id")
-                                .bind("id", productId)
-                                .mapTo(String.class)
-                                .findFirst()
-                                .orElse("Sản phẩm");
-
-                        throw new RuntimeException("Sản phẩm '" + productName + "' đã hết hàng hoặc không đủ số lượng.");
-                    }
-
-                    handle.createUpdate("INSERT INTO order_details (order_id, product_id, option_id, quantity, price) VALUES (:orderId, :productId, :optionId, :quantity, :price)")
-                            .bind("orderId", orderId)
-                            .bind("productId", productId)
-                            .bind("optionId", optionId)
-                            .bind("quantity", quantity)
-                            .bind("price", price)
-                            .execute();
+                if (product == null) {
+                    throw new RuntimeException("Sản phẩm không tồn tại");
                 }
 
-            });
+                if (product.getStock() == null || product.getStock() <= 0) {
 
-            jsonResponse.put("success", true);
-            jsonResponse.put("message", "Thanh toán thành công!");
-            out.print(gson.toJson(jsonResponse));
+                    throw new RuntimeException(
+                            product.getName()
+                                    + " đã hết hàng"
+                    );
+                }
 
-        } catch (RuntimeException e) {
-            // Bắt lỗi Hết hàng để thông báo cho khách
-            jsonResponse.put("success", false);
-            jsonResponse.put("message", e.getMessage());
-            out.print(gson.toJson(jsonResponse));
+                if (quantity > product.getStock()) {
+
+                    throw new RuntimeException(
+                            product.getName()
+                                    + " không đủ tồn kho"
+                    );
+                }
+                boolean updated =productService.updateStock(optionId, quantity);
+
+                if (!updated) {
+                    throw new RuntimeException(
+                            "Không thể cập nhật tồn kho"
+                    );
+                }
+                codAmount +=product.getPrice() * quantity;
+                GHNItem item =new GHNItem(product, quantity);
+                items.add(item);
+                OrderDetail od =new OrderDetail();
+                od.setOrderId(orderId);
+                od.setProductId(productId);
+                od.setOptionId(optionId);
+                od.setQuantity(quantity);
+                od.setTotal(product.getPrice() * quantity);
+
+                flag =orderDetailService.addOrderDetail(od);
+                cart.getData().remove(optionId);
+            }
+            session.setAttribute("cart", cart);
+            if (codAmount > 30000000) {
+                codAmount = 29999999;
+            }
+            GHNCreateOrderRequest ghnRequest =
+                    new GHNCreateOrderRequest(
+                            address,
+                            user,
+                            "Đơn hàng MomBaby",
+                            paymentMethod.equals("COD")
+                                    ? codAmount
+                                    : 0,
+                            items
+                    );
+            String ghnResponse = GHNCreateOrder(ghnRequest);
+            ObjectMapper mapper =
+                    new ObjectMapper();
+
+            APIResponse<CreateOrderResponse> apiResponse =
+                    mapper.readValue(
+                            ghnResponse,
+                            new TypeReference<>() {}
+                    );
+            if (apiResponse.getCode() == 200) {
+                orderService.updateShippingId(
+                        orderId,
+                        apiResponse.getData().getOrder_code()
+                );
+
+            } else {
+
+                orderService.updateStatus(
+                        orderId,
+                        OrderStatus.ORDER_CREATE_ERROR
+                );
+            }
+
+            if (flag) {
+
+                response.getWriter().write("""
+                        {"success":true,"message":"Đặt hàng thành công"}
+                        """);
+
+            } else {
+
+                response.getWriter().write("""
+                        {"success":false,"message":"Đặt hàng thất bại"}
+                        """);
+            }
+
         } catch (Exception e) {
+
             e.printStackTrace();
-            jsonResponse.put("success", false);
-            jsonResponse.put("message", "Đã xảy ra lỗi hệ thống.");
-            out.print(gson.toJson(jsonResponse));
+
+            response.getWriter().write(
+                    "{\"success\":false,\"message\":\""
+                            + e.getMessage()
+                            + "\"}"
+            );
         }
+}
+
+    private String GHNCreateOrder(
+            GHNCreateOrderRequest request
+    ) throws IOException {
+
+        GHNApiCaller apiCaller =
+                new GHNApiCaller();
+
+        Gson gson =
+                new Gson();
+
+        String json =
+                gson.toJson(request);
+
+        return apiCaller.createOrder(json);
     }
+
 }

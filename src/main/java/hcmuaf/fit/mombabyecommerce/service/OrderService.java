@@ -56,5 +56,8 @@ public class OrderService {
                 OrderStatus.valueOf(status)
         );
     }
+    public boolean updateShippingId(Integer orderId, String shippingId) {
+        return orderDao.updateShippingId(orderId, shippingId);
+    }
 
 }
