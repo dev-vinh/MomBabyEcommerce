@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ public class CartDB implements Serializable {
 
     public CartDB() {
     }
-
+    @JdbiConstructor
     public CartDB(
             @ColumnName("id") Integer id,
             @ColumnName("userId") Integer userId,

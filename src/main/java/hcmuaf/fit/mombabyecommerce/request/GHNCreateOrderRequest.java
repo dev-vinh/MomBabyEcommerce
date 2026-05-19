@@ -36,7 +36,7 @@ public class GHNCreateOrderRequest {
         this.to_address= address.getStreet();
         this.to_ward_name = address.getCity();
         this.to_district_name= address.getState();
-        this.to_province_name= address.getCountry();
+        this.to_province_name= address.getState();
         this.to_phone= address.getPhoneNumber();
 
         this.content = content;

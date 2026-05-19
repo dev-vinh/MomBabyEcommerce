@@ -182,4 +182,13 @@ public interface OrderDao {
             @Bind("userId") Integer userId,
             @Bind("status") OrderStatus status
     );
+
+
+    @SqlUpdate("""
+    UPDATE orders
+    SET shippingId = :shippingId
+    WHERE id = :orderId
+    """)
+    boolean updateShippingId(@Bind("orderId") Integer orderId,
+                             @Bind("shippingId") String shippingId);
 }
