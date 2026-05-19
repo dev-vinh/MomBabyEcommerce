@@ -141,7 +141,7 @@ public class GoogleCallbackServlet extends HttpServlet {
             session.setAttribute("sessionId", session.getId());
             session.setAttribute("roleType", user.getRole().getRoleType().name());
             session.setAttribute("permissions", permissionTypes);
-
+            System.out.println("LOGIN SESSION: " + session.getId());
             try {
                 emailService.sendLoginNotification(user.getEmail(), user.getFullName());
             } catch (Exception e) {

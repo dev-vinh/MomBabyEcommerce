@@ -10,15 +10,21 @@ document.addEventListener("DOMContentLoaded",async () => {
                 method: "GET",
                 credentials: "include"
             });
+
             const data = await res.json();
-            return res.ok && data.status === 200 ? data.data : null;
+
+            return res.ok && data.statusCode === 200
+                ? data.data
+                : null;
+
         } catch (err) {
             return null;
         }
     }
+
     const currentUser = await checkSession();
     const isLoggedIn = currentUser !== null;
-
+    console.log("isLoggedIn" + isLoggedIn);
     // Hiệu ứng hover cho menu
     menuItems.forEach((item) => {
         let timeout;
@@ -75,21 +81,10 @@ document.addEventListener("DOMContentLoaded",async () => {
         }
     });
         const loginLink = document.getElementById("login-link");
+        const modal = document.getElementById("loginModal");
         if (loginLink) {
             if (isLoggedIn) {
-                loginLink.textContent = "Đăng xuất";
-
-                loginLink.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    fetch("logout", {
-                        method: "GET",
-                        credentials: "include"
-                    }).then(() => {
-                        sessionStorage.clear();
-                        window.location.href = "home";
-                    });
-                });
-
+                loginLink.style.display = "none";
             }
             else {
                 loginLink.addEventListener("click", (event) => {
