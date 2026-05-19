@@ -5,6 +5,8 @@ import com.cloudinary.utils.ObjectUtils;
 import hcmuaf.fit.mombabyecommerce.Dao.ImageDao;
 import org.jdbi.v3.core.Jdbi;
 
+import hcmuaf.fit.mombabyecommerce.model.Image;
+
 import java.util.List;
 import java.util.Map;
 public class ImageService {
@@ -53,6 +55,14 @@ public class ImageService {
 
     public List<String> getAllImagesByProductId(Integer productId) {
         return imageDao.getAllImagesByProductId(productId);
+    }
+
+    public List<Image> getImagesByProductId(Integer productId) {
+        return imageDao.getImagesByProductId(productId);
+    }
+
+    public int deleteImagesByProductId(Integer productId) {
+        return imageDao.deleteImagesByProductId(productId);
     }
 
 }
