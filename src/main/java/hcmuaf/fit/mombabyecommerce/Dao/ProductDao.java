@@ -326,6 +326,15 @@ public interface ProductDao {
                           @Bind("brandId") Integer brandId,
                           @Bind("imageId") Integer imageId);
 
+    @SqlUpdate("""
+    UPDATE inventory
+    SET quantity = quantity - :quantity
+    WHERE optionVariantId = :optionId
+      AND quantity >= :quantity
+    """)
+    int updateStock(@Bind("optionId") Integer optionId,
+                    @Bind("quantity") int quantity);
+
     @SqlQuery("""
     SELECT COUNT(DISTINCT p.id)
     FROM products p
