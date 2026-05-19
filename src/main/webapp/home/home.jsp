@@ -50,6 +50,7 @@
 
 <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+<%--<script> const contextPath = "${pageContext.request.contextPath}"; </script>--%>
+<%--<script src="${pageContext.request.contextPath}/static/style-component/style-home/banner.js"></script>--%>
 
 </body>

@@ -83,10 +83,6 @@
 
 }
 .user-popup {
-    right: 0;
-    left: auto;
-}
-.user-popup {
     display: none;
     position: absolute;
     top: 100%;

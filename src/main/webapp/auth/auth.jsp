@@ -1,17 +1,13 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: vinhp
+  Date: 3/14/2026
+  Time: 1:18 PM
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Auth</title>
-    <script src="https://www.google.com/recaptcha/api.js?hl=vi" async defer></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
-</head>
-<body>
-<div class="container" id="container">
+<div class="auth-wrapper">
+<div class="auth-container" id="container">
     <!-- Đăng ký -->
     <div class="form-container sign-up-container">
         <form action="#">
@@ -20,6 +16,9 @@
                 <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>
                 <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
+                <%--                <a href="#" onclick="handleFacebookAuth('register')" class="social">h<i class="fa-brands fa-facebook-f"></i></a>--%>
+                <%--                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>--%>
+                <%--                <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa   -linkedin-in"></i></a>--%>
             </div>
             <span>hoặc sử dụng email của bạn để đăng ký</span>
             <div class="infield">
@@ -37,7 +36,7 @@
                 <label for="emails">Email <span class="required">*</span> </label>
                 <small class="error" id="email-error"></small>
             </div>
-
+            
             <div class="infield password">
                 <input type="password" id="passwordd" placeholder=" " required>
                 <label for="passwordd">Mật khẩu <span class="required">*</span> </label>
@@ -68,16 +67,52 @@
         </form>
     </div>
 
-    <!-- Đăng nhập -->
+<%--    <!-- Đăng nhập -->--%>
+<%--    <div class="form-container sign-in-container">--%>
+<%--        <form action="#">--%>
+<%--            <h1>Đăng nhập</h1>--%>
+<%--            <div class="social-container">--%>
+<%--                <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>--%>
+<%--                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>--%>
+<%--                <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>--%>
+<%--            </div>--%>
+<%--            <span>hoặc sử dụng tài khoản của bạn</span>--%>
+<%--            <div class="infield">--%>
+<%--                <input type="email" id="email" placeholder=" " name="email" required />--%>
+<%--                <label for="email">Email <span class="required">*</span> </label>--%>
+<%--            </div>--%>
+<%--            <div class="infield password">--%>
+<%--                <input type="password" id="password" placeholder=" " required>--%>
+<%--                <label for="password">Mật khẩu <span class="required">*</span> </label>--%>
+<%--                <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>--%>
+<%--            </div>--%>
+<%--            <div class="remember-forgot-container">--%>
+<%--                <div class="infield remember-me">--%>
+<%--                    <input type="checkbox" id="remember-checkbox" />--%>
+<%--                    <label for="remember-checkbox">Ghi nhớ đăng nhập</label>--%>
+<%--                </div>--%>
+<%--                <a href="${pageContext.request.contextPath}/auth/forgot-password" class="forgot">Quên mật khẩu?</a>--%>
+<%--            </div>--%>
+
+
+<%--            <button type="submit" id="signInButton"--%>
+<%--            >Đăng nhập</button>--%>
+
+<%--            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ--%>
+<%--            </a>--%>
+<%--        </form>--%>
+<%--    </div>--%>
     <div class="form-container sign-in-container">
-        <form action="#">
-            <h1>Đăng nhập</h1>
+        <form action="#" id="signInForm"> <h1>Đăng nhập</h1>
             <div class="social-container">
                 <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://accounts.google.com/" class="social"><i class="fa-brands fa-google-plus-g"></i></a>
+                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>
                 <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
             </div>
             <span>hoặc sử dụng tài khoản của bạn</span>
+
+            <div id="auth-error-message" class="error-msg-box" style="display: none;"></div>
+
             <div class="infield">
                 <input type="email" id="email" placeholder=" " name="email" required />
                 <label for="email">Email <span class="required">*</span> </label>
@@ -87,6 +122,7 @@
                 <label for="password">Mật khẩu <span class="required">*</span> </label>
                 <i class="fa-solid fa-eye toggle-password" data-toggle="#password"></i>
             </div>
+
             <div class="remember-forgot-container">
                 <div class="infield remember-me">
                     <input type="checkbox" id="remember-checkbox" />
@@ -95,15 +131,12 @@
                 <a href="${pageContext.request.contextPath}/auth/forgot-password" class="forgot">Quên mật khẩu?</a>
             </div>
 
+            <button type="submit" id="signInButton">Đăng nhập</button>
 
-            <button type="submit" id="signInButton"
-            >Đăng nhập</button>
-
-            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ
-            </a>
+            <a href="${pageContext.request.contextPath}/home" class="back-home-link">Về trang chủ</a>
         </form>
     </div>
-
+<%--// đến đây--%>
     <div class="overlay-container" id="overlayCon">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
@@ -121,15 +154,10 @@
         </div>
     </div>
 </div>
+</div>
+<script src="${pageContext.request.contextPath}/static/style-page/auth/auth.js"></script>
 
-<main>
-    <script src="${pageContext.request.contextPath}/static/style-page/auth/auth.js"></script>
-</main>
 
 <% if (request.getAttribute("errorMessage") != null) { %>
 <p style="color: red;"><%= request.getAttribute("errorMessage") %></p>
 <% } %>
-</body>
-</html>
-
-

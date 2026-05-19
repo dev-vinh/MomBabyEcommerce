@@ -14,29 +14,43 @@ body {
 
 }
 
-.close-btn-auth {
-    position: absolute;
-    right: 12px;
-    top: 12px;
-    cursor: pointer;
-    color: #555;
-    background: #fff;
-    font-size: 18px;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    z-index: 1;
+/*!*đoạn này để test chức năng poup đăng ký đăng nhập*!*/
+.my-custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 99999; /* Ưu tiên cao nhất */
+    left: 0;
+    top: 0;
+    width: 100vw;  /* Sử dụng viewport width */
+    height: 100vh; /* Sử dụng viewport height */
+    background-color: rgba(0, 0, 0, 0.6);
+    overflow: auto; /* Cho phép cuộn nếu form dài */
 }
 
+.my-modal-content {
+    background-color: #fff;
+    margin: 5% auto; /* Cách top 5% */
+    /*padding: 25px;*/
+    width: 90%;
+    max-width: 500px; /* Giới hạn chiều rộng popup */
+    max-height: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    box-sizing: border-box;
+}
 
+.close-btn-auth {
+    position: absolute;
+    right: 15px; top: 10px;
+    cursor: pointer;
+    color: #333;
+    background-color: white;
+    font-size: 50px;
+    border: solid 1px black;
+}
 .close-btn-auth:hover {
-    color: #243b55;
-    border-color: #243b55;
+    color: #ff4d4d;
 }
 #main_header  {
     justify-content: center;
@@ -216,10 +230,10 @@ body > #header > nav > ul > li > a {
 }
 
 .user-login {
-    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    font-size: 14px;
+    padding: 5px;
 }
 
 .user-login span {
@@ -285,8 +299,9 @@ body > #header > nav > ul > li > a {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 10px;
     width: 165px;
-    z-index: 99999;
+    z-index: 10;
     transform: translate(50%, 0px);
+
 }
 
 .user-popup a {
@@ -315,94 +330,9 @@ body > #header > nav > ul > li > a {
     object-fit: contain;
     transition: transform 0.3s ease;
 }
-.user-popup#authModal {
-    width: 330px;
-    padding: 0;
-    border: none;
-    border-radius: 6px;
-    box-shadow: 0 8px 32px rgba(20,30,48,0.18);
-    transform: translate(0, 0);
-    right: 0;
-    z-index: 99999;
-}
 
-.user-popup {
-    display: none;
-    position: absolute;
-    top: calc(100% + 10px);
-    right: -100px;
-    left: auto;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(20,30,48,0.15);
-    width: 340px;
-    padding: 0;
-    z-index: 99999;
-    transform: none;
-}
 
-.my-modal-content {
-    width: 90%;
-    max-width: 450px;
-    max-height: unset;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(20,30,48,0.2);
-    position: relative;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-.user-popup-logged {
-    padding: 8px;
-}
+/* ===== SEARCH OVERLAY ===== */
 
-.user-popup-logged a {
 
-    display: flex;
 
-    align-items: center;
-
-    width: 100%;
-
-    padding: 12px 14px;
-
-    border-radius: 12px;
-
-    text-decoration: none;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    box-sizing: border-box;
-
-    transition: all 0.2s ease;
-}
-
-.user-popup:has(.user-popup-logged) {
-    width: 220px;
-    padding: 8px;
-}
-.popup-profile {
-
-    color: #243b55;
-
-    background: #f7f9fc;
-
-    margin-bottom: 6px;
-}
-
-.popup-profile:hover {
-
-    background: #eef3f8;
-}
-
-.popup-logout {
-
-    color: #e53935;
-}
-
-.popup-logout:hover {
-
-    background: #fff2f2;
-}

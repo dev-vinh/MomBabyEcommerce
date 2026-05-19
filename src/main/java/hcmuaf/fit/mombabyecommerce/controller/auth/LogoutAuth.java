@@ -17,7 +17,6 @@ public class LogoutAuth extends HttpServlet {
         if (session != null) {
             session.invalidate();
         }
-
         response.sendRedirect("home");
     }
 
