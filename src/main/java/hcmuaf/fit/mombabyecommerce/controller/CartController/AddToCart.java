@@ -1,12 +1,9 @@
 package hcmuaf.fit.mombabyecommerce.controller.CartController;
 
-import hcmuaf.fit.mombabyecommerce.Dao.CartDao;
-import hcmuaf.fit.mombabyecommerce.Dao.CartItemDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
-import hcmuaf.fit.mombabyecommerce.model.CartDB;
-import hcmuaf.fit.mombabyecommerce.model.CartItem;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
+import hcmuaf.fit.mombabyecommerce.service.CartDBService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -17,8 +14,7 @@ import java.io.IOException;
 @WebServlet(name = "AddToCart", value = "/add-cart")
 public class AddToCart extends HttpServlet {
     ProductService productService = new ProductService(DBConnection.getJdbi());
-    CartDao cartDao = DBConnection.getJdbi().onDemand(CartDao.class);
-    CartItemDao cartItemDao = DBConnection.getJdbi().onDemand(CartItemDao.class);
+    CartDBService cartDBService = new CartDBService(DBConnection.getJdbi());
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -109,44 +105,13 @@ public class AddToCart extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("userId");
 
             if (userId != null) {
-              CartDB dbCart = cartDao.getActiveCartByUserId(userId);
-                if (dbCart == null) {
-                    cartDao.createCart(userId, null);
-                    dbCart = cartDao.getActiveCartByUserId(userId);
-                }
-                CartItem existing = cartItemDao.getItem(
-                        dbCart.getId(),
+                cartDBService.addToCart(
+                        userId,
                         productId,
-                        optionId
+                        optionId,
+                        quantity,
+                        product.getPrice()
                 );
-
-                if (existing != null) {
-
-                    int newQty = existing.getQuantity() + quantity;
-
-                    if (newQty > product.getStock()) {
-                        response.getWriter().write("""
-                                {"success": false, "message": "Số lượng vượt quá tồn kho"}
-                                """);
-                        return;
-                    }
-
-                    cartItemDao.updateQuantity(
-                            dbCart.getId(),
-                            productId,
-                            optionId,
-                            newQty
-                    );
-
-                } else {
-                    cartItemDao.addItem(
-                            dbCart.getId(),
-                            productId,
-                            optionId,
-                            quantity,
-                            product.getPrice()
-                    );
-                }
             }
             response.getWriter().write("{\"success\": true}");
         } catch (Exception e) {

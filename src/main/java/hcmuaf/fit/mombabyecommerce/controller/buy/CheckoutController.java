@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import hcmuaf.fit.mombabyecommerce.Dao.CartDao;
+import hcmuaf.fit.mombabyecommerce.Dao.CartItemDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.Address;
 import hcmuaf.fit.mombabyecommerce.model.Card;
@@ -36,7 +38,8 @@ public class CheckoutController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
-
+    CartDao cartDao =DBConnection.getJdbi().onDemand(CartDao.class);
+    CartItemDao cartItemDao =DBConnection.getJdbi().onDemand(CartItemDao.class);
     private int codAmount;
     private StringBuilder content = new StringBuilder();
     private List<GHNItem>items = new ArrayList<>();
