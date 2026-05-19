@@ -1,6 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.controller.CartController;
 
+import hcmuaf.fit.mombabyecommerce.Dao.CartDao;
+import hcmuaf.fit.mombabyecommerce.Dao.CartItemDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.CartDB;
+import hcmuaf.fit.mombabyecommerce.model.CartItem;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
@@ -13,7 +17,8 @@ import java.io.IOException;
 @WebServlet(name = "AddToCart", value = "/add-cart")
 public class AddToCart extends HttpServlet {
     ProductService productService = new ProductService(DBConnection.getJdbi());
-
+    CartDao cartDao = DBConnection.getJdbi().onDemand(CartDao.class);
+    CartItemDao cartItemDao = DBConnection.getJdbi().onDemand(CartItemDao.class);
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,9 +34,15 @@ public class AddToCart extends HttpServlet {
 
         try {
             Integer productId = Integer.parseInt(request.getParameter("productId"));
-            Integer optionId = Integer.parseInt(request.getParameter("optionId"));
+            String optionParam = request.getParameter("optionId");
+            if (optionParam == null || optionParam.isEmpty()) {
+                response.getWriter().write("{\"success\": false, \"message\": \"OptionId required\"}");
+                return;
+            }
+            Integer optionId = Integer.parseInt(optionParam);
             String qtyParam = request.getParameter("quantity");
             int quantity = 1;
+
             if (qtyParam != null && !qtyParam.isEmpty()) {
                 try {
                     quantity = Integer.parseInt(qtyParam);
@@ -39,7 +50,6 @@ public class AddToCart extends HttpServlet {
                     quantity = 1;
                 }
             }
-            System.out.println("[AddToCart] Received request - productId: " + productId + ", optionId: " + optionId);
 
             Product product = productService.getProductByIdAndOptionId(productId, optionId);
 
@@ -58,9 +68,9 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
                         + product.getStock() + " sản phẩm\"}");
                 return;
-                }
-                System.out.println("[AddToCart] Product retrieved: " + product.getName() +
-                        ", optionId in product: " + product.getOptionId());
+            }
+            System.out.println("[AddToCart] Product retrieved: " + product.getName() +
+                    ", optionId in product: " + product.getOptionId());
 
             if (product.getOptionId() == null) {
                 System.err.println("[AddToCart] ERROR: Product optionId is NULL!");
@@ -71,15 +81,12 @@ public class AddToCart extends HttpServlet {
                 response.getWriter().write("{\"success\": false, \"message\": \"Số lượng không hợp lệ\"}");
                 return;
             }
+
             HttpSession session = request.getSession();
             Cart cart = (Cart) session.getAttribute("cart");
             if (cart == null) {
                 cart = new Cart();
                 session.setAttribute("cart", cart);
-                System.out.println("[AddToCart] Created new cart in session");
-            } else {
-                System.out.println(
-                        "[AddToCart] Retrieved existing cart from session with " + cart.getData().size() + " items");
             }
 
 
@@ -93,18 +100,55 @@ public class AddToCart extends HttpServlet {
             }
             boolean added = cart.addProduct(product, quantity);
 
-            if (added) {
-                session.setAttribute("cart", cart);
-                System.out.println("[AddToCart] SUCCESS: Product added to cart. Cart now has " +
-                        cart.getData().size() + " items");
-                System.out.println("[AddToCart] Cart saved to session. Session ID: " + session.getId());
-                System.out.println("[AddToCart] Cart contents (optionIds): " + cart.getData().keySet());
-                response.getWriter().write("{\"success\": true}");
-            } else {
-                System.err.println("[AddToCart] ERROR: Failed to add product to cart");
-                response.getWriter().write("{\"success\": false, \"message\": \"Failed to add to cart\"}");
+            if (!added) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Add failed\"}");
+                return;
             }
+            session.setAttribute("cart", cart);
 
+            Integer userId = (Integer) session.getAttribute("userId");
+
+            if (userId != null) {
+              CartDB dbCart = cartDao.getActiveCartByUserId(userId);
+                if (dbCart == null) {
+                    cartDao.createCart(userId, null);
+                    dbCart = cartDao.getActiveCartByUserId(userId);
+                }
+                CartItem existing = cartItemDao.getItem(
+                        dbCart.getId(),
+                        productId,
+                        optionId
+                );
+
+                if (existing != null) {
+
+                    int newQty = existing.getQuantity() + quantity;
+
+                    if (newQty > product.getStock()) {
+                        response.getWriter().write("""
+                                {"success": false, "message": "Số lượng vượt quá tồn kho"}
+                                """);
+                        return;
+                    }
+
+                    cartItemDao.updateQuantity(
+                            dbCart.getId(),
+                            productId,
+                            optionId,
+                            newQty
+                    );
+
+                } else {
+                    cartItemDao.addItem(
+                            dbCart.getId(),
+                            productId,
+                            optionId,
+                            quantity,
+                            product.getPrice()
+                    );
+                }
+            }
+            response.getWriter().write("{\"success\": true}");
         } catch (Exception e) {
             System.err.println("[AddToCart] EXCEPTION: " + e.getMessage());
             e.printStackTrace();
