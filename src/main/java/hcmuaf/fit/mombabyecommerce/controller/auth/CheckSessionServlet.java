@@ -25,7 +25,7 @@ public class CheckSessionServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         ObjectMapper objectMapper = new ObjectMapper();
 
-        HttpSession session = request.getSession(false); // false = không tạo session mới
+        HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -45,7 +45,8 @@ public class CheckSessionServlet extends HttpServlet {
         userData.put("roleType", user.getRole().getRoleType().name());
         userData.put("status", user.getStatus());
         userData.put("permissions", session.getAttribute("permissions"));
-
+        System.out.println("CHECK SESSION: " +
+                (session == null ? "null" : session.getId()));
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(objectMapper.writeValueAsString(
                 new ResponseWrapper<>(200, "success", "Đã đăng nhập", userData)
