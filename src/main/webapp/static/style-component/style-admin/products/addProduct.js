@@ -173,6 +173,130 @@ async function loadVariantValues(typeSelect, selectedValueId = null, selectedVal
     validateSaveButton();
 }
 
+function getSelectedOptionText(select) {
+    if (!select || select.selectedIndex < 0) return '';
+    return select.options[select.selectedIndex]?.textContent?.trim() || '';
+}
+
+function getAttributeName(typeSelect) {
+    return getSelectedOptionText(typeSelect) || 'thuộc tính';
+}
+
+async function reloadVariantValueSelects(attributeId, targetSelect = null, preferredValueId = null, preferredValueText = null) {
+    const rows = Array.from(document.querySelectorAll('.attribute-row'));
+
+    for (const row of rows) {
+        const typeSelect = row.querySelector('.variant-type-select');
+        const valueSelect = row.querySelector('.variant-value-select');
+
+        if (!typeSelect || !valueSelect || typeSelect.value !== String(attributeId)) continue;
+
+        const currentValueId = valueSelect.value;
+        const currentValueText = getSelectedOptionText(valueSelect);
+
+        await loadVariantValues(
+            typeSelect,
+            valueSelect === targetSelect ? preferredValueId : currentValueId,
+            valueSelect === targetSelect ? preferredValueText : currentValueText
+        );
+    }
+}
+
+async function createDropdownValue(typeSelect, valueSelect) {
+    if (!typeSelect.value) {
+        notify('Vui lòng chọn thuộc tính trước khi thêm giá trị.', 'error');
+        return;
+    }
+
+    const attributeName = getAttributeName(typeSelect);
+    const input = prompt(`Nhập giá trị mới cho ${attributeName}:`);
+    const value = input ? input.trim() : '';
+
+    if (!value) return;
+
+    try {
+        const result = await fetchJson(`${ADMIN_BASE}/api/variants`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify({
+                attributeId: Number(typeSelect.value),
+                value
+            })
+        });
+
+        await reloadVariantValueSelects(
+            typeSelect.value,
+            valueSelect,
+            result.data?.id,
+            result.data?.value
+        );
+
+        notify('Đã thêm giá trị dropdown.', 'success');
+    } catch (error) {
+        console.error(error);
+        notify(error.message || 'Không thể thêm giá trị dropdown.', 'error');
+    }
+}
+
+async function updateDropdownValue(typeSelect, valueSelect) {
+    if (!typeSelect.value || !valueSelect.value) {
+        notify('Vui lòng chọn giá trị cần sửa.', 'error');
+        return;
+    }
+
+    const currentText = getSelectedOptionText(valueSelect);
+    const input = prompt('Nhập giá trị mới:', currentText);
+    const value = input ? input.trim() : '';
+
+    if (!value || value === currentText) return;
+
+    try {
+        const result = await fetchJson(`${ADMIN_BASE}/api/variants/${valueSelect.value}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify({ value })
+        });
+
+        await reloadVariantValueSelects(
+            typeSelect.value,
+            valueSelect,
+            result.data?.id || valueSelect.value,
+            result.data?.value || value
+        );
+
+        notify('Đã sửa giá trị dropdown.', 'success');
+    } catch (error) {
+        console.error(error);
+        notify(error.message || 'Không thể sửa giá trị dropdown.', 'error');
+    }
+}
+
+async function deleteDropdownValue(typeSelect, valueSelect) {
+    if (!typeSelect.value || !valueSelect.value) {
+        notify('Vui lòng chọn giá trị cần xóa.', 'error');
+        return;
+    }
+
+    const currentText = getSelectedOptionText(valueSelect);
+
+    const confirmed = confirm(`Xóa giá trị dropdown "${currentText}"? Dữ liệu biến thể đã gắn với sản phẩm sẽ không bị xóa.`);
+
+    if (!confirmed) return;
+
+    try {
+        await fetchJson(`${ADMIN_BASE}/api/variants/${valueSelect.value}`, {
+            method: 'DELETE'
+        });
+
+        await reloadVariantValueSelects(typeSelect.value, valueSelect, null, null);
+
+        notify('Đã xóa giá trị dropdown.', 'success');
+    } catch (error) {
+        console.error(error);
+        notify(error.message || 'Không thể xóa giá trị dropdown.', 'error');
+    }
+}
+
 function createAttributeRow(card, selectedTypeId = null, selectedValueId = null, selectedValueText = null) {
     const row = document.createElement('div');
     row.className = 'attribute-row';
@@ -185,11 +309,46 @@ function createAttributeRow(card, selectedTypeId = null, selectedValueId = null,
     valueSelect.className = 'option-select variant-value-select';
     valueSelect.innerHTML = '<option value="">Chọn giá trị</option>';
 
+    const valueCell = document.createElement('div');
+    valueCell.className = 'variant-value-cell';
+
+    const valueActions = document.createElement('div');
+    valueActions.className = 'variant-value-actions';
+
+    const addValueButton = document.createElement('button');
+    addValueButton.type = 'button';
+    addValueButton.className = 'variant-value-tool add-template-value-button';
+    addValueButton.textContent = '+';
+    addValueButton.title = 'Thêm giá trị dropdown cho thuộc tính này';
+    addValueButton.addEventListener('click', () => createDropdownValue(typeSelect, valueSelect));
+
+    const editValueButton = document.createElement('button');
+    editValueButton.type = 'button';
+    editValueButton.className = 'variant-value-tool edit-template-value-button';
+    editValueButton.textContent = '✎';
+    editValueButton.title = 'Sửa giá trị dropdown đang chọn';
+    editValueButton.addEventListener('click', () => updateDropdownValue(typeSelect, valueSelect));
+
+    const deleteValueButton = document.createElement('button');
+    deleteValueButton.type = 'button';
+    deleteValueButton.className = 'variant-value-tool delete-template-value-button';
+    deleteValueButton.textContent = '×';
+    deleteValueButton.title = 'Xóa giá trị dropdown đang chọn';
+    deleteValueButton.addEventListener('click', () => deleteDropdownValue(typeSelect, valueSelect));
+
+    valueActions.appendChild(addValueButton);
+    valueActions.appendChild(editValueButton);
+    valueActions.appendChild(deleteValueButton);
+
+    valueCell.appendChild(valueSelect);
+    valueCell.appendChild(valueActions);
+
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
     removeButton.className = 'remove-attribute-button';
     removeButton.innerHTML = '×';
-    removeButton.title = 'Xóa thuộc tính';
+    removeButton.title = 'Xóa thuộc tính khỏi phiên bản này';
+
     removeButton.addEventListener('click', () => {
         row.remove();
         validateSaveButton();
@@ -199,7 +358,7 @@ function createAttributeRow(card, selectedTypeId = null, selectedValueId = null,
     valueSelect.addEventListener('change', validateSaveButton);
 
     row.appendChild(typeSelect);
-    row.appendChild(valueSelect);
+    row.appendChild(valueCell);
     row.appendChild(removeButton);
 
     card.querySelector('.attributes-list').appendChild(row);
