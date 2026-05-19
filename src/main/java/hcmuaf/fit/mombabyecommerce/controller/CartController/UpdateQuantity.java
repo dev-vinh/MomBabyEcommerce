@@ -1,9 +1,13 @@
 package hcmuaf.fit.mombabyecommerce.controller.CartController;
 
+import hcmuaf.fit.mombabyecommerce.Dao.CartDao;
+import hcmuaf.fit.mombabyecommerce.Dao.CartItemDao;
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.model.CartDB;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
 import hcmuaf.fit.mombabyecommerce.model.cart.ProductCart;
+import hcmuaf.fit.mombabyecommerce.service.CartDBService;
 import hcmuaf.fit.mombabyecommerce.service.ProductService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -14,6 +18,7 @@ import java.io.IOException;
 @WebServlet(name = "IncreaseQuantity", value = "/cart/update-quantity")
 public class UpdateQuantity extends HttpServlet {
     ProductService productService = new ProductService(DBConnection.getJdbi());
+    CartDBService cartDBService = new CartDBService(DBConnection.getJdbi());
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,38 +44,77 @@ public class UpdateQuantity extends HttpServlet {
                 return;
             }
 
-            Integer optionId = Integer.parseInt(request.getParameter("optionId"));
-            int quantity = Integer.parseInt(request.getParameter("quantity"));
+            String productIdParam =request.getParameter("productId");
+            String optionIdParam =request.getParameter("optionId");
+            String quantityParam =request.getParameter("quantity");
+
+            if (productIdParam == null
+                    || optionIdParam == null
+                    || quantityParam == null) {
+
+                response.getWriter().write("""
+                        {"success":false,"message":"Missing params"}
+                        """);
+                return;
+            }
+
+            Integer productId =Integer.parseInt(productIdParam);
+            Integer optionId =Integer.parseInt(optionIdParam);
+            int quantity =Integer.parseInt(quantityParam);
+
             if (quantity < 1) {
-                response.getWriter().write("{\"success\":false,\"message\":\"Số lượng không hợp lệ\"}");
+                response.getWriter().write("""
+                        {"success":false,"message":"Số lượng không hợp lệ"}
+                        """);
                 return;
             }
+
             if (!cart.getData().containsKey(optionId)) {
-                response.getWriter().write("{\"success\":false,\"message\":\"Item not found\"}");
+                response.getWriter().write("""
+                        {"success":false,"message":"Item not found"}
+                        """);
+                return;
+            }
+            Product product =productService.getProductByIdAndOptionId(productId, optionId);
+            if (product == null) {
+                response.getWriter().write("""
+                        {"success":false,"message":"Product not found"}
+                        """);
                 return;
             }
 
-            ProductCart productCart = cart.getData().get(optionId);
-            Product product = productService.getProductByIdAndOptionId(productCart.getProductId(), optionId);
-            int currentStock = product == null || product.getStock() == null ? 0 : product.getStock();
+            int currentStock =product.getStock() == null? 0: product.getStock();
             if (currentStock <= 0) {
-                response.getWriter().write("{\"success\":false,\"message\":\"Sản phẩm đã hết hàng\"}");
-                return;
-            }
-            if (quantity > currentStock) {
-                productCart.setStock(currentStock);
-                response.getWriter().write("{\"success\":false,\"message\":\"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
-                        + currentStock + " sản phẩm\"}");
+                response.getWriter().write("""
+                        {"success":false,"message":"Sản phẩm đã hết hàng"}
+                        """);
                 return;
             }
 
+            if (quantity > currentStock) {
+                response.getWriter().write(
+                        "{\"success\":false,\"message\":\"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
+                                + currentStock + " sản phẩm\"}"
+                );
+            response.getWriter().write("{\"success\":true,\"stock\":" + currentStock + ",\"quantity\":" + quantity + "}");
+                return;
+            }
+            ProductCart productCart = cart.getData().get(optionId);
             productCart.setQuantity(quantity);
             productCart.setStock(currentStock);
             cart.getData().put(optionId, productCart);
             session.setAttribute("cart", cart);
-
-            response.getWriter().write("{\"success\":true,\"stock\":" + currentStock + ",\"quantity\":" + quantity + "}");
-
+            Integer userId =
+                    (Integer) session.getAttribute("userId");
+            if (userId != null) {
+                cartDBService.updateQuantity(
+                        userId,
+                        productId,
+                        optionId,
+                        quantity
+                );
+            }
+            response.getWriter().write("{\"success\":true,\"stock\":"+ currentStock + ",\"quantity\":" + quantity + "}");
         } catch (Exception e) {
             response.getWriter().write("{\"success\":false,\"message\":\"" + e.getMessage() + "\"}");
         }

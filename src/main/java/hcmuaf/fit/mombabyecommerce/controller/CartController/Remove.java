@@ -1,6 +1,8 @@
 package hcmuaf.fit.mombabyecommerce.controller.CartController;
 
+import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
 import hcmuaf.fit.mombabyecommerce.model.cart.Cart;
+import hcmuaf.fit.mombabyecommerce.service.CartDBService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -9,7 +11,7 @@ import java.io.IOException;
 
 @WebServlet(name = "Remove", value = "/cart/remove")
 public class Remove extends HttpServlet {
-
+    CartDBService cartDBService = new CartDBService(DBConnection.getJdbi());
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -25,26 +27,26 @@ public class Remove extends HttpServlet {
 
         try {
             HttpSession session = request.getSession(false);
-
             if (session == null) {
                 writeJson(response, false, "Session không tồn tại");
                 return;
             }
-
             Cart cart = (Cart) session.getAttribute("cart");
-
             if (cart == null) {
                 writeJson(response, false, "Giỏ hàng không tồn tại");
                 return;
             }
-
             String optionIdParam = request.getParameter("optionId");
+            String productIdParam = request.getParameter("productId");
+            if (productIdParam == null || optionIdParam == null
+                    || productIdParam.trim().isEmpty()
+                    || optionIdParam.trim().isEmpty()) {
 
-            if (optionIdParam == null || optionIdParam.trim().isEmpty()) {
-                writeJson(response, false, "Thiếu optionId");
+                writeJson(response, false, "Thiếu productId hoặc optionId");
                 return;
             }
 
+            Integer productId = Integer.parseInt(productIdParam);
             Integer optionId = Integer.parseInt(optionIdParam);
 
             if (!cart.getData().containsKey(optionId)) {
@@ -55,6 +57,15 @@ public class Remove extends HttpServlet {
             cart.getData().remove(optionId);
             session.setAttribute("cart", cart);
 
+            Integer userId =(Integer) session.getAttribute("userId");
+
+            if (userId != null) {
+                cartDBService.removeItem(
+                        userId,
+                        productId,
+                        optionId
+                );
+            }
             writeJson(response, true, "Đã xóa sản phẩm khỏi giỏ hàng");
 
         } catch (NumberFormatException e) {
