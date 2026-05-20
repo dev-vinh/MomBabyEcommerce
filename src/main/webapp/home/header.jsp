@@ -19,8 +19,6 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-toast.css?v=1">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/home/Home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-home/search.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-page/auth/auth.css">
-
 </head>
 
 <body>
@@ -112,27 +110,32 @@
         <%-- <span class="cart-count" id="cart-count">0</span>--%>
       </a>
 
-      <div class="icon user-login" target="_top">
-        <%-- <i class="fas fa-user"></i>--%>
+      <div class="icon user-login">
         <i class="fa-solid fa-user"></i>
-            <div class="user-popup">
-                <c:choose>
+        <div class="user-popup">
+          <c:choose>
+            <c:when test="${not empty sessionScope.user}">
+              <div class="user-popup-logged">
 
-                    <c:when test="${not empty sessionScope.user}">
-                        <a id = "headerDisplayName" class="nav_item" href="user-profile" >
-                            Xin chào ${sessionScope.user.displayName}
-                      </a>
-<%--                        <a class="nav_item" href="user-profile">Trang của tôi</a>--%>
-                        <a class="nav_item" href="logout">Đăng xuất</a>
-                    </c:when>
+                <a href="user-profile" class="popup-profile">
+                  <i class="fa-solid fa-user"></i>
+                  <span>Xin chào ${sessionScope.user.displayName}</span>
+                </a>
 
-                    <c:otherwise>
-<%--                        <a href="login" id="login-link">Đăng nhập/Đăng ký</a>--%>
-                        <span id="login-link" style="cursor: pointer; color: inherit; font-size: 12px">Đăng nhập/Đăng ký</span>
-                    </c:otherwise>
+                <a href="logout" class="popup-logout">
+                  <i class="fa-solid fa-right-from-bracket"></i>
+                  <span>Đăng xuất</span>
+                </a>
 
-                </c:choose>
-            </div>
+              </div>
+            </c:when>
+
+            <c:otherwise>
+              <jsp:include page="/auth/loginModal.jsp" />
+            </c:otherwise>
+          </c:choose>
+        </div>
+
       </div>
     </div>
 
@@ -190,45 +193,55 @@
 
 </div>
 
-<%--<div id="loginModal" class="modal">--%>
-<%--    <div class="modal-content">--%>
-<%--        <span class="close-btn">&times;</span>--%>
-<%--&lt;%&ndash;                <jsp:include page="../auth/auth.jsp" />&ndash;%&gt;--%>
-<%--    </div>--%>
-<%--</div>--%>
-<div id="loginModal" class="my-custom-modal">
-    <div class="my-modal-content">
-        <span class="close-btn-auth">&times;</span>
-        <jsp:include page="/auth/auth.jsp" />
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const modal = document.getElementById("loginModal");
-        const btn = document.getElementById("login-link");
-        const span = document.querySelector(".close-btn-auth");
-        if (btn && modal) {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-                modal.style.display = "block";
-            });
-        }
-        if (span && modal) {
-            span.addEventListener("click", function () {
-                modal.style.display = "none";
-            });
-        }
-        window.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-
-    });
-</script>
 <script>
   window.contextPath = "${pageContext.request.contextPath}";
+</script>
+<script>
+  const signInForm = document.getElementById("signInForm");
+  if (signInForm) {
+    signInForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorBox = document.getElementById("auth-error-message");
+      const btn = document.getElementById("signInButton");
+
+      btn.innerText = "Đang xử lý...";
+      btn.disabled = true;
+
+      try {
+        const response = await fetch("login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.data) {
+          sessionStorage.setItem("userId", data.data.id);
+          sessionStorage.setItem("sessionId", data.data.sessionId);
+          sessionStorage.setItem("role", data.data.role);
+
+          if (data.data.role === "ADMIN") {
+            window.location.href = "admin/dashboard";
+          } else {
+            renderUserPopup(data.data);
+          }
+        } else {
+          errorBox.innerText = data.message || "Email hoặc mật khẩu không đúng!";
+          errorBox.style.display = "block";
+          btn.innerText = "Đăng nhập";
+          btn.disabled = false;
+        }
+      } catch (err) {
+        errorBox.innerText = "Lỗi kết nối máy chủ!";
+        errorBox.style.display = "block";
+        btn.innerText = "Đăng nhập";
+        btn.disabled = false;
+      }
+    });
+  }
 </script>
 <script src="${pageContext.request.contextPath}/static/style-page/home/home.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-home/search.js"></script>
