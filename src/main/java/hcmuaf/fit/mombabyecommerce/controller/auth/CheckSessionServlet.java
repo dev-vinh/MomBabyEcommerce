@@ -28,9 +28,9 @@ public class CheckSessionServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("user") == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write(objectMapper.writeValueAsString(
-                    new ResponseWrapper<>(401, "error", "Chưa đăng nhập", null)
+                    new ResponseWrapper<>(200, "success", "Chưa đăng nhập", null)
             ));
             return;
         }

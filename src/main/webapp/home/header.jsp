@@ -197,9 +197,9 @@
   window.contextPath = "${pageContext.request.contextPath}";
 </script>
 <script>
-  const signInForm = document.getElementById("signInForm");
-  if (signInForm) {
-    signInForm.addEventListener("submit", async (e) => {
+  const loginFormHeader = document.getElementById("loginFormHeader");
+  if (loginFormHeader) {
+    loginFormHeader.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
