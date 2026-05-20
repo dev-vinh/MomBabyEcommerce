@@ -23,8 +23,6 @@
           href="${pageContext.request.contextPath}/static/style-component/style-cart/CartItem.css">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.css">
-    <script
-            src="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.js"></script>
     <style>
         #price {
             margin-bottom: 5px;
@@ -53,14 +51,19 @@
     <div class="container row">
         <div class="left-side">
             <div class="list_product">
-
-                <!-- 1. KHỐI DANH SÁCH SẢN PHẨM -->
                 <c:if test="${not empty productList}">
                     <c:forEach items="${productList}" var="p">
-                        <div class="wrap mid_align row product-item" data-stock="${p.stock}"
-                             data-id="${p.productId}" data-option-id="${p.optionId}"
-                             data-quantity="${p.quantity}" data-price="${p.price}">
-
+                        <div class="wrap mid_align row product-item"
+                             data-product-id="${p.productId}"
+                             data-option-id="${p.optionId}"
+                             data-stock="${p.stock}"
+                             data-quantity="${p.quantity}"
+                             data-price="${p.price}"
+                             data-weight="${empty p.weight ? 500 : p.weight}"
+                             data-length="${empty p.length ? 20 : p.length}"
+                             data-width="${empty p.width ? 15 : p.width}"
+                             data-height="${empty p.height ? 10 : p.height}"
+                        >
                             <div class="image">
                                 <c:choose>
                                     <c:when test="${empty p.imageUrl}">
@@ -70,23 +73,31 @@
                                         <img src="${p.imageUrl}" alt="" />
                                     </c:otherwise>
                                 </c:choose>
-                            </div> <!-- /Đóng image -->
-
+                            </div>
                             <div class="description mid_align col">
-                                <div class="title">${p.name}</div>
+                                <div class="title">
+                                        ${p.name}
+                                </div>
+                                <c:if test="${not empty p.variantText}">
+                                    <div class="variant-text">
+                                            ${p.variantText}
+                                    </div>
+                                </c:if>
+                                <div class="status">
                                 <c:choose>
                                     <c:when test="${not empty p.stock and p.stock > 0}">
-                                        <div class="status">
-                                            <span class="status_type">Còn hàng</span>
-                                        </div>
+                                            <span class="status_type">
+                                                Còn hàng
+                                            </span>
                                     </c:when>
                                     <c:otherwise>
-                                        <div class="status">
-                                            <span class="status_type">Đang về hàng</span>
-                                        </div>
+                                            <span class="status_type out-of-stock">
+                                                Đang về hàng
+                                            </span>
                                     </c:otherwise>
                                 </c:choose>
-                            </div> <!-- /Đóng description -->
+                                </div>
+                            </div>
 
                             <div class="price_and_quantity mid_align col">
                                 <div id="price" data-price="${p.price}">
@@ -95,52 +106,59 @@
                                 <div id="quantity" class="mid_align row" data-quantity="${p.quantity}">
                                     Số lượng : ${p.quantity}
                                 </div>
-                            </div> <!-- /Đóng price_and_quantity -->
-                        </div> <!-- /Đóng product-item -->
+                            </div>
+                        </div>
                     </c:forEach>
                 </c:if>
 
                 <c:if test="${empty productList}">
                     <p style="color: orange; padding: 20px;">Không có sản phẩm nào trong giỏ hàng.</p>
                 </c:if>
-
-
-                <!-- 2. KHỐI ĐỊA CHỈ NHẬN HÀNG -->
                 <div class="address">
                     <div class="address_title row">
                         <span>Địa chỉ Nhận hàng</span>
-                    </div> <!-- /Đóng address_title -->
+                    </div>
 
                     <div class="address_body">
                         <c:if test="${not empty addressList}">
                             <c:set var="found" value="false" />
                             <c:forEach items="${addressList}" var="address">
                                 <c:if test="${address.isDefault == true}">
-                                    <div id="address" class="item_header row mid_align" data-address-id="${address.id}">
-                                        <span class="name">${address.fullName}</span>
-                                        <div class="rec_vertical"></div>
-                                        <span class="phone">${address.phoneNumber}</span>
-                                        <a href="#" class="change">Thay đổi</a>
-                                    </div> <!-- /Đóng item_header (Mặc định) -->
-                                    <div class="address_detail">
-                                        <span>${address.street}, ${address.city}, ${address.state}, ${address.country}</span>
-                                    </div> <!-- /Đóng address_detail (Mặc định) -->
-                                    <c:set var="found" value="true" />
-                                </c:if>
-                            </c:forEach>
+                                    <div class="address-item active"
+                                         data-address-id="${address.id}"
+                                         data-district-id="${address.districtId}"
+                                         data-commune-id="${address.wardCode}">
 
-                            <c:if test="${found == false}">
-                                <c:forEach items="${addressList}" var="address">
-                                    <c:if test="${found == false}">
-                                        <div id="address" class="item_header row mid_align" data-address-id="${address.id}">
+                                        <div id="address" class="item_header row mid_align">
                                             <span class="name">${address.fullName}</span>
                                             <div class="rec_vertical"></div>
                                             <span class="phone">${address.phoneNumber}</span>
-                                            <a href="#" class="change">Thay đổi</a>
-                                        </div> <!-- /Đóng item_header (Phụ) -->
+                                        </div>
                                         <div class="address_detail">
                                             <span>${address.street}, ${address.city}, ${address.state}, ${address.country}</span>
-                                        </div> <!-- /Đóng address_detail (Phụ) -->
+                                        </div>
+                                    </div>
+                                    <c:set var="found" value="true" />
+                                </c:if>
+                            </c:forEach>
+                            <c:if test="${found == false}">
+                                <c:forEach items="${addressList}" var="address">
+                                    <c:if test="${found == false}">
+                                        <div class="address-item"
+                                             data-address-id="${address.id}"
+                                             data-district-id="${address.districtId}"
+                                             data-commune-id="${address.wardCode}">
+
+                                            <div id="address" class="item_header row mid_align">
+                                                <span class="name">${address.fullName}</span>
+                                                <div class="rec_vertical"></div>
+                                                <span class="phone">${address.phoneNumber}</span>
+                                                <a href="#" class="change">Thay đổi</a>
+                                            </div>
+                                            <div class="address_detail">
+                                                <span>${address.street}, ${address.city}, ${address.state}, ${address.country}</span>
+                                            </div>
+                                        </div>
                                         <c:set var="found" value="true" />
                                     </c:if>
                                 </c:forEach>
@@ -149,26 +167,22 @@
 
                         <c:if test="${empty addressList}">
                             <p style="color: orange;">Bạn chưa có địa chỉ giao hàng.
-                                <a href="${pageContext.request.contextPath}/user-address">Thêm địa chỉ mới</a>
+                                <a href="${pageContext.request.contextPath}/user-address">Thêm địa chỉ mới </a>
                             </p>
                         </c:if>
-                    </div> <!-- /Đóng address_body -->
-                </div> <!-- /Đóng address -->
-
-
-                <!-- 3. KHỐI PHƯƠNG THỨC THANH TOÁN -->
+                    </div>
+                </div>
                 <div class="payment">
                     <div class="payment_title row">
                         <span>Phương thức thanh toán</span>
-                    </div> <!-- /Đóng payment_title -->
+                    </div>
 
                     <div class="payment_body col">
-                        <!-- Thống nhất đưa tất cả các item thanh toán vào chung trong payment_body -->
                         <div class="item mid_align cod">
                             <i class="fa-solid fa-money-bill"></i>
-                            <span>Thanh toán khi nhận hàng</span>
-                            <input type="radio" name="payment-method" data-payment="COD" checked>
-                        </div> <!-- /Đóng item cod -->
+                            <span>Thanh toán khi nhận hàng </span>
+                            <input type="radio" name="payment-method" data-payment="COD" checked >
+                        </div>
 
                         <div class="item mid_align banking col">
                             <div class="title">
@@ -194,18 +208,18 @@
                                                     <c:if test="${card.isDefault == 'false'}">
                                                         <input type="radio" name="payment-method" data-payment="${card.id}">
                                                     </c:if>
-                                                </div> <!-- /Đóng wrap_card -->
-                                            </div> <!-- /Đóng card_item -->
+                                                </div>
+                                            </div>
                                         </c:forEach>
                                     </c:if>
-                                </div> <!-- /Đóng card_list col -->
-                            </div> <!-- /Đóng title -->
-                        </div> <!-- /Đóng item banking col -->
+                                </div>
+                            </div>
+                        </div>
 
-                    </div> <!-- /Đóng payment_body col -->
-                </div> <!-- /Đóng payment -->
+                    </div>
+                </div>
 
-            </div> <!-- /Đóng list_product -->
+            </div>
         </div>
 
 
@@ -223,28 +237,30 @@
                     </div>
                     <div class="ship item_price">
                         <span>Phí vận chuyển</span>
-                        <span id="ship_fee" class="value">0 VND</span>
+                        <span id="ship_fee" class="value">0 VND </span>
                     </div>
                 </div>
 
                 <div class="wrap_total">
                     <div class="total_label">
-                        <span>Tổng cộng</span>
-                        <span id="total">0 VND</span>
+                        <span>Tổng cộng </span>
+                        <span id="total">0 VND </span>
                     </div>
-                    <span class="note">Đã bao gồm thuế GTGT</span>
+                    <span class="note">Đã bao gồm thuế GTGT </span>
                 </div>
 
-                <button type="button" id="pay">Thanh Toán</button>
+                <button type="button" id="pay">Thanh Toán </button>
 
                 <div class="term_condition">
-                    <span>Bằng cách gửi đơn đặt hàng, bạn đồng ý với <a href="#">Điều khoản &amp; điều kiện</a> và chúng tôi sẽ sử dụng dữ liệu cá nhân của bạn theo <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.</span>
+                    <span>
+                        Bằng cách gửi đơn đặt hàng, bạn đồng ý với <a href="#">Điều khoản &amp; điều kiện </a> và chúng tôi sẽ sử dụng dữ liệu cá nhân của bạn theo <a href="#" >Chính sách quyền riêng tư </a> của chúng tôi.
+                    </span>
                 </div>
 
                 <div class="ads col">
                     <div class="ads_item">
                         <i class="fa-solid fa-medal"></i>
-                        <span>Cam kết giá</span>
+                        <span>Cam kết giá </span>
                     </div>
                     <div class="ads_item">
                         <i class="fa-solid fa-truck-fast"></i>
@@ -252,19 +268,19 @@
                     </div>
                     <div class="ads_item">
                         <i class="fa-solid fa-percent"></i>
-                        <span>Gói trả góp 0%</span>
+                        <span> Gói trả góp 0%</span>
                     </div>
                     <div class="ads_item">
                         <i class="fa-solid fa-rotate"></i>
-                        <span>Đổi sản phẩm theo chính sách quy định trong vòng 14 ngày</span>
+                        <span>Đổi sản phẩm theo chính sách quy định trong vòng 14 ngày </span>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-</div>
-
+    </div>
+<script
+        src="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.js"></script>
 </body>
 
 </html>

@@ -214,17 +214,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const phoneNumber = (document.getElementById("phone")?.value || "").trim();
             const detail = (document.getElementById("detail")?.value || "").trim();
 
-            const wardName = wardSelect.dataset.name || "";
-            const city = districtSelect.dataset.name || "";
-            const state = provinceSelect.dataset.name || "";
+            let wardName = wardSelect.dataset.name || "";
+            let city = districtSelect.dataset.name || "";
+            let state = provinceSelect.dataset.name || "";
+            if (isEditMode && !provinceSelect.value) {
+                state = currentEditingAddress.state;
+                city = currentEditingAddress.city;
+            }
 
-            const street = wardName ? `${detail}, ${wardName}` : detail;
-
+            const street = (isEditMode && !provinceSelect.value) ? detail : (wardName ? `${detail}, ${wardName}` : detail);
             if (!/^0\d{9}$/.test(phoneNumber)) {
                 alert("Số điện thoại phải gồm 10 số và bắt đầu bằng 0.");
                 return;
             }
             const formData = {
+                id: isEditMode ? parseInt(editingAddressId) : null,
                 fullName: fullName,
                 phoneNumber: phoneNumber,
                 street: street,
@@ -232,8 +236,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 state: state,
                 country: "Việt Nam",
                 addressType: document.querySelector('input[name="addressType"]:checked')?.value || "shipping",
-                isDefault: false
+                isDefault: false,
+                districtId: districtSelect.value ? parseInt(districtSelect.value) : (isEditMode ? parseInt(currentEditingAddress.districtId) : null),
+                wardCode: wardSelect.value ? wardSelect.value : (isEditMode ? currentEditingAddress.wardCode : null)
             };
+            if (!formData.districtId || !formData.wardCode) {
+                alert("Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện, Phường/Xã .");
+                return;
+            }
 
             fetch(addForm.getAttribute("action"), {
                 method:  "POST",

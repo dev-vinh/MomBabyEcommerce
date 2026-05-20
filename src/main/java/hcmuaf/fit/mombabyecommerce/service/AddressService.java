@@ -31,17 +31,7 @@ public class AddressService {
         if (address.getDefault() == null) {
             address.setDefault(false);
         }
-        return addressDao.addAddress(
-                address.getUserId(),
-                address.getAddressType(),
-                address.getFullName(),
-                address.getPhoneNumber(),
-                address.getStreet(),
-                address.getCity(),
-                address.getState(),
-                address.getCountry(),
-                address.getDefault()
-        );
+        return addressDao.addAddress(address);
     }
     public Address findDefautlByUserId(Integer id) {
         return addressDao.getAddressDefaultByUserId(id);

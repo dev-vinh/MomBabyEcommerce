@@ -48,17 +48,10 @@ public class AddAddressController extends HttpServlet {
             ObjectMapper mapper = new ObjectMapper();
 
             Address newAddress = mapper.readValue(jsonData, Address.class);
+            System.out.println("districtId = " + newAddress.getDistrictId());
+            System.out.println("wardCode = " + newAddress.getWardCode());
 
             newAddress.setUserId(userId);
-
-            Address addressDefault = addressService.findDefautlByUserId(userId);
-
-            if (addressDefault == null) {
-                newAddress.setDefault(true);
-            }
-
-            int resultId = addressService.addAddress(newAddress);
-
             String validationError = validateAddress(newAddress);
             if (validationError != null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -68,6 +61,13 @@ public class AddAddressController extends HttpServlet {
                         .toString());
                 return;
             }
+            Address addressDefault = addressService.findDefautlByUserId(userId);
+
+            if (addressDefault == null) {
+                newAddress.setDefault(true);
+            }
+
+            int resultId = addressService.addAddress(newAddress);
 
             if (resultId > 0) {
                 newAddress.setId(resultId);
@@ -81,12 +81,20 @@ public class AddAddressController extends HttpServlet {
 
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"status\":\"error\", \"message\":\"Thêm địa chỉ thất bại.\"}");
+                response.getWriter().write(new JSONObject()
+                        .put("status", "error")
+                        .put("message", "Thêm địa chỉ thất bại.")
+                        .toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
             response.getWriter().println("Lỗi khi thêm địa chỉ.");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write(new JSONObject()
+                    .put("status", "error")
+                    .put("message", "Đã xảy ra hệ thống lỗi khi xử lý địa chỉ.")
+                    .toString());
         }
     }
 
@@ -110,7 +118,9 @@ public class AddAddressController extends HttpServlet {
         if (address.getState() == null || address.getState().isBlank()) {
             return "Tỉnh/Thành phố không được để trống.";
         }
-
+        if (address.getDistrictId() == null || address.getDistrictId() <= 0) {
+            return "Mã Quận/Huyện (District ID) không hợp lệ.";
+        }
         if (address.getCountry() == null || address.getCountry().isBlank()) {
             address.setCountry("Việt Nam");
         }

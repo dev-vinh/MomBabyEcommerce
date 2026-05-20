@@ -15,6 +15,8 @@ public class Address {
     private String street;
     private String city;
     private String state;
+    private Integer districtId;
+    private String wardCode;
     private String country;
     private Boolean isDefault;
 
@@ -27,6 +29,8 @@ public class Address {
                    @ColumnName("street") @Nullable String street,
                    @ColumnName("city") @Nullable String city,
                    @ColumnName("state") @Nullable String state,
+                   @ColumnName("districtId") @Nullable Integer districtId,
+                   @ColumnName("wardCode") @Nullable String wardCode,
                    @ColumnName("country") @Nullable String country,
                    @ColumnName("isDefault") @Nullable Boolean isDefault) {
         this.id = id;
@@ -37,6 +41,8 @@ public class Address {
         this.street = street;
         this.city = city;
         this.state = state;
+        this.districtId = districtId;
+        this.wardCode = wardCode;
         this.country = country;
         this.isDefault = isDefault;
     }
@@ -108,6 +114,22 @@ public class Address {
         this.state = state;
     }
 
+    public Integer getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Integer districtId) {
+        this.districtId = districtId;
+    }
+
+    public String getWardCode() {
+        return wardCode;
+    }
+
+    public void setWardCode(String wardCode) {
+        this.wardCode = wardCode;
+    }
+
     public String getCountry() {
         return country;
     }
@@ -143,6 +165,8 @@ public class Address {
                 ", street='" + street + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
+                ", districtId=" + districtId + '\''+
+                ", wardCode='" + wardCode + '\'' +
                 ", country='" + country + '\'' +
                 ", isDefault=" + isDefault +
                 '}';

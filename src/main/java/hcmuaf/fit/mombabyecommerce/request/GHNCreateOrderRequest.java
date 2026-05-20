@@ -13,6 +13,8 @@ public class GHNCreateOrderRequest {
     public String to_name; // Required
     public String to_phone; // Required
     public String to_address; // Required
+    public Integer to_district_id;
+    public String to_ward_code;
     public String to_ward_name; // Required
     public String to_district_name; // Required
     public String to_province_name; // Required
@@ -34,6 +36,8 @@ public class GHNCreateOrderRequest {
     public GHNCreateOrderRequest(Address address, User user, String content, int codAmount, List<GHNItem> items) {
         this.to_name= user.getFullName();
         this.to_address= address.getStreet();
+        this.to_district_id = address.getDistrictId(); // Lấy từ cột districtId (int)
+        this.to_ward_code = address.getWardCode();
         this.to_ward_name = address.getCity();
         this.to_district_name= address.getState();
         this.to_province_name= address.getState();

@@ -66,11 +66,15 @@
                 <select id="districtSelect" name="city" autocomplete="city" required disabled>
                     <option value="">-- Chọn Quận / Huyện --</option>
                 </select>
+                <input type="hidden" id="districtName" />
+                <input type="hidden" id="districtId" />
 
                 <label for="wardSelect">Phường / Xã:<span style="color:red;">*</span></label>
                 <select id="wardSelect" name="ward" autocomplete="ward" required disabled>
                     <option value="">-- Chọn Phường / Xã --</option>
                 </select>
+                <input type="hidden" id="wardName" />
+                <input type="hidden" id="wardCode" />
 
                 <label for="detail">Địa chỉ chi tiết:<span style="color:red;">*</span></label>
                 <input type="text" id="detail" name="detail" autocomplete="detail"
@@ -102,7 +106,9 @@
                              data-city="${fn:escapeXml(address.city)}"
                              data-state="${fn:escapeXml(address.state)}"
                              data-country="${fn:escapeXml(address.country)}"
-                             data-address-type="${fn:escapeXml(address.addressType)}">
+                             data-address-type="${fn:escapeXml(address.addressType)}"
+                             data-district-id="${address.districtId}"
+                             data-ward-code="${fn:escapeXml(address.wardCode)}">
 
                             <div class="icon mid_align">
                                 <c:choose>
