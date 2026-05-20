@@ -82,19 +82,21 @@ public interface ProductDao {
                                       @Bind("optionId") int optionId);
 
     @SqlQuery("""
-            SELECT p.id, p.name, p.sku, p.description, p.isActive,
-                   p.categoryId, cate.name as categoryName,
-                   p.brandId, p.noOfViews, p.noOfSold,
-                   p.imageId, img.url as imageUrl,
-                   ops.price, inv.quantity as stock, ops.id as optionId
-            FROM products p
-            JOIN categories cate ON cate.id = p.categoryId
-            JOIN option_variant ops ON ops.productId = p.id
-            JOIN inventory inv ON inv.optionVariantId = ops.id
-            JOIN image img ON img.id = p.imageId
-            WHERE p.isActive = true AND inv.quantity > 0
-            """)
+    SELECT p.id, p.name, p.sku, p.description, p.isActive,
+           p.categoryId, cate.name as categoryName,
+           p.brandId, p.noOfViews, p.noOfSold,
+           p.imageId, img.url as imageUrl,
+           NULL as price, NULL as stock, NULL as optionId,
+           NULL as height, NULL as length, NULL as width,
+           NULL as weight, NULL as variantText
+    FROM products p
+    JOIN categories cate ON cate.id = p.categoryId
+    LEFT JOIN image img ON img.id = p.imageId
+    WHERE p.isActive = true
+    ORDER BY p.id DESC
+    """)
     List<Product> getAllProducts();
+
 
     @SqlQuery("""
         SELECT o.price

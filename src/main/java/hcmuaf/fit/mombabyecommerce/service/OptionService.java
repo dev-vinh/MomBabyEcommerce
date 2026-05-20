@@ -56,6 +56,17 @@ public class OptionService {
     public void createInventory(Integer optionVariantId, Integer quantity) {
         optionDao.createInventory(optionVariantId, quantity);
     }
+    public List<OptionVariant> getAllOptionsWithStock() {
+        return optionDao.getAllOptionsWithStock();
+    }
+
+    public boolean updateStockWithLocation(Integer optionVariantId, Integer quantity, String location) {
+        return optionDao.updateStockWithLocation(optionVariantId, quantity, location);
+    }
+
+    public List<OptionVariant> getOptionsWithStockByProductId(Integer productId) {
+        return optionDao.getOptionsWithStockByProductId(productId);
+    }
     public static void main(String[] args) {
         OptionService  optionService = new OptionService(DBConnection.getJdbi());
 
