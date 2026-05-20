@@ -67,6 +67,9 @@
                             .collect(Collectors.toList());
 
                     HttpSession session = request.getSession();
+                    System.out.println(
+                            session.getAttribute("cart")
+                    );
                     session.setAttribute("user", user);
                     session.setAttribute("userId", user.getId());
                     session.setAttribute("roleType", user.getRole().getRoleType().name());

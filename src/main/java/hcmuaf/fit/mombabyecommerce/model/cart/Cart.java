@@ -85,6 +85,13 @@ public class Cart implements Serializable {
     public Map<Integer, ProductCart> getData() {
         return data;
     }
+    public void add(ProductCart productCart) {
+
+        data.put(
+                productCart.getOptionId(),
+                productCart
+        );
+    }
 
     public void setData(Map<Integer, ProductCart> data) {
         this.data = data;

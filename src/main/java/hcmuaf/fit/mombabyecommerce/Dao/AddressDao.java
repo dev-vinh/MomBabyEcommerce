@@ -25,18 +25,10 @@ public interface AddressDao {
     Address getAddressById(@Bind("addressId") Integer addressId);
 
 
-    @SqlUpdate("INSERT INTO address (userId, addressType, fullName, phoneNumber, street, city, state, country, isDefault) " +
-            "VALUES (:userId, :addressType, :fullName, :phoneNumber, :street, :city, :state, :country, :isDefault)")
+    @SqlUpdate("INSERT INTO address (userId, addressType, fullName, phoneNumber, street, city, state,districtId,wardCode, country, isDefault) " +
+            "VALUES (:userId, :addressType, :fullName, :phoneNumber, :street, :city, :state,:districtId,:wardCode,:country, :isDefault)")
     @GetGeneratedKeys("id")
-    int addAddress(@Bind("userId") Integer userId,
-                   @Bind("addressType") String addressType,
-                   @Bind("fullName") String fullName,
-                   @Bind("phoneNumber") String phoneNumber,
-                   @Bind("street") String street,
-                   @Bind("city") String city,
-                   @Bind("state") String state,
-                   @Bind("country") String country,
-                   @Bind("isDefault") Boolean isDefault);
+    int addAddress(@BindBean Address address);
 
     @SqlQuery(value = "SELECT *" +
             " FROM address" +
@@ -77,6 +69,8 @@ public interface AddressDao {
             "street = :street, " +
             "city = :city, " +
             "state = :state, " +
+            "districtId = :districtId, " +
+            "wardCode = :wardCode, " +
             "country = :country " +
             "WHERE id = :id AND userId = :userId")
     int updateAddress(@BindBean Address address);

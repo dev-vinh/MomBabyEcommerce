@@ -96,7 +96,6 @@ public class UpdateQuantity extends HttpServlet {
                         "{\"success\":false,\"message\":\"Số lượng vượt quá tồn kho. Trong kho chỉ còn "
                                 + currentStock + " sản phẩm\"}"
                 );
-            response.getWriter().write("{\"success\":true,\"stock\":" + currentStock + ",\"quantity\":" + quantity + "}");
                 return;
             }
             ProductCart productCart = cart.getData().get(optionId);
@@ -106,6 +105,9 @@ public class UpdateQuantity extends HttpServlet {
             session.setAttribute("cart", cart);
             Integer userId =
                     (Integer) session.getAttribute("userId");
+            if (userId == null) {
+                session.removeAttribute("mergedCart");
+            }
             if (userId != null) {
                 cartDBService.updateQuantity(
                         userId,

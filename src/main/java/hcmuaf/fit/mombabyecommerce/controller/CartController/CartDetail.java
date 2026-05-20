@@ -32,9 +32,28 @@ public class CartDetail extends HttpServlet {
             cart = new Cart();
             session.setAttribute("cart", cart);
         }
-        if (userId != null) {
-            cart = cartDBService.loadCartSessionFromDB(userId);
+        Boolean mergedCart = (Boolean) session.getAttribute("mergedCart");
+        if (userId != null && (mergedCart == null || !mergedCart)) {
+            Cart dbCart =cartDBService.loadCartSessionFromDB(userId);
+            for (ProductCart guestItem : cart.getProducts()) {
+                boolean found = false;
+                for (ProductCart dbItem : dbCart.getProducts()) {
+                    if (dbItem.getOptionId().equals(guestItem.getOptionId())) {
+                        dbItem.setQuantity(
+                                dbItem.getQuantity()
+                                        + guestItem.getQuantity()
+                        );
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    dbCart.add(guestItem);
+                }
+            }
+            cart = dbCart;
             session.setAttribute("cart", cart);
+            session.setAttribute("mergedCart", true);
         }
         for (ProductCart item : cart.getProducts()) {
             Product dbProduct =

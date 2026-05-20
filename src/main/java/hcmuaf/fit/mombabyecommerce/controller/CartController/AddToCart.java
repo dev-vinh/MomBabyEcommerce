@@ -103,7 +103,9 @@ public class AddToCart extends HttpServlet {
             session.setAttribute("cart", cart);
 
             Integer userId = (Integer) session.getAttribute("userId");
-
+            if (userId == null) {
+                session.removeAttribute("mergedCart");
+            }
             if (userId != null) {
                 cartDBService.addToCart(
                         userId,

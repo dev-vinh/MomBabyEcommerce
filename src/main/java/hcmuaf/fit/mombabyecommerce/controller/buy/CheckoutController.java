@@ -46,9 +46,8 @@ public class CheckoutController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
-    private int codAmount = 0;
-    private StringBuilder content = new StringBuilder();
-    private List<GHNItem>items = new ArrayList<>();
+    int codAmount = 0;
+    List<GHNItem>items = new ArrayList<>();
 
 
     @Override
@@ -68,7 +67,26 @@ public class CheckoutController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
+        String optionIdsParam = request.getParameter("optionIds");
         List<ProductCart> productList = new ArrayList<>();
+        if (optionIdsParam != null && !optionIdsParam.trim().isEmpty()) {
+            String[] optionIds = optionIdsParam.split(",");
+            for (String optionIdStr : optionIds) {
+                try {
+                    Integer optionId = Integer.parseInt(optionIdStr.trim());
+                    ProductCart item = cart.getData().get(optionId);
+                    if (item != null) {
+                        productList.add(item);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (productList.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
         List<Address> addressList =addressService.findByUserId(userId);
         if (addressList == null || addressList.isEmpty()) {
             response.sendRedirect(
@@ -81,7 +99,7 @@ public class CheckoutController extends HttpServlet {
         request.setAttribute("productList", productList);
         request.setAttribute("addressList", addressList);
         request.setAttribute("cardList", cardList);
-        request.getRequestDispatcher("Checkout/Checkout.jsp").forward(request, response);
+        request.getRequestDispatcher("Checkout/checkout.jsp").forward(request, response);
     }
 @Override
 protected void doPost(HttpServletRequest request, HttpServletResponse response)

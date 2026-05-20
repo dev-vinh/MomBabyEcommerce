@@ -28,42 +28,42 @@
                         </div>
                         <div id="cart_body" class="mid_align col">
 
-
-                            <%-- CHƯA CÓ CONTROLLẺR SETATTRIBUTẺ CHO productCarts--%>
                                 <c:if test="${empty productCarts}">
                                     <div id="empty_cart" class="mid_align col">
                                         <i class="fa-solid fa-cart-plus"></i>
                                         <h1>Giỏ Hàng Đang Trống</h1>
-                                        <span>Đăng nhập vào tài khoản của bạn để xem các mục đã lưu hoặc tiếp tục mua
-                                            sắm</span>
-
+                                        <span> Đăng nhập vào tài khoản của bạn để xem các mục đã lưu hoặc tiếp tục mua sắm
+                                        </span>
                                         <div class="btn row">
-                                            <button class="btn_shopping">Tiếp tục mua sắm</button>
-<%--                                            <button class="btn_login">Đăng nhập</button>--%>
-                                            <a class="btn_login login-link">
+                                            <button class="btn_shopping"
+                                                    onclick="window.location.href='${pageContext.request.contextPath}/home'">
+                                                Tiếp tục mua sắm
+                                            </button>
+                                            <a class="btn_login login-link"
+                                               href="${pageContext.request.contextPath}/login">
                                                 Đăng nhập
                                             </a>
                                         </div>
                                     </div>
                                 </c:if>
-                                <%-- CHƯA CÓ CONTROLLẺR SETATTRIBUTẺ CHO productCarts--%>
                                     <c:if test="${not empty productCarts }">
-
-
                                         <div class="content row">
                                             <div class="list_item ">
-                                                <%-- <span>Bạn đang có 4 sản phâm trong giỏ hàng</span>--%>
-
-
                                                     <c:forEach items="${productCarts}" var="p">
-
                                                         <div class="wrap mid_align row product-item"
-                                                            data-stock="${p.stock}" data-id="${p.optionId}">
+                                                             data-product-id="${p.productId}"
+                                                             data-option-id="${p.optionId}"
+                                                             data-stock="${p.stock}">
                                                             <input type="checkbox"
-                                                                   <c:if test="${p.stock > 0}">checked</c:if>
                                                                    class="product_checked"
                                                                    value="${p.optionId}"
-                                                                   <c:if test="${p.stock <= 0}">disabled</c:if>>
+                                                                    <c:if test="${p.stock > 0}">
+                                                                        checked
+                                                                    </c:if>
+                                                                    <c:if test="${p.stock <= 0}">
+                                                                        disabled
+                                                                    </c:if>
+                                                            >
                                                             <div class="image">
                                                                 <c:choose>
                                                                     <c:when test="${empty p.imageUrl}">
@@ -71,48 +71,47 @@
                                                                             alt="" />
                                                                     </c:when>
                                                                     <c:otherwise>
-                                                                        <img src="${p.imageUrl}" alt="" />
+                                                                        <img src="${p.imageUrl}" alt="${p.name}" />
                                                                     </c:otherwise>
                                                                 </c:choose>
                                                             </div>
 
 
                                                             <div class="description mid_align col  ">
-                                                                <div class="title ">${p.name}</div>
+                                                                <div class="title ">
+                                                                        ${p.name}
+                                                                </div>
                                                                 <c:if test="${not empty p.variantText}">
                                                                     <div class="variant-text">
                                                                             ${p.variantText}
                                                                     </div>
                                                                 </c:if>
-
-
-
-
                                                                 <div class="status">
                                                                     <c:choose>
                                                                         <c:when test="${p.stock > 0}">
-                                                                            <span class="status_type">Còn hàng (${p.stock})</span>
+                                                                            <span class="status_type">
+                                                                                Còn hàng (${p.stock})
+                                                                            </span>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <span class="status_type out-of-stock">Hết hàng</span>
+                                                                            <span class="status_type out-of-stock">
+                                                                                Hết hàng
+                                                                            </span>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </div>
-
                                                             </div>
-
-
                                                             <div class="section_price mid_align col  ">
                                                                 <span class="price" data-price="${p.price}">
                                                                     <fmt:formatNumber value="${p.price}"
                                                                         pattern="#,###" />
-
                                                                 </span>
-
-
-
                                                                 <div class="quantity mid_align row">
-                                                                    <button class="decrement" <c:if test="${p.stock <= 0}">disabled</c:if>>
+                                                                    <button class="decrement"
+                                                                            <c:if test="${p.stock <= 0}">
+                                                                                disabled
+                                                                            </c:if>
+                                                                    >
                                                                         <i class="fa-solid fa-minus"></i>
                                                                     </button>
 
@@ -120,7 +119,11 @@
                                                                             ${p.quantity}
                                                                     </span>
 
-                                                                    <button class="increment" <c:if test="${p.stock <= 0 || p.quantity >= p.stock}">disabled</c:if>>
+                                                                    <button class="increment"
+                                                                            <c:if test="${p.stock <= 0 || p.quantity >= p.stock}">
+                                                                                disabled
+                                                                            </c:if>
+                                                                    >
                                                                         <i class="fa-solid fa-plus"></i>
                                                                     </button>
 
@@ -130,17 +133,11 @@
                                                                     <i class=" del fa-solid fa-trash-can"></i>
                                                                 </div>
 
-
                                                             </div>
 
-
                                                         </div>
-
                                                     </c:forEach>
-
-
                                             </div>
-
 
                                             <div class="bill mid_align rol ">
                                                 <div class="discount">
