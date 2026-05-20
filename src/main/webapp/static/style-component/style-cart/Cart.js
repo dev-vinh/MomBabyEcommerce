@@ -26,6 +26,9 @@ async function checkSession() {
             method: "GET",
             credentials: "include"
         });
+        if (response.status === 401) {
+            return null;
+        }
 
         const result = await response.json();
 

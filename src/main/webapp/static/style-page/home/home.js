@@ -10,7 +10,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 method: "GET",
                 credentials: "include"
             });
+            if (res.status === 401) {
+                return null;
+            }
+            if (!res.ok) {
+                return null;
+            }
             const data = await res.json();
+
             return res.ok && data.statusCode === 200 ? data.data : null;
         } catch (err) {
             return null;

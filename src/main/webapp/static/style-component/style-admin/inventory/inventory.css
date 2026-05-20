@@ -1,0 +1,236 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+}
+
+.content {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 80px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+/* ========== TOOLBAR ========== */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.toolbar h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+/* ========== SEARCH ========== */
+.search-bar {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 280px;
+    transition: border-color 0.3s;
+}
+
+.search-bar:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* ========== TABLE ========== */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.inventory-table th {
+    background-color: #f7f8fa;
+    color: #555;
+    font-weight: 600;
+}
+
+.inventory-table tr:hover {
+    background-color: #f1f5f9;
+    cursor: pointer;
+}
+
+/* ========== PRODUCT GROUP ROW ========== */
+.product-group-row td {
+    background-color: #f0f4ff;
+    font-weight: 600;
+    color: #333;
+}
+
+.product-group-row:hover td {
+    background-color: #e8eeff;
+}
+
+.product-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* ========== STOCK BADGE ========== */
+.status {
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+}
+
+.status.in-stock {
+    color: #2ecc71;
+    background-color: #e9f7ef;
+}
+
+.status.low-stock {
+    color: #e67e22;
+    background-color: #fef3e2;
+}
+
+.status.out-of-stock {
+    color: #e74c3c;
+    background-color: #fde2e2;
+}
+
+/* ========== ACTION BUTTON ========== */
+.action-icons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-edit-stock {
+    background-color: white;
+    color: #0a7cff;
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.3s;
+}
+
+.btn-edit-stock:hover {
+    background-color: #69c0fd;
+}
+
+/* ========== MODAL ========== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px 24px;
+    width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-box h3 {
+    margin: 0 0 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.modal-field {
+    margin-bottom: 14px;
+}
+
+.modal-field label {
+    display: block;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.modal-field input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.modal-field input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.discard-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.discard-btn:hover {
+    background-color: #c0392b;
+}
+
+.add-btn {
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.add-btn:hover {
+    background-color: #5b49c3;
+}
+
