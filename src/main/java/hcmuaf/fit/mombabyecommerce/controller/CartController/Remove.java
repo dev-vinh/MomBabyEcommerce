@@ -53,11 +53,13 @@ public class Remove extends HttpServlet {
                 writeJson(response, false, "Sản phẩm không tồn tại trong giỏ hàng");
                 return;
             }
-
-            cart.getData().remove(optionId);
+            cart.delete(optionId);
             session.setAttribute("cart", cart);
 
             Integer userId =(Integer) session.getAttribute("userId");
+            if (userId == null) {
+                session.removeAttribute("mergedCart");
+            }
 
             if (userId != null) {
                 cartDBService.removeItem(

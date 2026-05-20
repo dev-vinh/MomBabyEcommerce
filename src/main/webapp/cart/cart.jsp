@@ -38,9 +38,13 @@
                                             sắm</span>
 
                                         <div class="btn row">
-                                            <button class="btn_shopping">Tiếp tục mua sắm</button>
+                                            <button class="btn_shopping"
+                                                    onclick="window.location.href='${pageContext.request.contextPath}/home'">
+                                                Tiếp tục mua sắm
+                                            </button>
 <%--                                            <button class="btn_login">Đăng nhập</button>--%>
-                                            <a class="btn_login login-link">
+                                            <a class="btn_login login-link"
+                                               href="${pageContext.request.contextPath}/login">
                                                 Đăng nhập
                                             </a>
                                         </div>

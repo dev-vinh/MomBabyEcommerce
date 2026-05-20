@@ -46,9 +46,8 @@ public class CheckoutController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
-    private int codAmount = 0;
-    private StringBuilder content = new StringBuilder();
-    private List<GHNItem>items = new ArrayList<>();
+    int codAmount = 0;
+    List<GHNItem>items = new ArrayList<>();
 
 
     @Override
