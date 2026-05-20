@@ -1,0 +1,496 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #343a40;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.left {
+    width: 270px;
+}
+
+.center {
+    width: 100%;
+}
+
+.side_bar {
+    width: 270px;
+}
+
+
+
+
+.wrap_content {
+    padding: 20px;
+    margin-top: 80px;
+    /*margin-left: 20px;*/
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/* Common styles */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid #e9ecef;
+    width: 100%;
+}
+
+/* Search and filters */
+.header-container {
+    padding: 13px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-container .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: #fff;
+    width: 280px;
+    transition: all 0.3s ease;
+}
+
+.header-container .search-bar:focus-within {
+    border-color: #0DCAF0;
+    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.15);
+}
+
+.header-container .search-bar input[type="text"] {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #495057;
+}
+
+.search-bar svg {
+    color: #6c757d;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.status-select {
+    margin-left: 629px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+    color: #495057;
+    background-color: #fff;
+    width: 180px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.status-select:focus {
+    border-color: #0DCAF0;
+    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.15);
+}
+
+/* Export button and menu */
+
+.entries-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+}
+
+.entries-dropdown label {
+    font-weight: 500;
+}
+
+.entries-dropdown select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    margin: 0 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.entries-dropdown select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.export-container {
+    position: relative;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #198754;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.export-btn:hover {
+    background-color: #157347;
+}
+
+.export-btn i {
+    font-size: 16px;
+}
+
+.export-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    width: 250px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    padding: 10px;
+}
+
+.export-container:hover .export-menu {
+    display: block;
+}
+
+.export-menu p {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.export-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+
+.export-option:hover {
+    background-color: #f5f5f5;
+}
+
+.export-option i {
+    font-size: 16px;
+}
+
+/* Màu sắc cho các icon xuất */
+.fa-copy {
+    color: #3498db; /* Xanh dương */
+}
+
+.fa-print {
+    color: #2ecc71; /* Xanh lá */
+}
+
+.fa-file-excel {
+    color: #ffffff; /* Xanh lá (màu Excel) */
+}
+
+.fa-file-csv {
+    color: #e74c3c; /* Đỏ */
+}
+
+.fa-file-pdf {
+    color: #e74c3c; /* Đỏ (màu PDF) */
+}
+
+.divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 10px 0;
+}
+
+/* Table styles */
+.table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #dee2e6;
+    position: sticky;
+    top: 0;
+}
+
+th:first-child, td:first-child {
+    padding-left: 24px;
+}
+
+th:last-child, td:last-child {
+    padding-right: 24px;
+}
+
+tr:hover {
+    background-color: #f8f9fa;
+}
+
+td {
+    border-bottom: 1px solid #e9ecef;
+    font-size: 14px;
+}
+
+.order-id {
+    color: #5E53CE;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.order-id:hover {
+    color: #4a43a5;
+    text-decoration: underline;
+}
+
+.order-name, .order-date, .order-total {
+    color: #495057;
+}
+
+/* Status badges */
+.status {
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 12px;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    min-width: 100px;
+}
+
+.payment-status-paid {
+    background-color: #24ad002e;
+    color: #24ad00;
+}
+.payment-status-pending {
+    background-color: #3535352e;
+    color: #000000;
+}
+
+.order-status-pending {
+    background-color: rgba(71, 85, 105, 0.1);
+    color: #475569;
+}
+
+
+.order-status-refunded {
+    background-color: rgba(71, 85, 105, 0.1);
+    color: #475569;
+}
+
+.order-status-failed {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.order-status-shipped {
+    background-color: rgb(148 237 255 / 23%);
+    color: #00a1c1;
+}
+
+.order-status-in-progress {
+    background-color: rgb(243 217 136 / 42%);
+    color: #dea600;
+}
+
+.order-status-delivered {
+    background-color: #24ad002e;
+    color: #24ad00;
+}
+
+
+
+/* Action menu */
+.actions {
+    position: relative;
+}
+
+.actions-btn {
+    font-size: 16px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.actions-btn:hover {
+    background-color: #f8f9fa;
+    color: #0DCAF0;
+}
+
+.actions-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    z-index: 100;
+    overflow: hidden;
+    padding: 8px 0;
+}
+
+.actions:hover .actions-menu {
+    display: block;
+}
+
+/* Icons */
+.fa-trash-alt:before, .fa-trash-can:before {
+    color: #dc3545;
+}
+
+.fa-file-pdf:before {
+    color: #dc3545;
+}
+
+.fa-file-excel:before {
+    color: #ffffff;
+}
+
+.fa-file-csv:before {
+    color: #6c757d;
+}
+
+/* Pagination */
+.footer-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px;
+    font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-link {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+    line-height: 1;
+}
+
+.page-link:hover {
+    background-color: #f8f9fa;
+    color: #0DCAF0;
+    border-color: #0DCAF0;
+}
+
+.page-link.active {
+    background-color: #0DCAF0;
+    color: #fff;
+    border-color: #0DCAF0;
+}
+
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    position: relative;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #0DCAF0;
+    border-color: #0DCAF0;
+}
+
+input[type="checkbox"]:checked:after {
+    content: '✓';
+    position: absolute;
+    top: -1px;
+    left: 3px;
+    color: white;
+    font-size: 12px;
+}
