@@ -3,9 +3,6 @@ $(document).ready(async function () {
     const currentUser = await checkSession();
     const isLoggedIn = currentUser !== null;
 
-    const userId = sessionStorage.getItem("userId");
-    const sessionId = sessionStorage.getItem("sessionId");
-
     if (isLoggedIn) {
         $('.btn_login').hide();
     }
@@ -95,7 +92,8 @@ function initCartItems() {
         const removeBtn = productItem.find('.remove');
 
         const stock = parseInt(productItem.attr('data-stock'), 10) || 0;
-        const optionId = parseInt(productItem.attr('data-id'), 10);
+        const productId =parseInt(productItem.attr('data-product-id'), 10);
+        const optionId =parseInt(productItem.attr('data-option-id'), 10);
 
         updatePrice(price, quantity);
         updateQuantityButtons(productItem);
@@ -106,6 +104,7 @@ function initCartItems() {
                 quantity,
                 price,
                 stock,
+                productId,
                 optionId
             );
         });
@@ -115,12 +114,17 @@ function initCartItems() {
                 productItem,
                 quantity,
                 price,
+                productId,
                 optionId
             );
         });
 
         removeBtn.off('click').on('click', function () {
-            removeItem(optionId, productItem);
+            removeItem(
+                productId,
+                optionId,
+                productItem
+            );
         });
     });
 }
@@ -159,6 +163,7 @@ function increaseQuantity(
     quantity,
     price,
     stock,
+    productId,
     optionId
 ) {
 
@@ -185,7 +190,7 @@ function increaseQuantity(
 
     const newQuantity = currentQuantity + 1;
 
-    updateQuantity(optionId, newQuantity, function () {
+    updateQuantity(productId,optionId, newQuantity, function () {
 
         quantity.attr('data-quantity', newQuantity);
         quantity.text(newQuantity);
@@ -200,6 +205,7 @@ function decreaseQuantity(
     productItem,
     quantity,
     price,
+    productId,
     optionId
 ) {
 
@@ -216,7 +222,7 @@ function decreaseQuantity(
 
     const newQuantity = currentQuantity - 1;
 
-    updateQuantity(optionId, newQuantity, function () {
+    updateQuantity(productId,optionId, newQuantity, function () {
 
         quantity.attr('data-quantity', newQuantity);
         quantity.text(newQuantity);
@@ -228,7 +234,7 @@ function decreaseQuantity(
 }
 
 
-function updateQuantity(optionId, quantity, onSuccess) {
+function updateQuantity(productId,optionId, quantity, onSuccess) {
 
     $.ajax({
         url: 'cart/update-quantity',
@@ -236,6 +242,7 @@ function updateQuantity(optionId, quantity, onSuccess) {
         dataType: 'json',
 
         data: {
+            productId: productId,
             optionId: optionId,
             quantity: quantity
         },
@@ -278,7 +285,7 @@ function updateQuantity(optionId, quantity, onSuccess) {
 }
 
 
-function removeItem(optionId, productItem) {
+function removeItem(productId,optionId, productItem) {
 
     $.ajax({
         url: 'cart/remove',
@@ -286,6 +293,7 @@ function removeItem(optionId, productItem) {
         dataType: 'json',
 
         data: {
+            productId: productId,
             optionId: optionId
         },
 
