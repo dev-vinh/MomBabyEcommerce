@@ -15,7 +15,7 @@ import java.util.List;
 
 @WebServlet(name = "AdminOrdersController", value = "/admin/orders")
 public class AdminOrdersController extends HttpServlet {
-    OrderService orderSerivce = new OrderService(DBConnection.getJdbi());
+    OrderService orderService = new OrderService(DBConnection.getJdbi());
     ExcelExportService excelExportService = new ExcelExportService();
 
     @Override
@@ -24,7 +24,7 @@ public class AdminOrdersController extends HttpServlet {
 
         if ("export".equals(action)) {
             try {
-                List<Order> orders = orderSerivce.getAllOrders();
+                List<Order> orders = orderService.getAllOrders();
                 byte[] excelBytes = excelExportService.exportOrdersToExcel(orders);
 
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -38,7 +38,7 @@ public class AdminOrdersController extends HttpServlet {
                 return;
             }
         }
-        List<Order> orders = orderSerivce.getAllOrders();
+        List<Order> orders = orderService.getAllOrders();
         request.setAttribute("orders", orders);
         request.getRequestDispatcher("orders.jsp").forward(request, response);
     }
