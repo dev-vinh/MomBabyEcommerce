@@ -45,6 +45,15 @@ public class ProductService {
         return products;
     }
 
+    public List<Product> getProductsPaged(int page, int size) {
+        int offset = (page - 1) * size;
+        return jdbi.withExtension(ProductDao.class, dao -> dao.getProductsPaged(size, offset));
+    }
+
+    public int countAllProducts() {
+        return jdbi.withExtension(ProductDao.class, dao -> dao.countAllProducts());
+    }
+
     public Integer getMinimumPriceForProduct(int productId) {
         return productDao.getMinimumPriceForProduct(productId);
     }
