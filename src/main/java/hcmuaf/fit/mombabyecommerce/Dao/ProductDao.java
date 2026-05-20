@@ -351,4 +351,61 @@ public interface ProductDao {
                       @Bind("minPrice") Integer minPrice,
                       @Bind("maxPrice") Integer maxPrice,
                       @Bind("brandId") Integer brandId);
+
+    @SqlQuery("""
+            SELECT
+                p.id,
+                p.name,
+                p.sku,
+                p.description,
+                p.isActive,
+                p.categoryId,
+                p.brandId,
+                p.noOfViews,
+                p.noOfSold,
+                p.imageId,
+                ops.id as optionId,
+                ops.price,
+                COALESCE(inv.quantity, 0) as stock,
+                cate.name as categoryName,
+                img.url as imageUrl,
+                NULL as height,
+                NULL as length,
+                NULL as width,
+                NULL as weight,
+                NULL as variantText
+            FROM products p
+            JOIN categories cate
+                ON cate.id = p.categoryId
+            LEFT JOIN image img
+                ON img.id = p.imageId
+            LEFT JOIN option_variant ops
+                ON ops.id = (
+                    SELECT o.id
+                    FROM option_variant o
+                    LEFT JOIN inventory i
+                        ON i.optionVariantId = o.id
+                    WHERE o.productId = p.id
+                      AND o.isActive = 1
+                    ORDER BY
+                        CASE
+                            WHEN COALESCE(i.quantity,0) > 0 THEN 0
+                            ELSE 1
+                        END,
+                        o.price ASC
+                    LIMIT 1
+                )
+            LEFT JOIN inventory inv
+                ON inv.optionVariantId = ops.id
+            WHERE p.isActive = true
+            ORDER BY p.id DESC
+            LIMIT :size OFFSET :offset
+            """)
+                List<Product> getProductsPaged(
+                        @Bind("size") int size,
+                        @Bind("offset") int offset
+                );
+
+    @SqlQuery("SELECT COUNT(*) FROM products WHERE isActive = true")
+    int countAllProducts();
 }

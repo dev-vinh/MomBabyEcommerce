@@ -58,8 +58,6 @@ function reRenderProducts(products) {
         // Safe path joining for image
         let imgPath = p.imageUrl || '';
         if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith(contextPath)) {
-            // If missing context path and not absolute, prepend it
-            // Ensure exactly one slash between them if needed, but contextPath usually has leading / and imgPath should too
             if (!imgPath.startsWith('/')) imgPath = '/' + imgPath;
             imgPath = contextPath + imgPath;
         }

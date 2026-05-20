@@ -17,22 +17,20 @@
     <nav id="sidebar" class="col">
         <ul>
             <!-- Bảng điều khiển -->
-            <li class="menu_item ">
+            <li class="menu_item">
                 <div class="wrap_menu_item">
                     <i class="fa-solid fa-house"></i>
                     <a href="dashboard">Tổng quan</a>
                 </div>
             </li>
 
-
-            <!--Sản phẩm-->
+            <!-- Sản phẩm -->
             <li class="menu_item">
                 <div class="wrap_menu_item">
                     <i class="fa-solid fa-box"></i>
                     <span>Sản phẩm</span>
                     <i class="fa-solid fa-chevron-down toggle-arrow"></i>
                 </div>
-
                 <ul class="submenu">
                     <li class="submenu_item">
                         <a href="list-product">Danh sách sản phẩm</a>
@@ -49,7 +47,6 @@
                     <i class="fa-solid fa-cart-shopping"></i>
                     <a href="orders">Đơn hàng</a>
                 </div>
-
             </li>
 
             <!-- Khách hàng -->
@@ -58,9 +55,7 @@
                     <i class="fa-solid fa-users"></i>
                     <a href="customers">Khách hàng</a>
                 </div>
-
             </li>
-
 
             <!-- Hồ sơ -->
             <li class="menu_item">
@@ -70,28 +65,33 @@
                 </div>
             </li>
 
-
             <!-- Danh mục -->
             <li class="menu_item">
                 <div class="wrap_menu_item">
-                    <i class="fa-solid fa-warehouse"></i>
+                    <i class="fa-solid fa-layer-group"></i>
                     <a href="category">Danh mục</a>
                 </div>
             </li>
 
+            <!-- Nhà sản xuất -->
             <li class="menu_item">
                 <div class="wrap_menu_item">
-                    <i class="fa-solid fa-warehouse"></i>
+                    <i class="fa-solid fa-industry"></i>
                     <a href="brand">Nhà sản xuất</a>
                 </div>
             </li>
 
+            <!-- Quản lý kho -->
+            <li class="menu_item">
+                <div class="wrap_menu_item">
+                    <i class="fa-solid fa-boxes-stacking"></i>
+                    <a href="inventory">Quản lý kho</a>
+                </div>
+            </li>
 
         </ul>
     </nav>
-
 </div>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/sidebar/Admin.js"></script>
-
 </body>
 </html>

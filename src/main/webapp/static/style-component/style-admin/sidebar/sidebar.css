@@ -187,7 +187,6 @@ a {
 }
 
 .submenu li.active {
-    /*background-color: #e5e7eb; !* Màu xanh đậm hơn *!*/
     color: #2563eb;
     border-radius: 5px;
 }
