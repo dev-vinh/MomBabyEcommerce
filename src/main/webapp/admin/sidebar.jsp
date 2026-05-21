@@ -89,6 +89,13 @@
                 </div>
             </li>
 
+            <li class="menu_item">
+                <div class="wrap_menu_item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <a href="manageRole.jsp">Quản lý Vai Trò</a>
+                </div>
+            </li>
+
         </ul>
     </nav>
 </div>

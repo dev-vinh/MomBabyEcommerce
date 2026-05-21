@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <title>Chi Tiết Đơn Hàng</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/orderDetail.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/orderDetail.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
