@@ -84,8 +84,15 @@
             <!-- Quản lý kho -->
             <li class="menu_item">
                 <div class="wrap_menu_item">
-                    <i class="fa-solid fa-boxes-stacking"></i>
+                    <i class="fa-solid fa-box"></i>
                     <a href="inventory">Quản lý kho</a>
+                </div>
+            </li>
+
+            <li class="menu_item">
+                <div class="wrap_menu_item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <a href="manageRole.jsp">Quản lý Vai Trò</a>
                 </div>
             </li>
 

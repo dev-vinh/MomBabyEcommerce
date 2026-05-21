@@ -7,26 +7,32 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 import java.util.List;
-@RegisterConstructorMapper(Permission.class)
+@RegisterBeanMapper(Permission.class)
 public interface PermissionDao {
 
-    @SqlQuery(value = """
-        select * from permissions
-""")
-    public List<Permission> getAllPermissions();
+    @SqlQuery("""
+        SELECT * FROM permissions
+    """)
+    List<Permission> getAllPermissions();
 
     @SqlQuery("""
-    SELECT p.id, p.name, p.type
-    FROM permissions p
-    JOIN role_permission rp ON p.id = rp.permissionId
-    JOIN roles r ON r.id = rp.roleId
-    WHERE r.id = :roleId
-""")
-    @RegisterBeanMapper(Permission.class)
-    List<Permission> getPermissionsByRoleId(@Bind("roleId") Integer roleId);
+        SELECT p.id, p.name, p.type
+        FROM permissions p
+        JOIN role_permission rp ON p.id = rp.permissionId
+        JOIN roles r ON r.id = rp.roleId
+        WHERE r.id = :roleId
+    """)
+    List<Permission> getPermissionsByRoleId(
+            @Bind("roleId") Integer roleId
+    );
 
-    @SqlQuery("SELECT * FROM permissions WHERE id = :id")
-    Permission getPermissionById(Integer id);
+    @SqlQuery("""
+        SELECT * FROM permissions
+        WHERE id = :id
+    """)
+    Permission getPermissionById(
+            @Bind("id") Integer id
+    );
 
 
 }

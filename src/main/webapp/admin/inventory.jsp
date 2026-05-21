@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.css">
-  <script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js" defer></script>
 </head>
 <body>
 
@@ -94,11 +93,17 @@
                   <span class="status in-stock">${opt.stock}</span>
                 </c:otherwise>
               </c:choose>
+
+              <c:if test="${not empty opt.warehouseLocation}">
+                <div style="font-size: 12px; color: #888; margin-top: 4px;">
+                  <i class="fa-solid fa-warehouse"></i> ${opt.warehouseLocation}
+                </div>
+              </c:if>
             </td>
             <td>
               <div class="action-icons">
                 <button class="btn-edit-stock"
-                        onclick="openEditModal(${opt.id}, ${opt.stock}, '${item.productName} - Option #${opt.id}')">
+                        onclick="openEditModal(${opt.id}, ${opt.stock}, '${item.productName} - Option #${opt.id}',  '${opt.warehouseLocation}')">
                   <i class="fa-solid fa-pen-to-square" style="padding: 5px;"></i> Cập nhật
                 </button>
               </div>

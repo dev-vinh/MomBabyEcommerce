@@ -14,6 +14,7 @@ public class OptionVariant implements Serializable {
     private Integer price;
     private Integer stock;
     private Integer variantId;
+    private String warehouseLocation;
     private String variantName;
     private String variantValue;
 
@@ -25,8 +26,9 @@ public class OptionVariant implements Serializable {
                          @ColumnName("price") @Nullable Integer price,
                          @ColumnName("stock") @Nullable Integer stock,
                          @ColumnName("variantId") @Nullable Integer variantId,
+                         @ColumnName("warehouseLocation") @Nullable String warehouseLocation,
                          @ColumnName("variantName") @Nullable String variantName,
-                         @ColumnName("variantValue") @Nullable String variantValue) {
+                         @ColumnName("variantValue") @Nullable String variantValue){
         this.id = id;
         this.productId = productId;
         this.price = price;
@@ -34,7 +36,7 @@ public class OptionVariant implements Serializable {
         this.variantId = variantId;
         this.variantName = variantName;
         this.variantValue = variantValue;
-
+        this.warehouseLocation= warehouseLocation;
     }
 
     public String getVariantValue() {
@@ -91,6 +93,11 @@ public class OptionVariant implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getWarehouseLocation() { return warehouseLocation; }
+    public void setWarehouseLocation(String warehouseLocation) {
+        this.warehouseLocation = warehouseLocation;
     }
 
     @Override
