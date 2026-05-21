@@ -26,6 +26,10 @@ public class AddRoleController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try{
+
 
         StringBuilder stringBuilder = new StringBuilder();
         String line;
@@ -57,7 +61,22 @@ public class AddRoleController extends HttpServlet {
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("success", true);
         response.getWriter().write(jsonResponse.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
 
+            response.setStatus(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR
+            );
+
+            JSONObject error =
+                    new JSONObject();
+
+            error.put("success", false);
+            error.put("message", e.getMessage());
+
+            response.getWriter()
+                    .write(error.toString());
+        }
 
     }
 

@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 .container {
     display: flex;
@@ -60,9 +61,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-.btn_add_role:hover {
-    background-color: #1e4fbf;
-}
+
 #role_table {
     width: 100%;
     border-collapse: collapse;
@@ -172,4 +171,20 @@ textarea {
     font-size: 13px;
     color: #666;
     margin-top: 4px;
+}
+.btn_add_role {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background-color: white;
+    color: #0a7cff !important;
+
+    font-size: 16px !important;
+    font-weight: 500;
+
+    padding: 8px 15px;
+    border: 1px solid #007bff;
+    border-radius: 8px;
+    cursor: pointer;
 }
