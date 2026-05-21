@@ -10,6 +10,7 @@
   <script> const contextPath = "${pageContext.request.contextPath}"; </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/adminPagination.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.css">
 </head>
 <body>
@@ -32,6 +33,21 @@
              onkeyup="searchInventory()">
     </div>
 
+    <%-- Entries dropdown - giống listProduct --%>
+    <div class="row">
+      <div class="entries-dropdown">
+        <label for="entries">Hiển thị</label>
+        <select id="entries" name="entries"
+                onchange="window.location.href='inventory?page=1&size='+this.value">
+          <option value="10"  ${size == 10  ? 'selected' : ''}>10</option>
+          <option value="25"  ${size == 25  ? 'selected' : ''}>25</option>
+          <option value="50"  ${size == 50  ? 'selected' : ''}>50</option>
+          <option value="100" ${size == 100 ? 'selected' : ''}>100</option>
+        </select>
+        mục
+      </div>
+    </div>
+
     <table class="inventory-table">
       <thead>
       <tr>
@@ -45,7 +61,7 @@
       </thead>
       <tbody id="inventoryTableBody">
 
-      <c:set var="stt" value="0"/>
+      <c:set var="stt" value="${(currentPage - 1) * size}"/>
       <c:forEach var="item" items="${inventoryList}">
         <c:set var="stt" value="${stt + 1}"/>
 
@@ -103,7 +119,7 @@
             <td>
               <div class="action-icons">
                 <button class="btn-edit-stock"
-                        onclick="openEditModal(${opt.id}, ${opt.stock}, '${item.productName} - Option #${opt.id}',  '${opt.warehouseLocation}')">
+                        onclick="openEditModal(${opt.id}, ${opt.stock}, '${item.productName} - Option #${opt.id}', '${opt.warehouseLocation}')">
                   <i class="fa-solid fa-pen-to-square" style="padding: 5px;"></i> Cập nhật
                 </button>
               </div>
@@ -113,8 +129,72 @@
 
       </c:forEach>
 
+      <c:if test="${empty inventoryList}">
+        <tr>
+          <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+            Không có dữ liệu kho hàng.
+          </td>
+        </tr>
+      </c:if>
+
       </tbody>
     </table>
+
+    <%-- Phân trang - giống listProduct --%>
+    <div class="pagination">
+
+      <c:choose>
+        <c:when test="${currentPage > 1}">
+          <a href="inventory?page=${currentPage - 1}&size=${size}">
+            <button class="prev-btn">Trước</button>
+          </a>
+        </c:when>
+        <c:otherwise>
+          <button class="prev-btn" disabled>Trước</button>
+        </c:otherwise>
+      </c:choose>
+
+      <c:if test="${currentPage > 3}">
+        <a href="inventory?page=1&size=${size}">
+          <button class="page-number">1</button>
+        </a>
+        <c:if test="${currentPage > 4}">
+          <span class="page-dots">...</span>
+        </c:if>
+      </c:if>
+
+      <c:forEach begin="1" end="${totalPages}" var="i">
+        <c:if test="${i >= currentPage - 2 && i <= currentPage + 2}">
+          <a href="inventory?page=${i}&size=${size}">
+            <button class="page-number ${i == currentPage ? 'active' : ''}">${i}</button>
+          </a>
+        </c:if>
+      </c:forEach>
+
+      <c:if test="${currentPage < totalPages - 2}">
+        <c:if test="${currentPage < totalPages - 3}">
+          <span class="page-dots">...</span>
+        </c:if>
+        <a href="inventory?page=${totalPages}&size=${size}">
+          <button class="page-number">${totalPages}</button>
+        </a>
+      </c:if>
+
+      <c:choose>
+        <c:when test="${currentPage < totalPages}">
+          <a href="inventory?page=${currentPage + 1}&size=${size}">
+            <button class="next-btn">Tiếp Theo</button>
+          </a>
+        </c:when>
+        <c:otherwise>
+          <button class="next-btn" disabled>Tiếp Theo</button>
+        </c:otherwise>
+      </c:choose>
+
+    </div>
+    <div style="text-align: right; font-size: 13px; color: #999; margin-top: 8px;">
+      Trang ${currentPage} / ${totalPages}
+    </div>
 
   </div>
 </div>
@@ -141,6 +221,8 @@
     </div>
   </div>
 </div>
+<div class="sp-grid" id="inventory_list"></div>
+<div class="sp-pagination" id="sp-pagination"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js"></script>

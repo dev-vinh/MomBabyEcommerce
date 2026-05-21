@@ -51,23 +51,51 @@ public class InventoryController extends HttpServlet {
         }
 
         try {
-            List<Product> products = productService.getAllProducts();
-            List<OptionVariant> allOptions = optionService.getAllOptionsWithStock();
+            int page = 1;
+            int pageSize = 10;
 
-            // Group options theo productId
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null) {
+                page = Integer.parseInt(pageParam);
+            }
+
+            int offset = (page - 1) * pageSize;
+
+            List<Product> products =
+                    productService.getInventoryProducts(offset, pageSize);
+
+            int totalProducts =
+                    productService.countInventoryProducts();
+
+            int totalPages =
+                    (int) Math.ceil((double) totalProducts / pageSize);
+
+            request.setAttribute("products", products);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            List<OptionVariant> allOptions = optionService.getAllOptionsWithStock();
+            allOptions.forEach(o -> System.out.println(
+                    "optionId=" + o.getId() +
+                            " productId=" + o.getProductId() +
+                            " stock=" + o.getStock()
+            ));
+
             Map<Integer, List<OptionVariant>> optionMap = allOptions.stream()
                     .collect(Collectors.groupingBy(OptionVariant::getProductId));
 
-            List<InventoryDTO> inventoryList = products.stream()
-                    .filter(p -> optionMap.containsKey(p.getId()))
-                    .map(p -> new InventoryDTO(
-                            p.getId(),
-                            p.getName(),
-                            p.getImageUrl(),
-                            optionMap.getOrDefault(p.getId(), new ArrayList<>())
-                    ))
+            List<InventoryDTO> inventoryList = optionMap.entrySet().stream()
+                    .map(entry -> {
+                        Integer productId = entry.getKey();
+                        Product p = products.stream()
+                                .filter(pr -> pr.getId().equals(productId))
+                                .findFirst()
+                                .orElse(null);
+                        String name = p != null ? p.getName() : "Sản phẩm #" + productId;
+                        String image = p != null ? p.getImageUrl() : null;
+                        return new InventoryDTO(productId, name, image, entry.getValue());
+                    })
                     .collect(Collectors.toList());
-
             request.setAttribute("inventoryList", inventoryList);
             request.getRequestDispatcher("/admin/inventory.jsp").forward(request, response);
 
@@ -75,6 +103,8 @@ public class InventoryController extends HttpServlet {
             e.printStackTrace();
             response.sendError(500, "Lỗi tải trang quản lý kho: " + e.getMessage());
         }
+
+
     }
 
     // PUT /admin/api/inventory/{optionVariantId}  → cập nhật stock
