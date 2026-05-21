@@ -1,6 +1,7 @@
-function openEditModal(optionId, currentStock, label) {
+function openEditModal(optionId, currentStock, label, currentLocation) {
     document.getElementById('modalOptionId').value = optionId;
     document.getElementById('modalQuantity').value = currentStock;
+    document.getElementById('modalLocation').value = currentLocation || '';
     document.getElementById('modalLocation').value = '';
     document.getElementById('modalTitle').textContent = 'Cập nhật kho: ' + label;
     document.getElementById('modalOverlay').classList.add('active');
@@ -29,6 +30,8 @@ function saveStock() {
         .then(function(data) {
             if (data.statusCode === 200) {
                 showToast('Cập nhật kho thành công!', 'success');
+                updateRowUI(optionId, quantity, location);
+
                 closeModal();
                 setTimeout(function() { location.reload(); }, 800);
             } else {
@@ -41,7 +44,35 @@ function saveStock() {
 }
 
 
+function updateRowUI(optionId, quantity, location) {
+    const btn = document.querySelector(`.btn-edit-stock[onclick*="openEditModal(${optionId},"]`);
+    if (!btn) return;
+    const row = btn.closest('tr');
 
+    const stockCell = row.cells[4];
+
+
+    let stockHtml = '';
+    if (quantity === 0) {
+        stockHtml = `<span class="status out-of-stock">Hết hàng (0)</span>`;
+    } else if (quantity <= 10) {
+        stockHtml = `<span class="status low-stock">Sắp hết (${quantity})</span>`;
+    } else {
+        stockHtml = `<span class="status in-stock">${quantity}</span>`;
+    }
+
+    const locationHtml = location
+        ? `<div style="font-size:12px;color:#888;margin-top:4px;">
+               <i class="fa-solid fa-warehouse"></i> ${location}
+           </div>`
+        : '';
+    stockCell.innerHTML = stockHtml + locationHtml;
+
+    const label = btn.getAttribute('onclick').match(/'([^']+)'/)?.[1] || '';
+    btn.setAttribute('onclick',
+        `openEditModal(${optionId}, ${quantity}, '${label}', '${location}')`
+    );
+}
 function searchInventory() {
     var keyword = document.getElementById('searchInput').value.toLowerCase();
     var rows = document.querySelectorAll('#inventoryTableBody tr');
