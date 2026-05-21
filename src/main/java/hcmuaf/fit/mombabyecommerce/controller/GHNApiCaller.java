@@ -13,8 +13,8 @@ public class GHNApiCaller {
     private final String token = ConfigLoader.get("ghn.token");
     private final String baseUrl = ConfigLoader.get("ghn.url");
 
-    private final String createOrderUrl ="shipping-order/create";
-    private final String cancelOrderUrl ="switch-status/cancel";
+    private final String createOrderUrl = "/shipping-order/create";
+    private final String cancelOrderUrl = "/switch-status/cancel";
 
     public  String createOrder(String payload) throws IOException {
         URI uri = URI.create(baseUrl + createOrderUrl);
