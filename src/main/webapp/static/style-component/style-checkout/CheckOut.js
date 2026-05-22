@@ -117,7 +117,7 @@ function bindCheckout() {
 
         const formData = {
             address_id: addressId,
-            card: paymentMethod,
+            paymentMethod: paymentMethod,
             products: products,
             ship_fee: shipFee
         };
@@ -142,9 +142,13 @@ function bindCheckout() {
             console.log(result);
 
             if (result.success) {
-                window.location.href = 'success';
+                if(result.paymentUrl){
+                    window.location.href = result.paymentUrl;
+                }else{
+                    window.location.href = "success";
+                }
             } else {
-                alert(result.message || 'Thanh toán thất bại');
+                alert(result.message);
             }
         } catch (error) {
             console.error(error);

@@ -84,18 +84,18 @@
                                     </div>
                                 </c:if>
                                 <div class="status">
-                                <c:choose>
-                                    <c:when test="${not empty p.stock and p.stock > 0}">
+                                    <c:choose>
+                                        <c:when test="${not empty p.stock and p.stock > 0}">
                                             <span class="status_type">
                                                 Còn hàng
                                             </span>
-                                    </c:when>
-                                    <c:otherwise>
+                                        </c:when>
+                                        <c:otherwise>
                                             <span class="status_type out-of-stock">
                                                 Đang về hàng
                                             </span>
-                                    </c:otherwise>
-                                </c:choose>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
 
@@ -181,14 +181,14 @@
                         <div class="item mid_align cod">
                             <i class="fa-solid fa-money-bill"></i>
                             <span>Thanh toán khi nhận hàng </span>
-                            <input type="radio" name="payment-method" data-payment="COD" checked >
+                            <input type="radio" name="payment-method" value="COD" checked >
                         </div>
 
                         <div class="item mid_align banking col">
                             <div class="title">
                                 <i class="fa-solid fa-building-columns"></i>
                                 <span>Thanh toán bằng VNPay </span>
-                                <input type="radio" name="payment-method" data-payment="VNPAY">
+                                <input type="radio" name="payment-method" value="VNPAY">
 
                                 <div class="card_list col">
                                     <c:if test="${not empty cardList}">
@@ -278,7 +278,7 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 <script
         src="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.js"></script>
 </body>

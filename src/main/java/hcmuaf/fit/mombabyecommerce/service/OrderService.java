@@ -2,6 +2,7 @@ package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.OrderDao;
 import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
+import hcmuaf.fit.mombabyecommerce.contant.PaymentStatus;
 import hcmuaf.fit.mombabyecommerce.model.Order;
 import org.jdbi.v3.core.Jdbi;
 
@@ -9,12 +10,12 @@ import java.util.List;
 
 public class OrderService {
     OrderDao orderDao;
-
+    private Jdbi jdbi;
 
     public OrderService(Jdbi jdbi) {
-        orderDao = jdbi.onDemand(OrderDao.class);
+        this.jdbi = jdbi;
+        this.orderDao = jdbi.onDemand(OrderDao.class);
     }
-
     public Integer addOrder(Order order) {
         return orderDao.createOrder(
                 order.getCreateAt(),
@@ -60,4 +61,9 @@ public class OrderService {
         return orderDao.updateShippingId(orderId, shippingId);
     }
 
+    public boolean updatePaymentStatus(
+            Integer orderId,
+            PaymentStatus paymentStatus){
+        return orderDao.updatePaymentStatus(orderId, paymentStatus);
+    }
 }
