@@ -187,16 +187,19 @@
       <input type="text" id="modalLocation" placeholder="VD: Kho HCM">
     </div>
 
+    <div class="modal-field">
+      <label>Ghi chú / Lý do</label>
+      <input type="text" id="modalReason" placeholder="VD: Nhập hàng mới, Kiểm kho...">
+    </div>
+
     <div class="modal-actions">
       <button class="discard-btn" onclick="closeModal()">Huỷ</button>
-      <button class="add-btn" onclick="saveStock()">Lưu</button>
+      <button class="add-btn" id="saveBtn" onclick="saveStock()" disabled>Lưu</button>
     </div>
   </div>
 </div>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="${pageContext.request.contextPath}/static/js/global-toast.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js"></script>
-
 </body>
 </html>

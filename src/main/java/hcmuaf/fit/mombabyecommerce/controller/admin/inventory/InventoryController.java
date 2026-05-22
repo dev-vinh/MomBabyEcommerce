@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.*;
@@ -114,13 +115,21 @@ public class InventoryController extends HttpServlet {
 
             Integer quantity = body.has("quantity") ? body.get("quantity").asInt() : null;
             String location = body.has("location") ? body.get("location").asText(null) : null;
+            String reason = body.has("reason") ? body.get("reason").asText(null) : null;
 
             if (quantity == null || quantity < 0) {
                 writeJson(response, new ResponseWrapper<>(400, "error", "Số lượng không hợp lệ.", null));
                 return;
             }
 
-            boolean updated = optionService.updateStockWithLocation(optionVariantId, quantity, location);
+            Integer userId = null;
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Object uid = session.getAttribute("userId");
+                if (uid instanceof Integer) userId = (Integer) uid;
+            }
+
+            boolean updated = optionService.updateStockWithLocation(optionVariantId, quantity, location, userId, reason);
             if (updated) {
                 OptionVariant option = optionService.getOptionById(optionVariantId);
                 writeJson(response, new ResponseWrapper<>(200, "success", "Cập nhật kho thành công.", option));
