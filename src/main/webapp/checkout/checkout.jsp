@@ -84,18 +84,18 @@
                                     </div>
                                 </c:if>
                                 <div class="status">
-                                <c:choose>
-                                    <c:when test="${not empty p.stock and p.stock > 0}">
+                                    <c:choose>
+                                        <c:when test="${not empty p.stock and p.stock > 0}">
                                             <span class="status_type">
                                                 Còn hàng
                                             </span>
-                                    </c:when>
-                                    <c:otherwise>
+                                        </c:when>
+                                        <c:otherwise>
                                             <span class="status_type out-of-stock">
                                                 Đang về hàng
                                             </span>
-                                    </c:otherwise>
-                                </c:choose>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
 
@@ -181,14 +181,14 @@
                         <div class="item mid_align cod">
                             <i class="fa-solid fa-money-bill"></i>
                             <span>Thanh toán khi nhận hàng </span>
-                            <input type="radio" name="payment-method" data-payment="COD" checked >
+                            <input type="radio" name="payment-method" value="COD" checked >
                         </div>
 
                         <div class="item mid_align banking col">
                             <div class="title">
                                 <i class="fa-solid fa-building-columns"></i>
                                 <span>Thanh toán bằng VNPay </span>
-                                <input type="radio" name="payment-method" data-payment="VNPAY">
+                                <input type="radio" name="payment-method" value="VNPAY">
 
                                 <div class="card_list col">
                                     <c:if test="${not empty cardList}">
@@ -250,7 +250,26 @@
                 </div>
 
                 <button type="button" id="pay">Thanh Toán </button>
-
+<%--                thêm xác nhận khi người dùng nhấn chọn thanh toán--%>
+                <div id="confirmModal" class="confirm-modal">
+                    <div class="confirm-box">
+                        <h3>Xác Nhận Thanh Toán</h3>
+                        <p>Bạn có chắc muốn thanh toán đơn hàng này?</p>
+                        <p>
+                            Phương thức:
+                            <span id="paymentText"></span>
+                        </p>
+                        <div class="confirm-action">
+                            <button type="button" id="cancelPay">
+                                Chờ chút
+                            </button>
+                            <button type="button" id="confirmPay">
+                                Xác nhận
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <%--thêm xác nhận khi người dùng nhấn chọn thanh toán--%>
                 <div class="term_condition">
                     <span>
                         Bằng cách gửi đơn đặt hàng, bạn đồng ý với <a href="#">Điều khoản &amp; điều kiện </a> và chúng tôi sẽ sử dụng dữ liệu cá nhân của bạn theo <a href="#" >Chính sách quyền riêng tư </a> của chúng tôi.
@@ -278,7 +297,7 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 <script
         src="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.js"></script>
 </body>

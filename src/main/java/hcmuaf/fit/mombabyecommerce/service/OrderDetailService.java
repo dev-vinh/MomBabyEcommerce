@@ -15,6 +15,7 @@ public class OrderDetailService {
     OptionService optionService = new OptionService(DBConnection.getJdbi());
 
     public OrderDetailService(Jdbi jdbi) {
+        this.jdbi = jdbi;
         orderDetailDao = jdbi.onDemand(OrderDetailDao.class);
     }
 
