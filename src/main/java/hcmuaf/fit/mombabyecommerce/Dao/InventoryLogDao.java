@@ -50,8 +50,8 @@ public interface InventoryLogDao {
         WHERE 1=1
         AND (:hasProductId = 0 OR il.product_id = :productId)
         AND (:hasActionType = 0 OR il.action_type = :actionType)
-        AND (:hasFromDate = 0 OR DATE(il.created_at) >= :fromDate)
-        AND (:hasToDate = 0 OR DATE(il.created_at) <= :toDate)
+        AND (:hasFromDate = 0 OR DATE(il.created_at) >= IFNULL(:fromDate, '1000-01-01'))
+        AND (:hasToDate = 0 OR DATE(il.created_at) <= IFNULL(:toDate, '9999-12-31'))
         ORDER BY il.created_at DESC
         LIMIT :limit OFFSET :offset
         """)
@@ -72,8 +72,8 @@ public interface InventoryLogDao {
         WHERE 1=1
         AND (:hasProductId = 0 OR il.product_id = :productId)
         AND (:hasActionType = 0 OR il.action_type = :actionType)
-        AND (:hasFromDate = 0 OR DATE(il.created_at) >= :fromDate)
-        AND (:hasToDate = 0 OR DATE(il.created_at) <= :toDate)
+        AND (:hasFromDate = 0 OR DATE(il.created_at) >= IFNULL(:fromDate, '1000-01-01'))
+        AND (:hasToDate = 0 OR DATE(il.created_at) <= IFNULL(:toDate, '9999-12-31'))
         """)
     int countLogs(@Bind("productId") Integer productId,
                   @Bind("hasProductId") int hasProductId,

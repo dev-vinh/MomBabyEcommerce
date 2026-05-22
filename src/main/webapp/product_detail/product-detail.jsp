@@ -258,10 +258,6 @@
             Mô tả sản phẩm
         </button>
 
-        <button class="tab-btn" data-tab="guide">
-            Hướng dẫn sử dụng
-        </button>
-
         <button class="tab-btn" data-tab="info">
             Thông tin sản phẩm
         </button>
@@ -273,61 +269,17 @@
 
         <div class="description-content">
 
-            <h3>
-                ${product.name}
-            </h3>
+            <c:choose>
 
-            <p>
-                ${product.name} là dòng sản phẩm dinh dưỡng chất lượng cao,
-                hỗ trợ phát triển toàn diện cho bé.
-            </p>
+                <c:when test="${not empty product.description}">
+                    <p>${product.description}</p>
+                </c:when>
 
-            <ul>
+                <c:otherwise>
+                    <p>Chưa có mô tả cho sản phẩm này.</p>
+                </c:otherwise>
 
-                <c:forEach var="desc" items="${descriptions}">
-
-                    <li>${desc}</li>
-
-                </c:forEach>
-
-            </ul>
-
-        </div>
-
-    </div>
-
-    <!-- GUIDE -->
-    <div class="tab-content" id="guide">
-
-        <div class="guide-content">
-
-            <ul>
-
-                <li>
-                    Rửa tay và dụng cụ pha sữa thật sạch trước khi sử dụng.
-                </li>
-
-                <li>
-                    Đun sôi nước và để nguội khoảng 40°C trước khi pha.
-                </li>
-
-                <li>
-                    Pha đúng liều lượng theo hướng dẫn của nhà sản xuất.
-                </li>
-
-                <li>
-                    Khuấy đều đến khi sữa tan hoàn toàn.
-                </li>
-
-                <li>
-                    Sữa nên sử dụng ngay sau khi pha.
-                </li>
-
-                <li>
-                    Không sử dụng phần sữa thừa sau 2 giờ.
-                </li>
-
-            </ul>
+            </c:choose>
 
         </div>
 

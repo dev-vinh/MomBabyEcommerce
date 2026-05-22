@@ -33,10 +33,11 @@
         <div class="divider"></div>
         <div class="filter-section">
             <div class="filter-label">
+                <i class="fa-solid fa-tag"></i>
                 Khoảng giá
             </div>
             <div class="filter-option">
-                <input type="radio" name="price" id="price0">
+                <input type="radio" name="price" id="price0" checked>
                 <label for="price0">Tất cả</label>
             </div>
             <div class="filter-option">
@@ -71,25 +72,23 @@
             </div>
 
             <div id="filter-brand" class="filter-content">
-
                 <c:forEach var="b" items="${brands}">
                     <div class="filter-option">
-                        <input type="radio" name="brand" value="${b.id}">
-                        <label>${b.name}</label>
+                        <input type="checkbox" name="brand" value="${b.id}" data-brand-name="${fn:escapeXml(b.name)}">
+                        <label>${fn:escapeXml(b.name)}</label>
                     </div>
                 </c:forEach>
-
             </div>
         </div>
-
-
-        <div class="divider"></div>
 
 
         <button class="btn-apply" id="apply_btn">Áp dụng</button>
     </aside>
 
     <main class="sp-main">
+        <!-- Active filter tags -->
+        <div id="active-filters" class="active-filters" style="display:none; margin-bottom:12px;"></div>
+
         <div class="sp-main-header">
             <h1 class="sp-main-title">
                 <c:choose>
