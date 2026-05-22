@@ -18,7 +18,6 @@
     text-transform: none;
   }
 
-
   .slm-dropdown .slm-error-box {
     background-color: #fff0f0;
     color: #d8000c;
@@ -32,7 +31,6 @@
     box-sizing: border-box;
     display: none;
   }
-
 
   .slm-dropdown .slm-field {
     width: 100%;
@@ -77,6 +75,7 @@
     color: #243b55;
     font-weight: 600;
   }
+
   .slm-dropdown .slm-field .toggle-password {
     position: absolute;
     right: 14px;
@@ -99,7 +98,6 @@
     color: #7a8fa6;
     font-size: 15px;
   }
-
 
   .slm-dropdown .slm-remember input[type="checkbox"] {
     accent-color: #243b55;
@@ -126,6 +124,29 @@
 
   .slm-dropdown .slm-btn:hover { opacity: 0.85; }
 
+  .slm-dropdown .social-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .slm-dropdown .social-container a {
+    border: 1px solid #dddddd;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    height: 40px;
+    width: 40px;
+    color: #333;
+    transition: all 0.5s ease;
+  }
+
+  .slm-dropdown .social-container a:hover {
+    color: #f6f5f7;
+    background: #20344c;
+  }
 
   .slm-dropdown .slm-footer {
     display: flex;
@@ -135,6 +156,8 @@
     padding: 0;
     margin-bottom: 0.8rem;
     width: 100%;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
   }
 
   .slm-dropdown .slm-footer a {
@@ -153,12 +176,18 @@
     text-decoration: none;
     margin-top: 6px;
   }
-
 </style>
 
 <div class="slm-dropdown">
   <h2>Đăng nhập</h2>
   <div id="auth-error-message" class="slm-error-box"></div>
+
+  <div class="social-container">
+    <a href="${pageContext.request.contextPath}/login-google" class="social">
+      <i class="fa-brands fa-google"></i>
+    </a>
+  </div>
+  <span style="display:block; text-align:center; color:#aaa; font-size:13px; margin-bottom:10px;">hoặc sử dụng tài khoản của bạn</span>
 
   <form action="#" id="modalSignInForm">
 

@@ -268,40 +268,43 @@ public interface ProductDao {
                    p.categoryId, p.imageId,
                    ops.id as optionId,
                    ops.price,
-                   inv.quantity as stock,
+                   COALESCE(inv.quantity, 0) as stock,
                    img.url as imageUrl
             FROM products p
             JOIN option_variant ops ON ops.productId = p.id
-            JOIN inventory inv ON inv.optionVariantId = ops.id
+            LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
             JOIN image img ON p.imageId = img.id
-            WHERE p.categoryId = :categoryId
-              AND p.isActive = true
+            WHERE p.isActive = true
+              AND (:categoryId = 0 OR p.categoryId = :categoryId)
               AND (:minPrice IS NULL OR ops.price >= :minPrice)
               AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
-              AND (:brandId IS NULL OR p.brandId = :brandId)
-            
+              AND COALESCE(inv.quantity, 0) > 0
+              AND (
+                  :brandIds_size = 0
+                  OR FIND_IN_SET(p.brandId, :brandIdsComma) > 0
+              )
               AND ops.id = (
                   SELECT o.id
                   FROM option_variant o
-                  JOIN inventory i ON i.optionVariantId = o.id
+                  LEFT JOIN inventory i ON i.optionVariantId = o.id
                   WHERE o.productId = p.id
-                    AND i.quantity > 0
+                    AND COALESCE(i.quantity, 0) > 0
                   ORDER BY o.price ASC
                   LIMIT 1
               )
-            
             ORDER BY
               CASE WHEN :sort = 'price_asc' THEN ops.price END ASC,
               CASE WHEN :sort = 'price_desc' THEN ops.price END DESC,
               p.noOfSold DESC
-            
             LIMIT :size OFFSET :offset
             """)
     List<Product> filterProducts(
             @Bind("categoryId") int categoryId,
             @Bind("minPrice") Integer minPrice,
             @Bind("maxPrice") Integer maxPrice,
-            @Bind("brandId") Integer brandId,
+            @Bind("brandIds") List<Integer> brandIds,
+            @Bind("brandIds_size") int brandIdsSize,
+            @Bind("brandIdsComma") String brandIdsComma,
             @Bind("sort") String sort,
             @Bind("size") Integer size,
             @Bind("offset") Integer offset
@@ -340,18 +343,23 @@ public interface ProductDao {
     SELECT COUNT(DISTINCT p.id)
     FROM products p
     JOIN option_variant ops ON ops.productId = p.id
-    JOIN inventory inv ON inv.optionVariantId = ops.id
-    WHERE p.categoryId = :categoryId
-      AND p.isActive = true
+    LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+    WHERE p.isActive = true
+      AND (:categoryId = 0 OR p.categoryId = :categoryId)
       AND (:minPrice IS NULL OR ops.price >= :minPrice)
       AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
-      AND (:brandId IS NULL OR p.brandId = :brandId)
-      AND inv.quantity > 0
+      AND COALESCE(inv.quantity, 0) > 0
+      AND (
+          :brandIds_size = 0
+          OR FIND_IN_SET(p.brandId, :brandIdsComma) > 0
+      )
     """)
     int countProducts(@Bind("categoryId") int categoryId,
                       @Bind("minPrice") Integer minPrice,
                       @Bind("maxPrice") Integer maxPrice,
-                      @Bind("brandId") Integer brandId);
+                      @Bind("brandIds") List<Integer> brandIds,
+                      @Bind("brandIds_size") int brandIdsSize,
+                      @Bind("brandIdsComma") String brandIdsComma);
 
     @SqlQuery("""
             SELECT

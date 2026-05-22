@@ -464,3 +464,66 @@ body {
 .arrow.rotate {
     transform: rotate(180deg);
 }
+
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.active-filters-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: #3d7a3d;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.filter-tag .remove-tag {
+    cursor: pointer;
+    opacity: 0.8;
+    font-size: 11px;
+}
+
+.filter-tag .remove-tag:hover {
+    opacity: 1;
+}
+
+.filter-tag-price {
+    background: #d94f3a;
+}
+
+.filter-tag-brand {
+    background: #3d7a3d;
+}
+
+.filter-tag-clear-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    background: #fff;
+    color: #d94f3a;
+    border: 1.5px solid #d94f3a;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.filter-tag-clear-all:hover {
+    background: #fff0f0;
+}

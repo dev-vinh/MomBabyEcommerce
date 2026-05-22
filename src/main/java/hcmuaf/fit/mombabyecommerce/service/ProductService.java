@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProductService {
     Jdbi jdbi;
@@ -176,7 +177,7 @@ public class ProductService {
     public List<Product> filterProducts(int categoryId,
                                         Integer minPrice,
                                         Integer maxPrice,
-                                        Integer brandId,
+                                        List<Integer> brandIds,
                                         String sort,
                                         Integer page,
                                         Integer size) {
@@ -185,8 +186,14 @@ public class ProductService {
         if (size == null || size <= 0) size = 16;
 
         int offset = (page - 1) * size;
+        int brandIdsSize = (brandIds != null && !brandIds.isEmpty()) ? brandIds.size() : 0;
 
-        return productDao.filterProducts(categoryId, minPrice, maxPrice, brandId, sort, size, offset);
+        if (brandIdsSize == 0) brandIds = null;
+        String brandIdsComma = (brandIds != null && !brandIds.isEmpty())
+                ? brandIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                : null;
+
+        return productDao.filterProducts(categoryId, minPrice, maxPrice, brandIds, brandIdsSize, brandIdsComma, sort, size, offset);
     }
 
     // mới thêm vô bởi NV
@@ -207,8 +214,14 @@ public class ProductService {
     public int countProducts(int categoryId,
                              Integer minPrice,
                              Integer maxPrice,
-                             Integer brandId) {
-        return productDao.countProducts(categoryId, minPrice, maxPrice, brandId);
+                             List<Integer> brandIds) {
+        int brandIdsSize = (brandIds != null && !brandIds.isEmpty()) ? brandIds.size() : 0;
+        if (brandIdsSize == 0) brandIds = null;
+        String brandIdsComma = (brandIds != null && !brandIds.isEmpty())
+                ? brandIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                : null;
+
+        return productDao.countProducts(categoryId, minPrice, maxPrice, brandIds, brandIdsSize, brandIdsComma);
     }
 
     public ProductDTO updateProductForAdmin(Integer productId,
