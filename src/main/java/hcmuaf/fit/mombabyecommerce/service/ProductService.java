@@ -54,6 +54,28 @@ public class ProductService {
         return jdbi.withExtension(ProductDao.class, dao -> dao.countAllProducts());
     }
 
+    public boolean deactivateProduct(int productId) {
+        return productDao.deactivateProduct(productId);
+    }
+
+    public List<Product> getProductsFiltered(
+            Integer categoryId, Boolean isActive, String keyword,
+            int page, int size) {
+        int offset = (page - 1) * size;
+        int hasCat = categoryId != null ? 1 : 0;
+        int hasActive = isActive != null ? 1 : 0;
+        int hasKw = (keyword != null && !keyword.isBlank()) ? 1 : 0;
+        return productDao.getProductsFiltered(
+                categoryId, hasCat, isActive, hasActive, keyword, hasKw, size, offset);
+    }
+
+    public int countProductsFiltered(Integer categoryId, Boolean isActive, String keyword) {
+        int hasCat = categoryId != null ? 1 : 0;
+        int hasActive = isActive != null ? 1 : 0;
+        int hasKw = (keyword != null && !keyword.isBlank()) ? 1 : 0;
+        return productDao.countProductsFiltered(categoryId, hasCat, isActive, hasActive, keyword, hasKw);
+    }
+
     public Integer getMinimumPriceForProduct(int productId) {
         return productDao.getMinimumPriceForProduct(productId);
     }

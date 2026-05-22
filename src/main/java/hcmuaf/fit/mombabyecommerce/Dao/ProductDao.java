@@ -2,7 +2,6 @@ package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.Variant;
-import jakarta.annotation.Nullable;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
@@ -399,7 +398,6 @@ public interface ProductDao {
                 )
             LEFT JOIN inventory inv
                 ON inv.optionVariantId = ops.id
-            WHERE p.isActive = true
             ORDER BY p.id DESC
             LIMIT :size OFFSET :offset
             """)
@@ -408,6 +406,79 @@ public interface ProductDao {
                         @Bind("offset") int offset
                 );
 
-    @SqlQuery("SELECT COUNT(*) FROM products WHERE isActive = true")
+    @SqlQuery("SELECT COUNT(*) FROM products")
     int countAllProducts();
+
+    @SqlQuery("""
+            SELECT
+                p.id,
+                p.name,
+                p.sku,
+                p.description,
+                p.isActive,
+                p.categoryId,
+                p.brandId,
+                p.noOfViews,
+                p.noOfSold,
+                p.imageId,
+                ops.id as optionId,
+                ops.price,
+                COALESCE(inv.quantity, 0) as stock,
+                cate.name as categoryName,
+                img.url as imageUrl,
+                NULL as height,
+                NULL as length,
+                NULL as width,
+                NULL as weight,
+                NULL as variantText
+            FROM products p
+            JOIN categories cate ON cate.id = p.categoryId
+            LEFT JOIN image img ON img.id = p.imageId
+            LEFT JOIN option_variant ops ON ops.id = (
+                SELECT o.id
+                FROM option_variant o
+                LEFT JOIN inventory i ON i.optionVariantId = o.id
+                WHERE o.productId = p.id AND o.isActive = 1
+                ORDER BY
+                    CASE WHEN COALESCE(i.quantity,0) > 0 THEN 0 ELSE 1 END,
+                    o.price ASC
+                LIMIT 1
+            )
+            LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+            WHERE 1=1
+              AND (:hasCategoryId = 0 OR p.categoryId = :categoryId)
+              AND (:hasIsActive = 0 OR p.isActive = :isActive)
+              AND (:hasKeyword = 0 OR LOWER(p.name) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%')
+                   OR LOWER(p.sku) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%'))
+            ORDER BY p.id DESC
+            LIMIT :size OFFSET :offset
+            """)
+    List<Product> getProductsFiltered(
+            @Bind("categoryId") Integer categoryId,
+            @Bind("hasCategoryId") int hasCategoryId,
+            @Bind("isActive") Boolean isActive,
+            @Bind("hasIsActive") int hasIsActive,
+            @Bind("keyword") String keyword,
+            @Bind("hasKeyword") int hasKeyword,
+            @Bind("size") int size,
+            @Bind("offset") int offset
+    );
+
+    @SqlQuery("""
+            SELECT COUNT(*)
+            FROM products p
+            WHERE 1=1
+              AND (:hasCategoryId = 0 OR p.categoryId = :categoryId)
+              AND (:hasIsActive = 0 OR p.isActive = :isActive)
+              AND (:hasKeyword = 0 OR LOWER(p.name) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%')
+                   OR LOWER(p.sku) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%'))
+            """)
+    int countProductsFiltered(
+            @Bind("categoryId") Integer categoryId,
+            @Bind("hasCategoryId") int hasCategoryId,
+            @Bind("isActive") Boolean isActive,
+            @Bind("hasIsActive") int hasIsActive,
+            @Bind("keyword") String keyword,
+            @Bind("hasKeyword") int hasKeyword
+    );
 }
