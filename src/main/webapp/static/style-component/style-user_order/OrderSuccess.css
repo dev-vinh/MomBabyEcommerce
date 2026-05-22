@@ -150,8 +150,23 @@ body{
     align-items: center;
     display: flex
 ;
+    margin-bottom: 7px;
 }
 
-#btn:hover{
+#btn #button-view :hover{
     scale: 1.05;
+}
+.button-cart {
+    text-align: center;
+    background-color: #0170F0;
+    height: 40px;
+    border-radius: 20px;
+    padding: 20px;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+}
+#button-view{
+    text-align: center;
+    color: white;
 }
