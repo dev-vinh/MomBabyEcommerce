@@ -200,6 +200,6 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
-<script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js"></script>
+<script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js?v=2"></script>
 </body>
 </html>

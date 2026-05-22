@@ -53,6 +53,19 @@ public class OptionService {
         return optionDao.decreaseStockIfEnough(optionVariantId, quantity);
     }
 
+    public boolean decreaseStockWithLog(Integer optionVariantId, Integer quantity,
+                                        Integer userId, String orderId, Integer productId) {
+        Integer stockBefore = getStockByOptionId(optionVariantId);
+        boolean ok = optionDao.decreaseStockIfEnough(optionVariantId, quantity);
+        if (ok) {
+            Integer stockAfter = getStockByOptionId(optionVariantId);
+            logDao.insertLog(optionVariantId, productId, "EXPORT",
+                    -quantity, stockBefore, stockAfter,
+                    "Xuất kho đơn hàng #" + orderId, userId);
+        }
+        return ok;
+    }
+
     public void createInventory(Integer optionVariantId, Integer quantity) {
         optionDao.createInventory(optionVariantId, quantity);
     }
@@ -70,13 +83,11 @@ public class OptionService {
             OptionVariant opt = getOptionById(optionVariantId);
             int productId = opt != null ? opt.getProductId() : null;
             int change = quantity - stockBefore;
-
             if (change != 0) {
                 String actionType = change > 0 ? "IMPORT" : "EXPORT";
+                String logReason = (reason != null && !reason.isBlank()) ? reason : "Cập nhật tồn kho thủ công";
                 logDao.insertLog(optionVariantId, productId, actionType,
-                        change, stockBefore, quantity,
-                        (reason != null && !reason.isBlank()) ? reason : "Cập nhật tồn kho thủ công",
-                        userId);
+                        change, stockBefore, quantity, logReason, userId);
             }
         }
         return updated;
@@ -93,16 +104,16 @@ public class OptionService {
             int page, int size) {
         int offset = (page - 1) * size;
         return logDao.getLogsPaged(productId, productId != null ? 1 : 0,
-                actionType, actionType != null ? 1 : 0,
-                fromDate, fromDate != null ? 1 : 0,
-                toDate, toDate != null ? 1 : 0,
+                actionType, (actionType != null && !actionType.isBlank()) ? 1 : 0,
+                fromDate, (fromDate != null && !fromDate.isBlank()) ? 1 : 0,
+                toDate, (toDate != null && !toDate.isBlank()) ? 1 : 0,
                 size, offset);
     }
 
     public int countLogs(Integer productId, String actionType, String fromDate, String toDate) {
         return logDao.countLogs(productId, productId != null ? 1 : 0,
-                actionType, actionType != null ? 1 : 0,
-                fromDate, fromDate != null ? 1 : 0,
-                toDate, toDate != null ? 1 : 0);
+                actionType, (actionType != null && !actionType.isBlank()) ? 1 : 0,
+                fromDate, (fromDate != null && !fromDate.isBlank()) ? 1 : 0,
+                toDate, (toDate != null && !toDate.isBlank()) ? 1 : 0);
     }
 }
