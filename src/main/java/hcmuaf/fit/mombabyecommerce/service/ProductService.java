@@ -346,13 +346,9 @@ public class ProductService {
         return productDao.updateStock(optionId, quantity) > 0;
     }
 
-    public List<Product> getInventoryProducts(int offset, int limit) {
-        return productDao.getInventoryProducts(offset, limit);
-    }
 
-    public int countInventoryProducts() {
-        return productDao.countInventoryProducts();
-    }
+
+
     public static void main(String[] args) {
         ProductService productService = new ProductService(DBConnection.getJdbi());
         System.out.println(productService.getProductById(1));

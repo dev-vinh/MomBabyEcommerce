@@ -14,7 +14,7 @@ function closeModal() {
 function saveStock() {
     const optionId = document.getElementById('modalOptionId').value;
     const quantity = parseInt(document.getElementById('modalQuantity').value);
-    const location = document.getElementById('modalLocation').value.trim();
+    const stockLocation = document.getElementById('modalLocation').value.trim();
 
     if (isNaN(quantity) || quantity < 0) {
         showToast('Số lượng không hợp lệ.', 'error');
@@ -24,16 +24,16 @@ function saveStock() {
     fetch(contextPath + '/admin/api/inventory/' + optionId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity: quantity, location: location || null })
+        body: JSON.stringify({ quantity: quantity, location: stockLocation || null })
     })
         .then(function(res) { return res.json(); })
         .then(function(data) {
             if (data.statusCode === 200) {
                 showToast('Cập nhật kho thành công!', 'success');
-                updateRowUI(optionId, quantity, location);
+                updateRowUI(optionId, quantity, stockLocation);
 
                 closeModal();
-                setTimeout(function() { location.reload(); }, 800);
+                setTimeout(function() { window.location.reload(); }, 800);
             } else {
                 showToast(data.message || 'Có lỗi xảy ra.', 'error');
             }

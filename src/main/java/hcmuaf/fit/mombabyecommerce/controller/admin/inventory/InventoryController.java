@@ -51,36 +51,15 @@ public class InventoryController extends HttpServlet {
         }
 
         try {
-            int page = 1;
-            int pageSize = 10;
-
             String pageParam = request.getParameter("page");
+            String sizeParam = request.getParameter("size");
 
-            if (pageParam != null) {
-                page = Integer.parseInt(pageParam);
-            }
+            int currentPage = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+            int size = (sizeParam != null) ? Integer.parseInt(sizeParam) : 10;
+            if (size <= 0) size = 10;
 
-            int offset = (page - 1) * pageSize;
-
-            List<Product> products =
-                    productService.getInventoryProducts(offset, pageSize);
-
-            int totalProducts =
-                    productService.countInventoryProducts();
-
-            int totalPages =
-                    (int) Math.ceil((double) totalProducts / pageSize);
-
-            request.setAttribute("products", products);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", totalPages);
+            List<Product> products = productService.getAllProducts();
             List<OptionVariant> allOptions = optionService.getAllOptionsWithStock();
-            allOptions.forEach(o -> System.out.println(
-                    "optionId=" + o.getId() +
-                            " productId=" + o.getProductId() +
-                            " stock=" + o.getStock()
-            ));
-
             Map<Integer, List<OptionVariant>> optionMap = allOptions.stream()
                     .collect(Collectors.groupingBy(OptionVariant::getProductId));
 
@@ -96,7 +75,23 @@ public class InventoryController extends HttpServlet {
                         return new InventoryDTO(productId, name, image, entry.getValue());
                     })
                     .collect(Collectors.toList());
-            request.setAttribute("inventoryList", inventoryList);
+
+            int totalItems = inventoryList.size();
+            int totalPages = (int) Math.ceil((double) totalItems / size);
+            if (totalPages < 1) totalPages = 1;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            int fromIndex = (currentPage - 1) * size;
+            int toIndex = Math.min(fromIndex + size, totalItems);
+            List<InventoryDTO> pagedList = (fromIndex < totalItems)
+                    ? inventoryList.subList(fromIndex, toIndex)
+                    : Collections.emptyList();
+
+            request.setAttribute("inventoryList", pagedList);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("size", size);
             request.getRequestDispatcher("/admin/inventory.jsp").forward(request, response);
 
         } catch (Exception e) {

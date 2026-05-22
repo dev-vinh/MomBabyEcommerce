@@ -7,11 +7,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản Lý Kho</title>
-  <script> const contextPath = "${pageContext.request.contextPath}"; </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/adminPagination.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
 
@@ -28,12 +27,8 @@
 
     <div class="toolbar">
       <h2>Quản Lý Kho Hàng</h2>
-      <input type="text" id="searchInput" class="search-bar"
-             placeholder="Tìm kiếm sản phẩm..."
-             onkeyup="searchInventory()">
     </div>
 
-    <%-- Entries dropdown - giống listProduct --%>
     <div class="row">
       <div class="entries-dropdown">
         <label for="entries">Hiển thị</label>
@@ -51,7 +46,7 @@
     <table class="inventory-table">
       <thead>
       <tr>
-        <th style="width: 40px">#</th>
+        <th style="width: 60px">ID</th>
         <th>Sản phẩm / Phiên bản</th>
         <th>Biến thể</th>
         <th>Giá bán</th>
@@ -61,55 +56,34 @@
       </thead>
       <tbody id="inventoryTableBody">
 
-      <c:set var="stt" value="${(currentPage - 1) * size}"/>
       <c:forEach var="item" items="${inventoryList}">
-        <c:set var="stt" value="${stt + 1}"/>
-
-        <%-- Dòng tên sản phẩm --%>
-        <tr class="product-group-row">
-          <td>${stt}</td>
-          <td colspan="4">
+        <tr class="product-group-row" data-product-id="${item.productId}">
+          <td><strong>${item.productId}</strong></td>
+          <td colspan="5">
             <c:if test="${not empty item.productImage}">
               <img src="${item.productImage}" class="product-img" alt="Ảnh sản phẩm">
             </c:if>
             <strong>${item.productName}</strong>
           </td>
-          <td></td>
         </tr>
 
-        <%-- Dòng từng option --%>
         <c:forEach var="opt" items="${item.options}">
-          <tr>
+          <tr data-option-id="${opt.id}">
             <td></td>
-            <td style="padding-left: 30px; color: #666;">
-              Option #${opt.id}
-            </td>
+            <td style="padding-left: 30px; color: #666;">Option #${opt.id}</td>
             <td>
               <c:choose>
-                <c:when test="${not empty opt.variantName}">
-                  ${opt.variantName}: ${opt.variantValue}
-                </c:when>
-                <c:otherwise>
-                  <span style="color: #bbb;">—</span>
-                </c:otherwise>
+                <c:when test="${not empty opt.variantName}">${opt.variantName}: ${opt.variantValue}</c:when>
+                <c:otherwise><span style="color: #bbb;">—</span></c:otherwise>
               </c:choose>
             </td>
-            <td>
-              <fmt:formatNumber value="${opt.price}" type="number" groupingUsed="true"/>đ
-            </td>
+            <td><fmt:formatNumber value="${opt.price}" type="number" groupingUsed="true"/>đ</td>
             <td>
               <c:choose>
-                <c:when test="${opt.stock == 0}">
-                  <span class="status out-of-stock">Hết hàng (0)</span>
-                </c:when>
-                <c:when test="${opt.stock <= 10}">
-                  <span class="status low-stock">Sắp hết (${opt.stock})</span>
-                </c:when>
-                <c:otherwise>
-                  <span class="status in-stock">${opt.stock}</span>
-                </c:otherwise>
+                <c:when test="${opt.stock == 0}"><span class="status out-of-stock">Hết hàng (0)</span></c:when>
+                <c:when test="${opt.stock <= 10}"><span class="status low-stock">Sắp hết (${opt.stock})</span></c:when>
+                <c:otherwise><span class="status in-stock">${opt.stock}</span></c:otherwise>
               </c:choose>
-
               <c:if test="${not empty opt.warehouseLocation}">
                 <div style="font-size: 12px; color: #888; margin-top: 4px;">
                   <i class="fa-solid fa-warehouse"></i> ${opt.warehouseLocation}
@@ -126,7 +100,6 @@
             </td>
           </tr>
         </c:forEach>
-
       </c:forEach>
 
       <c:if test="${empty inventoryList}">
@@ -140,7 +113,6 @@
       </tbody>
     </table>
 
-    <%-- Phân trang - giống listProduct --%>
     <div class="pagination">
 
       <c:choose>
@@ -221,10 +193,10 @@
     </div>
   </div>
 </div>
-<div class="sp-grid" id="inventory_list"></div>
-<div class="sp-pagination" id="sp-pagination"></div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=1"></script>
+<script src="${pageContext.request.contextPath}/static/js/global-toast.js"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/inventory/inventory.js"></script>
+
 </body>
 </html>
