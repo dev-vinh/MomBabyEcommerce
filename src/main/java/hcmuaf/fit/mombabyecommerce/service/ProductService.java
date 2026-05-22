@@ -345,6 +345,10 @@ public class ProductService {
     public boolean updateStock(Integer optionId, int quantity) {
         return productDao.updateStock(optionId, quantity) > 0;
     }
+
+
+
+
     public static void main(String[] args) {
         ProductService productService = new ProductService(DBConnection.getJdbi());
         System.out.println(productService.getProductById(1));
