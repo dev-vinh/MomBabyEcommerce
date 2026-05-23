@@ -49,11 +49,12 @@ public class UserOrderDetailController extends HttpServlet {
 
 
             Address address = addressService.findById(order.getAddressId());
+            System.out.println("address" +address);
             if (address != null) {
                 request.setAttribute("address", address);
             }
 
-            request.setAttribute("COD", order.getCOD());
+
         }
 
         List<OrderDetail> orderDetails = null;

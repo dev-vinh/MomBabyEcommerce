@@ -311,7 +311,7 @@
 
                                     <div class="content_item full_name">
                                         <i class="fa-regular fa-user"></i>
-                                        <span> ${address.displayName} </span>
+                                        <span> ${address.fullName} </span>
                                     </div>
 
                                     <div class="content_item phone">
@@ -343,36 +343,30 @@
 
                                 <div class="section_right">
                                     <div class="title">
-                                        <span>Phương thức thanh toán:</span>
-                                    </div>
+                                        <span>Phương thức thanh toán: </span>
+                                            <c:if test="${order.COD}">
+                                                <span>Thanh toán khi nhận hàng</span>
+                                            </c:if>
 
-                                    <div class="content col">
-
-                                        <c:if test="${ not empty card}">
-                                            <span>${card.type} : **** ${card.last4}</span>
-                                        </c:if>
-
-                                        <c:if test="${COD == true }">
-                                            <span>Thanh toán khi nhận hàng</span>
-                                        </c:if>
+                                            <c:if test="${not order.COD}">
+                                                <span>Thanh toán VNPay</span>
+                                            </c:if>
 
                                     </div>
-
 
                                     <div class="title">
-                                        <span>Trạng thái thanh toán:</span>
-                                    </div>
-                                    <div class="content col">
+                                        <span>Trạng thái thanh toán: </span>
 
-                                        <c:if test="${order.paymentStatus =='PENDING'}">
-                                            <span>Chưa thanh toán</span>
-                                        </c:if>
+                                            <c:if test="${order.paymentStatus =='PENDING'}">
+                                                <span>Chưa thanh toán</span>
+                                            </c:if>
 
-                                        <c:if test="${order.paymentStatus =='PAID'}">
-                                            <span>Đã thanh toán</span>
-                                        </c:if>
+                                            <c:if test="${order.paymentStatus =='PAID'}">
+                                                <span>Đã thanh toán</span>
+                                            </c:if>
 
                                     </div>
+
 
                                 </div>
 
