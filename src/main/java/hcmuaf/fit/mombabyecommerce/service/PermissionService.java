@@ -19,8 +19,12 @@ public class PermissionService {
     }
 
     public static void main(String[] args) {
-        PermissionService permissionService = new PermissionService(DBConnection.getJdbi());
-        List<Permission> permissions = permissionService.getAllPermissions();
+        PermissionService permissionService =
+                new PermissionService(DBConnection.getJdbi());
+
+        List<Permission> permissions =
+                permissionService.getAllPermissions();
+
         System.out.println(permissions);
     }
 }

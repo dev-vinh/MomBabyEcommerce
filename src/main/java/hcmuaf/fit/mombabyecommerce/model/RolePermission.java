@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
 
 import java.io.Serializable;
 
@@ -9,6 +10,7 @@ public class RolePermission implements Serializable {
     private Integer roleId;
     private Integer permissionId;
 
+    @JdbiConstructor
     public RolePermission(
             @ColumnName("id") Integer id,
             @ColumnName("roleId") Integer roleId,
