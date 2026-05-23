@@ -61,7 +61,7 @@ public class OptionService {
             Integer stockAfter = getStockByOptionId(optionVariantId);
             logDao.insertLog(optionVariantId, productId, "EXPORT",
                     -quantity, stockBefore, stockAfter,
-                    "Xuất kho đơn hàng #" + orderId, userId);
+                    "Xuất kho cho đơn hàng #" + orderId, userId);
         }
         return ok;
     }
