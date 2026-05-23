@@ -95,8 +95,23 @@ async function getShipFee(items, address) {
 }
 
 function bindCheckout() {
-    $('#pay').on('click', async function () {
-        // CHỈNH SỬA: Đổi selector tìm address-id từ '.address-item.active'
+    $('#pay').on('click', function () {
+        const paymentMethod = $('input[name="payment-method"]:checked').val();
+        let paymentText = "COD";
+        if(paymentMethod === "VNPAY"){
+            paymentText = "Thanh toán VNPAY";
+        }
+        $('#paymentText').text(paymentText);
+
+        $('#confirmModal').fadeIn();
+    });
+    // chọn chờ chút
+    $('#cancelPay').on('click', function () {
+        $('#confirmModal').fadeOut();
+    });
+    // chọn Xác nhận
+    $('#confirmPay').on('click', async function () {
+        $('#confirmModal').fadeOut();
         const addressId = $('.address-item.active').data('address-id');
         const paymentMethod = $('input[name="payment-method"]:checked').val();
         const products = [];

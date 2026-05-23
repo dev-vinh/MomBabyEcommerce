@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProductService {
     Jdbi jdbi;
@@ -52,6 +53,28 @@ public class ProductService {
 
     public int countAllProducts() {
         return jdbi.withExtension(ProductDao.class, dao -> dao.countAllProducts());
+    }
+
+    public boolean deactivateProduct(int productId) {
+        return productDao.deactivateProduct(productId);
+    }
+
+    public List<Product> getProductsFiltered(
+            Integer categoryId, Boolean isActive, String keyword,
+            int page, int size) {
+        int offset = (page - 1) * size;
+        int hasCat = categoryId != null ? 1 : 0;
+        int hasActive = isActive != null ? 1 : 0;
+        int hasKw = (keyword != null && !keyword.isBlank()) ? 1 : 0;
+        return productDao.getProductsFiltered(
+                categoryId, hasCat, isActive, hasActive, keyword, hasKw, size, offset);
+    }
+
+    public int countProductsFiltered(Integer categoryId, Boolean isActive, String keyword) {
+        int hasCat = categoryId != null ? 1 : 0;
+        int hasActive = isActive != null ? 1 : 0;
+        int hasKw = (keyword != null && !keyword.isBlank()) ? 1 : 0;
+        return productDao.countProductsFiltered(categoryId, hasCat, isActive, hasActive, keyword, hasKw);
     }
 
     public Integer getMinimumPriceForProduct(int productId) {
@@ -154,7 +177,7 @@ public class ProductService {
     public List<Product> filterProducts(int categoryId,
                                         Integer minPrice,
                                         Integer maxPrice,
-                                        Integer brandId,
+                                        List<Integer> brandIds,
                                         String sort,
                                         Integer page,
                                         Integer size) {
@@ -163,8 +186,14 @@ public class ProductService {
         if (size == null || size <= 0) size = 16;
 
         int offset = (page - 1) * size;
+        int brandIdsSize = (brandIds != null && !brandIds.isEmpty()) ? brandIds.size() : 0;
 
-        return productDao.filterProducts(categoryId, minPrice, maxPrice, brandId, sort, size, offset);
+        if (brandIdsSize == 0) brandIds = null;
+        String brandIdsComma = (brandIds != null && !brandIds.isEmpty())
+                ? brandIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                : null;
+
+        return productDao.filterProducts(categoryId, minPrice, maxPrice, brandIds, brandIdsSize, brandIdsComma, sort, size, offset);
     }
 
     // mới thêm vô bởi NV
@@ -185,8 +214,14 @@ public class ProductService {
     public int countProducts(int categoryId,
                              Integer minPrice,
                              Integer maxPrice,
-                             Integer brandId) {
-        return productDao.countProducts(categoryId, minPrice, maxPrice, brandId);
+                             List<Integer> brandIds) {
+        int brandIdsSize = (brandIds != null && !brandIds.isEmpty()) ? brandIds.size() : 0;
+        if (brandIdsSize == 0) brandIds = null;
+        String brandIdsComma = (brandIds != null && !brandIds.isEmpty())
+                ? brandIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                : null;
+
+        return productDao.countProducts(categoryId, minPrice, maxPrice, brandIds, brandIdsSize, brandIdsComma);
     }
 
     public ProductDTO updateProductForAdmin(Integer productId,
@@ -345,6 +380,10 @@ public class ProductService {
     public boolean updateStock(Integer optionId, int quantity) {
         return productDao.updateStock(optionId, quantity) > 0;
     }
+
+
+
+
     public static void main(String[] args) {
         ProductService productService = new ProductService(DBConnection.getJdbi());
         System.out.println(productService.getProductById(1));

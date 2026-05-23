@@ -35,7 +35,7 @@ public interface OptionVariantDao {
             o.productId,
             o.price,
             COALESCE(inv.quantity, 0) as stock,
-             inv.warehouseLocation as warehouseLocation,
+            inv.warehouseLocation as warehouseLocation,
             CAST(NULL AS SIGNED) as variantId,
             CAST(NULL AS CHAR) as variantName,
             CAST(NULL AS CHAR) as variantValue
@@ -167,8 +167,8 @@ public interface OptionVariantDao {
     @SqlQuery("""
     SELECT
         o.id as id,
-        o.productId,
-        o.price,
+        o.productId as productId,
+        o.price as price,
         COALESCE(inv.quantity, 0) as stock,
         inv.warehouseLocation as warehouseLocation,
         v.id as variantId,

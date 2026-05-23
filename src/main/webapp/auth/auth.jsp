@@ -17,9 +17,7 @@
         <form action="#">
             <h1>Tạo tài khoản</h1>
             <div class="social-container">
-                <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>
-                <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="${pageContext.request.contextPath}/login-google" class="social"><i class="fa-brands fa-google"></i></a>
             </div>
             <span>hoặc sử dụng email của bạn để đăng ký</span>
             <div class="infield">
@@ -73,9 +71,7 @@
         <form action="#">
             <h1>Đăng nhập</h1>
             <div class="social-container">
-                <a href="https://www.facebook.com/?locale=vi_VN" class="social"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="${pageContext.request.contextPath}/register-google" class="social"><i class="fa-brands fa-google"></i></a>
-                <a href="https://www.linkedin.com/" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="${pageContext.request.contextPath}/login-google" class="social"><i class="fa-brands fa-google"></i></a>
             </div>
             <span>hoặc sử dụng tài khoản của bạn</span>
             <div class="infield">

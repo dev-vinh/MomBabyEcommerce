@@ -117,12 +117,6 @@
           </select>
         </div>
 
-        <div class="section inventory-note">
-          <h2>Ghi chú tồn kho</h2>
-          <p>Trang này chỉ quản lý thông tin sản phẩm, hình ảnh, phiên bản và giá bán.</p>
-          <p>Tồn kho thực tế nên cập nhật ở màn hình quản lý kho để tránh người quản lý sản phẩm chỉnh sai số lượng.</p>
-        </div>
-
         <div class="save">
           <button type="button" id="saveButton">Lưu</button>
         </div>

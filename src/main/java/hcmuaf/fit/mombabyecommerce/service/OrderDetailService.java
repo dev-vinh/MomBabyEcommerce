@@ -49,9 +49,12 @@ public class OrderDetailService {
                 throw new RuntimeException("Không thể tạo chi tiết đơn hàng");
             }
 
-            boolean stockUpdated = optionDao.decreaseStockIfEnough(
+            boolean stockUpdated = optionService.decreaseStockWithLog(
                     orderDetail.getOptionId(),
-                    orderDetail.getQuantity()
+                    orderDetail.getQuantity(),
+                    null,
+                    String.valueOf(orderDetail.getOrderId()),
+                    orderDetail.getProductId()
             );
 
             if (!stockUpdated) {

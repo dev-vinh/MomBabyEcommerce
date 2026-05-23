@@ -262,8 +262,53 @@ a{
     width: 100%;
     box-sizing: border-box;
 }
+.confirm-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:999;
+}
 
+.confirm-box{
+    width:400px;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    margin:150px auto;
+}
 
+.confirm-action{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.confirm-action button{
+    padding:10px 16px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+#confirmPay{
+    background: #e5e5e5;
+    transition: 0.3s;
+}
+#cancelPay{
+    background: #e5e5e5;
+    transition: 0.3s;
+}
+/* Hover nút xác nhận */
+#confirmPay:hover{
+    background: green;
+    color: white;
+}
+/* Hover nút chờ chút */
+#cancelPay:hover{
+    background: red;
+    color: white;
+}
 
 
 

@@ -250,7 +250,26 @@
                 </div>
 
                 <button type="button" id="pay">Thanh Toán </button>
-
+<%--                thêm xác nhận khi người dùng nhấn chọn thanh toán--%>
+                <div id="confirmModal" class="confirm-modal">
+                    <div class="confirm-box">
+                        <h3>Xác Nhận Thanh Toán</h3>
+                        <p>Bạn có chắc muốn thanh toán đơn hàng này?</p>
+                        <p>
+                            Phương thức:
+                            <span id="paymentText"></span>
+                        </p>
+                        <div class="confirm-action">
+                            <button type="button" id="cancelPay">
+                                Chờ chút
+                            </button>
+                            <button type="button" id="confirmPay">
+                                Xác nhận
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <%--thêm xác nhận khi người dùng nhấn chọn thanh toán--%>
                 <div class="term_condition">
                     <span>
                         Bằng cách gửi đơn đặt hàng, bạn đồng ý với <a href="#">Điều khoản &amp; điều kiện </a> và chúng tôi sẽ sử dụng dữ liệu cá nhân của bạn theo <a href="#" >Chính sách quyền riêng tư </a> của chúng tôi.

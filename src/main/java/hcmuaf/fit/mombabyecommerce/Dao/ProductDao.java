@@ -2,7 +2,6 @@ package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import hcmuaf.fit.mombabyecommerce.model.Variant;
-import jakarta.annotation.Nullable;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
@@ -82,18 +81,20 @@ public interface ProductDao {
                                       @Bind("optionId") int optionId);
 
     @SqlQuery("""
-            SELECT p.id, p.name, p.sku, p.description, p.isActive,
-                   p.categoryId, cate.name as categoryName,
-                   p.brandId, p.noOfViews, p.noOfSold,
-                   p.imageId, img.url as imageUrl,
-                   ops.price, inv.quantity as stock, ops.id as optionId
-            FROM products p
-            JOIN categories cate ON cate.id = p.categoryId
-            JOIN option_variant ops ON ops.productId = p.id
-            JOIN inventory inv ON inv.optionVariantId = ops.id
-            JOIN image img ON img.id = p.imageId
-            WHERE p.isActive = true AND inv.quantity > 0
-            """)
+    SELECT p.id, p.name, p.sku, p.description, p.isActive,
+           p.categoryId, cate.name as categoryName,
+           p.brandId, p.noOfViews, p.noOfSold,
+           p.imageId, img.url as imageUrl,
+           ops.price,
+           COALESCE(inv.quantity, 0) as stock,
+           ops.id as optionId
+    FROM products p
+    JOIN categories cate ON cate.id = p.categoryId
+    JOIN option_variant ops ON ops.productId = p.id
+    LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+    JOIN image img ON img.id = p.imageId
+    WHERE p.isActive = true
+""")
     List<Product> getAllProducts();
 
     @SqlQuery("""
@@ -267,40 +268,43 @@ public interface ProductDao {
                    p.categoryId, p.imageId,
                    ops.id as optionId,
                    ops.price,
-                   inv.quantity as stock,
+                   COALESCE(inv.quantity, 0) as stock,
                    img.url as imageUrl
             FROM products p
             JOIN option_variant ops ON ops.productId = p.id
-            JOIN inventory inv ON inv.optionVariantId = ops.id
+            LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
             JOIN image img ON p.imageId = img.id
-            WHERE p.categoryId = :categoryId
-              AND p.isActive = true
+            WHERE p.isActive = true
+              AND (:categoryId = 0 OR p.categoryId = :categoryId)
               AND (:minPrice IS NULL OR ops.price >= :minPrice)
               AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
-              AND (:brandId IS NULL OR p.brandId = :brandId)
-            
+              AND COALESCE(inv.quantity, 0) > 0
+              AND (
+                  :brandIds_size = 0
+                  OR FIND_IN_SET(p.brandId, :brandIdsComma) > 0
+              )
               AND ops.id = (
                   SELECT o.id
                   FROM option_variant o
-                  JOIN inventory i ON i.optionVariantId = o.id
+                  LEFT JOIN inventory i ON i.optionVariantId = o.id
                   WHERE o.productId = p.id
-                    AND i.quantity > 0
+                    AND COALESCE(i.quantity, 0) > 0
                   ORDER BY o.price ASC
                   LIMIT 1
               )
-            
             ORDER BY
               CASE WHEN :sort = 'price_asc' THEN ops.price END ASC,
               CASE WHEN :sort = 'price_desc' THEN ops.price END DESC,
               p.noOfSold DESC
-            
             LIMIT :size OFFSET :offset
             """)
     List<Product> filterProducts(
             @Bind("categoryId") int categoryId,
             @Bind("minPrice") Integer minPrice,
             @Bind("maxPrice") Integer maxPrice,
-            @Bind("brandId") Integer brandId,
+            @Bind("brandIds") List<Integer> brandIds,
+            @Bind("brandIds_size") int brandIdsSize,
+            @Bind("brandIdsComma") String brandIdsComma,
             @Bind("sort") String sort,
             @Bind("size") Integer size,
             @Bind("offset") Integer offset
@@ -339,18 +343,23 @@ public interface ProductDao {
     SELECT COUNT(DISTINCT p.id)
     FROM products p
     JOIN option_variant ops ON ops.productId = p.id
-    JOIN inventory inv ON inv.optionVariantId = ops.id
-    WHERE p.categoryId = :categoryId
-      AND p.isActive = true
+    LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+    WHERE p.isActive = true
+      AND (:categoryId = 0 OR p.categoryId = :categoryId)
       AND (:minPrice IS NULL OR ops.price >= :minPrice)
       AND (:maxPrice IS NULL OR ops.price <= :maxPrice)
-      AND (:brandId IS NULL OR p.brandId = :brandId)
-      AND inv.quantity > 0
+      AND COALESCE(inv.quantity, 0) > 0
+      AND (
+          :brandIds_size = 0
+          OR FIND_IN_SET(p.brandId, :brandIdsComma) > 0
+      )
     """)
     int countProducts(@Bind("categoryId") int categoryId,
                       @Bind("minPrice") Integer minPrice,
                       @Bind("maxPrice") Integer maxPrice,
-                      @Bind("brandId") Integer brandId);
+                      @Bind("brandIds") List<Integer> brandIds,
+                      @Bind("brandIds_size") int brandIdsSize,
+                      @Bind("brandIdsComma") String brandIdsComma);
 
     @SqlQuery("""
             SELECT
@@ -397,7 +406,6 @@ public interface ProductDao {
                 )
             LEFT JOIN inventory inv
                 ON inv.optionVariantId = ops.id
-            WHERE p.isActive = true
             ORDER BY p.id DESC
             LIMIT :size OFFSET :offset
             """)
@@ -406,6 +414,79 @@ public interface ProductDao {
                         @Bind("offset") int offset
                 );
 
-    @SqlQuery("SELECT COUNT(*) FROM products WHERE isActive = true")
+    @SqlQuery("SELECT COUNT(*) FROM products")
     int countAllProducts();
+
+    @SqlQuery("""
+            SELECT
+                p.id,
+                p.name,
+                p.sku,
+                p.description,
+                p.isActive,
+                p.categoryId,
+                p.brandId,
+                p.noOfViews,
+                p.noOfSold,
+                p.imageId,
+                ops.id as optionId,
+                ops.price,
+                COALESCE(inv.quantity, 0) as stock,
+                cate.name as categoryName,
+                img.url as imageUrl,
+                NULL as height,
+                NULL as length,
+                NULL as width,
+                NULL as weight,
+                NULL as variantText
+            FROM products p
+            JOIN categories cate ON cate.id = p.categoryId
+            LEFT JOIN image img ON img.id = p.imageId
+            LEFT JOIN option_variant ops ON ops.id = (
+                SELECT o.id
+                FROM option_variant o
+                LEFT JOIN inventory i ON i.optionVariantId = o.id
+                WHERE o.productId = p.id AND o.isActive = 1
+                ORDER BY
+                    CASE WHEN COALESCE(i.quantity,0) > 0 THEN 0 ELSE 1 END,
+                    o.price ASC
+                LIMIT 1
+            )
+            LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
+            WHERE 1=1
+              AND (:hasCategoryId = 0 OR p.categoryId = :categoryId)
+              AND (:hasIsActive = 0 OR p.isActive = :isActive)
+              AND (:hasKeyword = 0 OR LOWER(p.name) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%')
+                   OR LOWER(p.sku) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%'))
+            ORDER BY p.id DESC
+            LIMIT :size OFFSET :offset
+            """)
+    List<Product> getProductsFiltered(
+            @Bind("categoryId") Integer categoryId,
+            @Bind("hasCategoryId") int hasCategoryId,
+            @Bind("isActive") Boolean isActive,
+            @Bind("hasIsActive") int hasIsActive,
+            @Bind("keyword") String keyword,
+            @Bind("hasKeyword") int hasKeyword,
+            @Bind("size") int size,
+            @Bind("offset") int offset
+    );
+
+    @SqlQuery("""
+            SELECT COUNT(*)
+            FROM products p
+            WHERE 1=1
+              AND (:hasCategoryId = 0 OR p.categoryId = :categoryId)
+              AND (:hasIsActive = 0 OR p.isActive = :isActive)
+              AND (:hasKeyword = 0 OR LOWER(p.name) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%')
+                   OR LOWER(p.sku) LIKE CONCAT('%', LOWER(IFNULL(:keyword,'')), '%'))
+            """)
+    int countProductsFiltered(
+            @Bind("categoryId") Integer categoryId,
+            @Bind("hasCategoryId") int hasCategoryId,
+            @Bind("isActive") Boolean isActive,
+            @Bind("hasIsActive") int hasIsActive,
+            @Bind("keyword") String keyword,
+            @Bind("hasKeyword") int hasKeyword
+    );
 }

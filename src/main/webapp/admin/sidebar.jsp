@@ -85,8 +85,17 @@
             <li class="menu_item">
                 <div class="wrap_menu_item">
                     <i class="fa-solid fa-box"></i>
-                    <a href="inventory">Quản lý kho</a>
+                    <span>Quản lý kho</span>
+                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
                 </div>
+                <ul class="submenu">
+                    <li class="submenu_item">
+                        <a href="inventory">Tồn kho</a>
+                    </li>
+                    <li class="submenu_item">
+                        <a href="inventory-log">Lịch sử kho</a>
+                    </li>
+                </ul>
             </li>
 
             <li class="menu_item">
