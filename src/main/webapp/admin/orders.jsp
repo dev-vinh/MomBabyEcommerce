@@ -70,7 +70,7 @@
                             <th>Thanh Toán</th>
                             <th>Tổng Tiền</th>
                             <th>Trạng Thái</th>
-                            <th></th>
+                            <th>Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -129,7 +129,25 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td></td>
+                                    <td>
+                                    <td>
+                                        <div class="action-buttons">
+
+                                            <a href="order-detail?orderId=${o.id}"
+                                               class="btn-view">
+
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+
+                                            <button type="button"
+                                                    class="btn-edit"
+                                                    data-id="${o.id}"
+                                                    data-status="${o.orderStatus}">
+                                                Chỉnh sửa
+                                            </button>
+
+                                        </div>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </c:if>
@@ -150,7 +168,69 @@
                 </div>
             </div>
         </div>
-    </div> </div>
+    </div>
+</div>
+<div id="editOrderModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h3>Cập nhật trạng thái</h3>
+            <span class="close" id="closeModalBtn">&times;</span>
+        </div>
+
+        <form action="${pageContext.request.contextPath}/admin/order-detail"
+              method="post">
+
+            <input type="hidden"
+                   name="action"
+                   value="update-status">
+
+            <input type="hidden"
+                   name="orderId"
+                   id="edit-order-id">
+
+            <div class="form-group">
+
+                <label>Trạng thái</label>
+
+                <select name="status"
+                        id="edit-order-status">
+
+                    <option value="PENDING">
+                        Chờ xác nhận
+                    </option>
+
+                    <option value="CONFIRMED">
+                        Đã xác nhận
+                    </option>
+
+                    <option value="PROCESSING">
+                        Đang đóng gói
+                    </option>
+
+                    <option value="SHIPPING">
+                        Đang giao hàng
+                    </option>
+
+                    <option value="DELIVERED">
+                        Đã giao hàng
+                    </option>
+
+                    <option value="CANCELLED">
+                        Đã hủy
+                    </option>
+                </select>
+            </div>
+            <button type="submit"
+                    class="save-btn">
+
+                Cập nhật
+            </button>
+        </form>
+    </div>
+</div>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/orders/order.js"></script>
 </body>
 </html>

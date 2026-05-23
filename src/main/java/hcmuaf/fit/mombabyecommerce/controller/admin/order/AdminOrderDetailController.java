@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.controller.admin.order;
 
 import hcmuaf.fit.mombabyecommerce.connection.DBConnection;
+import hcmuaf.fit.mombabyecommerce.contant.OrderStatus;
 import hcmuaf.fit.mombabyecommerce.model.Order;
 import hcmuaf.fit.mombabyecommerce.model.OrderDetail;
 import hcmuaf.fit.mombabyecommerce.model.User;
@@ -40,4 +41,20 @@ public class AdminOrderDetailController extends HttpServlet {
         request.getRequestDispatcher("orderDetail.jsp").forward(request, response);
     }
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("update-status".equals(action)) {
+            Integer orderId = Integer.parseInt(request.getParameter("orderId"));
+            String statusParam = request.getParameter("status");
+            try {
+                OrderStatus orderStatus = OrderStatus.valueOf(statusParam);
+                orderService.updateStatus(orderId, orderStatus);
+            } catch (IllegalArgumentException e) {
+                throw new ServletException("Invalid order status: " + statusParam);
+            }
+            response.sendRedirect(request.getContextPath()
+                    + "/admin/order-detail?orderId=" + orderId);
+        }
+    }
 }

@@ -101,7 +101,7 @@ public class CheckoutController extends HttpServlet {
         request.setAttribute("productList", productList);
         request.setAttribute("addressList", addressList);
         request.setAttribute("cardList", cardList);
-        request.getRequestDispatcher("checkout/checkout.jsp").forward(request, response);
+        request.getRequestDispatcher("/Checkout/checkout.jsp").forward(request, response);
     }
 
     @Override
@@ -241,17 +241,26 @@ public class CheckoutController extends HttpServlet {
                             new TypeReference<>() {
                             }
                     );
-            if (apiResponse.getCode() == 200) {
+            if (apiResponse.getCode() == 200 && apiResponse.getData() != null
+                    && apiResponse.getData().getOrder_code() != null
+                    && !apiResponse.getData().getOrder_code().isBlank()) {
+
                 orderService.updateShippingId(
                         orderId,
                         apiResponse.getData().getOrder_code()
                 );
-
-            } else {
-
                 orderService.updateStatus(
                         orderId,
-                        OrderStatus.ORDER_CREATE_ERROR
+                        OrderStatus.PENDING
+                );
+            }else {
+                orderService.updateShippingId(
+                        orderId,
+                        "DHM_" + System.currentTimeMillis()
+                );
+                orderService.updateStatus(
+                        orderId,
+                        OrderStatus.PENDING
                 );
             }
 

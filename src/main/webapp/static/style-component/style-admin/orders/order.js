@@ -122,4 +122,25 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+    const modal = document.getElementById("editOrderModal");
+    const closeBtn = document.getElementById("closeModalBtn");
+    document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn-edit");
+        if (!btn) return;
+
+        const id = btn.dataset.id;
+        const status = btn.dataset.status;
+
+        document.getElementById("edit-order-id").value = id;
+        document.getElementById("edit-order-status").value = status;
+        document.getElementById("editOrderModal").style.display = "flex";
+    });
+    closeBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+    window.addEventListener("click", function (e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 });
