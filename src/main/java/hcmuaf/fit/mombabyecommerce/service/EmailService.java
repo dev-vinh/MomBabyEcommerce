@@ -12,7 +12,7 @@
         private static final String SMTP_HOST = "smtp.gmail.com";
         private static final String SMTP_PORT = "587";
         private static final String USERNAME = "tuanghiencuu@gmail.com";
-        private static final String PASSWORD = "trgm jemx lzxr dmyw";
+        private static final String PASSWORD = "lbns hhaw qgdt fsbg";
         private static final Properties properties = new Properties();
         private static Session session;
 

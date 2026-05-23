@@ -185,6 +185,7 @@
                                 </p>
                                 <p>Tên khách hàng: <span>${user.fullName}</span></p>
                                 <p>Email: <span>${user.email}</span></p>
+                                <p>SĐT: <span>${user.phoneNumber}</span></p>
                             </div>
                         </c:if>
                     </div>

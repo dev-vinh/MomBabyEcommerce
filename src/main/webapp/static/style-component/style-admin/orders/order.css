@@ -494,3 +494,143 @@ input[type="checkbox"]:checked:after {
     color: white;
     font-size: 12px;
 }
+/* Action buttons */
+
+.action-buttons{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-view,
+.btn-edit{
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-view{
+    background-color: rgba(13, 202, 240, 0.12);
+    color: #0dcaf0;
+}
+
+.btn-view:hover{
+    background-color: #0dcaf0;
+    color: white;
+}
+
+.btn-edit{
+    background-color: rgba(255, 193, 7, 0.15);
+    color: #d39e00;
+}
+
+.btn-edit:hover{
+    background-color: #ffc107;
+    color: white;
+}
+.modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content{
+    width: 420px;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-header h3{
+    margin: 0;
+    font-size: 22px;
+    color: #343a40;
+}
+
+.close{
+    font-size: 28px;
+    cursor: pointer;
+    color: #6c757d;
+    transition: 0.2s;
+}
+
+.close:hover{
+    color: #dc3545;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.form-group label{
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-group select{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.form-group select:focus{
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.15);
+}
+
+.save-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #0dcaf0;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.save-btn:hover{
+    background-color: #0aa8c9;
+}
+@keyframes fadeIn{
+
+    from{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
