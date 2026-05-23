@@ -13,6 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Detail</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/customerDetail.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 
 </head>
 <body>

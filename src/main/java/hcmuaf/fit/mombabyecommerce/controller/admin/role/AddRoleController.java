@@ -6,6 +6,7 @@ import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.RolePermission;
 import hcmuaf.fit.mombabyecommerce.service.RolePermissionService;
 import hcmuaf.fit.mombabyecommerce.service.RoleService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,12 @@ public class AddRoleController extends HttpServlet {
     RoleService roleService = new RoleService(DBConnection.getJdbi());
     RolePermissionService rolePermissionService = new RolePermissionService(DBConnection.getJdbi());
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Role> roles = roleService.getAllRoles();
+        request.setAttribute("roles", roles);
+        request.getRequestDispatcher("admin/manageRole.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -37,7 +44,7 @@ public class AddRoleController extends HttpServlet {
         while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line);
         }
-
+        System.out.println(stringBuilder.toString());
         JSONObject jsonObject = new JSONObject(stringBuilder.toString());
         String roleName = jsonObject.getString("roleName");
         String description = jsonObject.getString("description");

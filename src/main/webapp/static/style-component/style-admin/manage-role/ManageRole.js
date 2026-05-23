@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("roleModal");
     const addBtn = document.getElementById("addRoleBtn");

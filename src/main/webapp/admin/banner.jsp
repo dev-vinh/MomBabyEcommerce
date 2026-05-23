@@ -11,12 +11,16 @@
 <head>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/banner/banner.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
     <title>Quản lý Banner</title>
     <script>
         const contextPath = "${pageContext.request.contextPath}";
     </script>
 </head>
 <body>
+<div class="wrap_header">
+    <jsp:include page="header.jsp"/>
+</div>
 <div class="container">
     <div class="left">
         <div class="side_bar">
@@ -24,9 +28,7 @@
         </div>
     </div>
     <div class="center">
-        <div class="wrap_header">
-            <jsp:include page="header.jsp"/>
-        </div>
+
 
         <div class="content">
             <div class="toolbar">

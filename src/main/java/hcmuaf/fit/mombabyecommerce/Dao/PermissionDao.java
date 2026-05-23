@@ -7,12 +7,10 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 import java.util.List;
-@RegisterBeanMapper(Permission.class)
+@RegisterConstructorMapper(Permission.class)
 public interface PermissionDao {
 
-    @SqlQuery("""
-        SELECT * FROM permissions
-    """)
+    @SqlQuery("SELECT id, name, type FROM permissions")
     List<Permission> getAllPermissions();
 
     @SqlQuery("""

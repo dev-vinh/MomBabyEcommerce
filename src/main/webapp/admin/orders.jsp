@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
+<div class="header">
+    <jsp:include page="header.jsp"/>
+</div>
 <div class="container">
     <div class="left">
         <div class="side_bar">
@@ -23,10 +26,6 @@
     </div>
 
     <div class="center">
-        <div class="header">
-            <jsp:include page="header.jsp"/>
-        </div>
-
         <div class="wrap_content">
             <div class="row">
                 <h1 class="header-title">Đơn Hàng</h1>
@@ -42,11 +41,14 @@
                         <input type="text" placeholder="Tìm kiếm" id="order-search-input">
                     </div>
 
-                    <select class="status-select">
-                        <option>Mặc Định</option>
-                        <option>Đã Gửi</option>
-                        <option>Đang Xử Lý</option>
-                        <option>Đã Giao</option>
+                    <select class="status-select" id="statusFilter">
+                        <option value="ALL">Mặc Định</option>
+                        <option value="PENDING">Chờ xác nhận</option>
+                        <option value="CONFIRMED">Đã xác nhận</option>
+                        <option value="PROCESSING">Đang đóng gói</option>
+                        <option value="SHIPPING">Đang giao hàng</option>
+                        <option value="DELIVERED">Đã giao hàng</option>
+                        <option value="CANCELLED">Đã huỷ</option>
                     </select>
 
                     <div class="header-actions">
@@ -76,7 +78,7 @@
                         <tbody>
                         <c:if test="${not empty orders}">
                             <c:forEach items="${orders}" var="o">
-                                <tr class="order-row">
+                                <tr class="order-row"  data-status="${o.orderStatus}">
                                     <td><input type="checkbox"></td>
                                     <td><a href="order-detail?orderId=${o.id}" class="order-id">#${o.id}</a></td>
                                     <td class="order-name">${o.userName}</td>
