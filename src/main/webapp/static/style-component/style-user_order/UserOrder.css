@@ -163,11 +163,8 @@ i {
     transition: 0.2s;
 }
 
-.menu_item:hover{
-    background: #f2f2f2;
-}
 
-.menu_item.active{
-    background: #ff6b6b;
-    color: white;
+#order_menu .menu_item.active{
+    background-color: #135add !important;
+    color: white !important;
 }

@@ -6,7 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -26,15 +26,20 @@
             <jsp:include page="sidebar.jsp"/>
         </div>
     </div>
+
     <div class="center">
+
+
         <div class="content">
             <h2>Quản lý vai trò</h2>
             <p class="subtitle">Tạo và quản lý các vai trò với quyền tuỳ chỉnh</p>
+
             <div class="content_header">
                 <button class="btn_add_role" id="addRoleBtn">
-                    Thêm vai trò
+                    <i class="fa-solid fa-plus"></i> Thêm vai trò
                 </button>
             </div>
+
             <table id="role_table">
                 <thead>
                 <tr>
@@ -65,27 +70,31 @@
                         </tr>
                     </c:forEach>
                 </c:if>
+
+
                 </tbody>
             </table>
         </div>
-        <div class= "modal hidden" id="roleModal">
+
+        <!-- Modal -->
+        <div class="modal hidden" id="roleModal">
             <div class="modal_content">
                 <span class="close_btn" id="closeRoleModal">&times;</span>
                 <h3>Thêm vai trò mới</h3>
                 <form id="roleForm">
                     <div class="form_group">
                         <label>Tên</label>
-                        <input type="text" name="name" placeholder="Ví dụ: NguyenVanA">
+                        <input type="text" name="name" placeholder="Ví dụ: Kiểm thử Beta">
                     </div>
                     <div class="form_group">
-                        <label>Mô tả </label>
+                        <label>Mô tả</label>
                         <textarea name="description" placeholder="Mô tả ngắn gọn về vai trò này..."></textarea>
                     </div>
                     <div class="form_group">
-                        <c:if test="${not empty permissions}">
+                        <c:if test="${not empty adminpermissions}">
                             <div>
-                                <c:forEach  items="${permissions}" var="per">
-                                    <label><input type="checkbox" class="permission" value="${per.id}"> ${per.name}</label><br>
+                                <c:forEach  items="${adminpermissions}" var="per">
+                                    <label><input type="checkbox" class="permission" data-id="${per.id}"> ${per.name} </label><br>
                                 </c:forEach>
                             </div>
                         </c:if>
@@ -102,6 +111,7 @@
 <script>
     const CONTEXT_PATH = "${pageContext.request.contextPath}";
 </script>
+
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/manage-role/ManageRole.js"></script>
 </body>
 </html>

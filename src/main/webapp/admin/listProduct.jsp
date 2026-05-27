@@ -12,21 +12,6 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
 
-<%
-    // Build filter query string for pagination links
-    StringBuilder filterSb = new StringBuilder();
-    if (request.getParameter("keyword") != null && !request.getParameter("keyword").isEmpty()) {
-        filterSb.append("&keyword=").append(java.net.URLEncoder.encode(request.getParameter("keyword"), "UTF-8"));
-    }
-    if (request.getParameter("categoryId") != null && !request.getParameter("categoryId").isEmpty()) {
-        filterSb.append("&categoryId=").append(request.getParameter("categoryId"));
-    }
-    if (request.getParameter("status") != null && !request.getParameter("status").isEmpty()) {
-        filterSb.append("&status=").append(request.getParameter("status"));
-    }
-    pageContext.setAttribute("filterQs", filterSb.toString());
-%>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>

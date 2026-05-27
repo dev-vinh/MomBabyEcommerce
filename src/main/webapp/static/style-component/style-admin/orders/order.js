@@ -143,4 +143,17 @@ document.addEventListener("DOMContentLoaded", function () {
             modal.style.display = "none";
         }
     });
+    const statusFilter = document.getElementById("statusFilter");
+    statusFilter.addEventListener("change", function () {
+        const selectedStatus = this.value;
+        const rows = document.querySelectorAll(".order-row");
+        rows.forEach(row => {
+            const rowStatus = row.dataset.status;
+            if (selectedStatus === "ALL" || rowStatus === selectedStatus) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
 });

@@ -40,6 +40,7 @@ public class ProductController extends HttpServlet {
 
             validateProductInput(name, sku, categoryId, brandId, imageId, imageIds, options);
 
+
             ProductDTO createdProduct = productService.createProductForAdmin(
                     name,
                     sku,

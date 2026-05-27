@@ -1,11 +1,9 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
 import hcmuaf.fit.mombabyecommerce.contant.ERole;
-import jakarta.annotation.Nullable;
+import java.io.Serializable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
-
-import java.io.Serializable;
 
 public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,7 +16,14 @@ public class Role implements Serializable {
     public Role() {
     }
 
-    public Role(Integer id, ERole roleType, String name, String description, Boolean isActive) {
+    @JdbiConstructor
+    public Role(
+            @ColumnName("id") Integer id,
+            @ColumnName("roleType") ERole roleType,
+            @ColumnName("name") String name,
+            @ColumnName("description") String description,
+            @ColumnName("isActive") Boolean isActive
+    ) {
         this.id = id;
         this.roleType = roleType;
         this.name = name;
