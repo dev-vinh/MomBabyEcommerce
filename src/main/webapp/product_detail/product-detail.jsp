@@ -230,6 +230,9 @@
                     <button id="add-to-cart" class="btn-add-to-cart btn add">
                         <i class="fa-solid fa-cart-shopping"></i> Thêm vào giỏ hàng
                     </button>
+                    <button id="buy-now" class="btn-add-to-cart btn add" style="background-color: yellow">
+                        <i class="fa-regular fa-money-bill-1" style="color:#e255e2 "></i><span id="text-buynow" style="color: #e255e2">Mua ngay</span>
+                    </button>
             </div>
 
             <div id="cart-notification" class="notification hidden">
