@@ -59,19 +59,69 @@ $(document).ready(function () {
             }
         }
 
-        function updateButtons(optionId) {
-            currentOptionId = optionId;
-            const qty = qtyInput.val() || 1;
-            if (buy_now.length > 0) {
-                buy_now.attr('href', `${window.contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
-            }
-        }
+        // function updateButtons(optionId) {
+        //     currentOptionId = optionId;
+        //     const qty = qtyInput.val() || 1;
+        //     if (buy_now.length > 0) {
+        //         buy_now.attr('href', `${window.contextPath}/buy-now?productId=${product_id}&optionId=${currentOptionId}&quantity=${qty}`);
+        //     }
+        // }
+        buy_now.on('click', async function (e) {
+            e.preventDefault();
 
+            const qty = parseInt(qtyInput.val()) || 1;
+            // validate option
+            if (!currentOptionId) {
+                alert('Vui lòng chọn phân loại');
+                return;
+            }
+            // validate stock
+            if (maxStock <= 0) {
+                alert('Sản phẩm đã hết hàng');
+                return;
+            }
+            // validate quantity
+            if (qty > maxStock) {
+                alert(
+                    'Số lượng vượt quá tồn kho. Trong kho chỉ còn '
+                    + maxStock + ' sản phẩm'
+                );
+                return;
+            }
+            const formData = {
+                productId: product_id,
+                optionId: currentOptionId,
+                quantity: qty
+            };
+
+            console.log(formData);
+            try {
+                const response = await fetch(`${window.contextPath}/buy-now`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    }
+                );
+                const result = await response.json();
+
+                console.log(result);
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Có lỗi xảy ra');
+            }
+        });
         btnMinus.on('click', function () {
             let currentQty = parseInt(qtyInput.val()) || 1;
             if (currentQty > 1) {
                 qtyInput.val(currentQty - 1);
-                updateButtons(currentOptionId);
             }
         });
 
@@ -85,14 +135,12 @@ $(document).ready(function () {
 
             if (currentQty < maxStock) {
                 qtyInput.val(currentQty + 1);
-                updateButtons(currentOptionId);
             } else {
                 alert('Số lượng phân loại này trong kho chỉ còn ' + maxStock + ' sản phẩm');
             }
         });
 
 
-        updateButtons(currentOptionId);
 
         $('.option-item').on('click', function () {
             const selectedOption = $(this);

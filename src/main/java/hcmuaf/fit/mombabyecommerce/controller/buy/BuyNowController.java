@@ -26,89 +26,80 @@ public class BuyNowController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String productIdStr = request.getParameter("productId");
-        String optionIdStr = request.getParameter("optionId");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if (productIdStr == null || optionIdStr == null) {
+        HttpSession session = request.getSession();
+        List<ProductCart> buyNowList = (List<ProductCart>) session.getAttribute("buyNowList");
+        if (buyNowList == null || buyNowList.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
 
-        Product product = productService.getProductByIdAndOptionId(Integer.parseInt(productIdStr),
-                Integer.parseInt(optionIdStr));
-
-        HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
-
-        if (product == null) {
-            throw new ServletException("Product not found");
-        }
-        ProductCart productCart = new ProductCart(product);
-
-        List<ProductCart> productList = new ArrayList<>();
-        productList.add(productCart);
-
-        // Handle null userId (guest user) - use empty lists instead of querying with
-        // null
         List<Address> addressList = new ArrayList<>();
-        List<Card> cardList = new ArrayList<>();
         if (userId != null) {
             addressList = addressService.findByUserId(userId);
-            cardList = cardService.getCartByUserId(userId);
         }
 
-        request.setAttribute("productList", productList);
+        request.setAttribute("productList", buyNowList);
         request.setAttribute("addressList", addressList);
-        request.setAttribute("cardList", cardList);
-
-        response.setContentType("text/html;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        request.getRequestDispatcher("checkout/checkout.jsp").forward(request, response);
-
+        request.getRequestDispatcher("/Checkout/checkout.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
-            String productId = request.getParameter("productId");
-            String optionId = request.getParameter("optionId");
+            // read json
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = request.getReader().readLine()) != null) {sb.append(line);}
+            JSONObject json = new JSONObject(sb.toString());
+            int productId = json.getInt("productId");
+            int optionId = json.getInt("optionId");
+            int quantity = json.getInt("quantity");
 
-            if (productId == null || optionId == null) {
-                JSONObject errorResponse = new JSONObject();
-                errorResponse.put("success", false);
-                errorResponse.put("message", "Missing required parameters");
-                response.getWriter().write(errorResponse.toString());
-                return;
-            }
-
-            Product product = productService.getProductByIdAndOptionId(
-                    Integer.parseInt(productId),
-                    Integer.parseInt(optionId)
-            );
-
+            // lấy sản phẩm
+            Product product = productService.getProductByIdAndOptionId(productId, optionId);
             if (product == null) {
-                JSONObject errorResponse = new JSONObject();
-                errorResponse.put("success", false);
-                errorResponse.put("message", "Product not found");
-                response.getWriter().write(errorResponse.toString());
+                JSONObject error = new JSONObject();
+                error.put("success", false);
+
+                error.put(
+                        "message",
+                        "Sản phẩm không tồn tại");
+                response.getWriter().write(error.toString());
                 return;
             }
 
-            JSONObject successResponse = new JSONObject();
-            successResponse.put("success", true);
-            successResponse.put("message", "Product found");
-            response.getWriter().write(successResponse.toString());
+            // CHECK STOCK
+            if (quantity > product.getStock()) {
+                JSONObject error = new JSONObject();
+                error.put("success", false);
 
+                error.put("message", "Số lượng vượt quá tồn kho");
+                response.getWriter().write(error.toString());
+                return;
+            }
+            // LƯU BUY NOW SESSION
+            ProductCart productCart = new ProductCart(product);
+            productCart.setQuantity(quantity);
+            List<ProductCart> buyNowList = new ArrayList<>();
+            buyNowList.add(productCart);
+            HttpSession session = request.getSession();
+
+            session.setAttribute("buyNowList", buyNowList);
+
+            JSONObject success = new JSONObject();
+            success.put("success", true);
+            success.put("redirectUrl", request.getContextPath() + "/buy-now");
+            response.getWriter().write(success.toString());
         } catch (Exception e) {
-            JSONObject errorResponse = new JSONObject();
-            errorResponse.put("success", false);
-            errorResponse.put("message", "An error occurred: " + e.getMessage());
-            response.getWriter().write(errorResponse.toString());
+            JSONObject error = new JSONObject();
+            error.put("success", false);
+            error.put("message", "Có lỗi xảy ra");
+            response.getWriter().write(error.toString());
         }
     }
 

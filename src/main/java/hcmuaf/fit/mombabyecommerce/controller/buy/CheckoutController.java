@@ -69,6 +69,12 @@ public class CheckoutController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
+        List<ProductCart> buyNowList = (List<ProductCart>)
+                session.getAttribute("buyNowList");
+        if (buyNowList == null || buyNowList.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
         String optionIdsParam = request.getParameter("optionIds");
         List<ProductCart> productList = new ArrayList<>();
         if (optionIdsParam != null && !optionIdsParam.trim().isEmpty()) {
@@ -124,13 +130,13 @@ public class CheckoutController extends HttpServlet {
                 return;
             }
             Cart cart = (Cart) session.getAttribute("cart");
-            if (cart == null || cart.getData().isEmpty()) {
-                response.getWriter().write("""
-                        {"success":false,"message":"Giỏ hàng trống"}
-                        """);
-
-                return;
-            }
+//            if (cart == null || cart.getData().isEmpty()) {
+//                response.getWriter().write("""
+//                        {"success":false,"message":"Giỏ hàng trống"}
+//                        """);
+//
+//                return;
+//            }
             BufferedReader reader = request.getReader();
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
