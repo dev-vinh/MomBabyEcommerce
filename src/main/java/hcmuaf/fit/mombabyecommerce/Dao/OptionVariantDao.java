@@ -197,7 +197,7 @@ public interface OptionVariantDao {
         o.productId,
         o.price,
         COALESCE(inv.quantity, 0) as stock,
-          inv.warehouseLocation as warehouseLocation,
+        inv.warehouseLocation as warehouseLocation,
         v.id as variantId,
         v.name as variantName,
         v.value as variantValue
@@ -206,7 +206,10 @@ public interface OptionVariantDao {
     LEFT JOIN variant v ON v.optionId = o.id
     WHERE o.isActive = 1
       AND o.productId = :productId
-    ORDER BY o.id, v.id
+    ORDER BY
+        COALESCE(inv.quantity, 0) ASC,
+        o.id,
+        v.id
     """)
     List<OptionVariant> getOptionsWithStockByProductId(@Bind("productId") Integer productId);
 }
