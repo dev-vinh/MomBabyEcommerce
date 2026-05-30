@@ -221,7 +221,7 @@ public interface DashboardDao {
         LEFT JOIN inventory inv ON inv.optionVariantId = ops.id
         INNER JOIN image img ON p.imageId = img.id
         WHERE p.isActive = 1
-          AND COALESCE(inv.quantity, 0) <= 20
+          AND COALESCE(inv.quantity, 0) <= 10
         GROUP BY p.id, p.name, p.sku, p.description, p.isActive,
                  p.categoryId, p.brandId, p.noOfViews, p.noOfSold, p.imageId, img.url
         ORDER BY stock ASC

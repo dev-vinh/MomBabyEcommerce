@@ -116,4 +116,8 @@ public class OptionService {
                 fromDate, (fromDate != null && !fromDate.isBlank()) ? 1 : 0,
                 toDate, (toDate != null && !toDate.isBlank()) ? 1 : 0);
     }
+    public Integer getAverageSoldLast3Months(Integer optionId) {
+        return optionDao.getAverageSoldLast3Months(optionId);
+    }
+
 }

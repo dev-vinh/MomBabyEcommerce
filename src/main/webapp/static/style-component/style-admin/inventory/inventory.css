@@ -48,7 +48,6 @@ body {
     border-color: #007bff;
 }
 
-/* ========== TABLE ========== */
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
@@ -62,6 +61,9 @@ body {
     vertical-align: middle;
     border-bottom: 1px solid #ddd;
     font-size: 14px;
+}
+.table-wrapper {
+    overflow-x: auto;
 }
 
 .inventory-table th {
