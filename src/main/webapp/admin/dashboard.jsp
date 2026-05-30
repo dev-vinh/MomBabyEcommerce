@@ -26,22 +26,34 @@
 
     <div class="main_content">
         <div class="dashboard-filter">
-            <form method="get" action="${pageContext.request.contextPath}/admin/dashboard">
+            <form method="get" action="${pageContext.request.contextPath}/admin/dashboard" class="filter_form">
                 <div class="period_tabs">
                     <button type="submit" name="period" value="WEEK"
-                            class="period_tab ${period == 'WEEK' ? 'active' : ''}">
-                        <i class="fa-regular fa-calendar-week"></i> Tuần này
+                            class="period_tab ${period == 'WEEK' && filterMode == 'period' ? 'active' : ''}">
+                        Tuần này
                     </button>
                     <button type="submit" name="period" value="MONTH"
-                            class="period_tab ${period == 'MONTH' ? 'active' : ''}">
-                        <i class="fa-regular fa-calendar"></i> Tháng này
+                            class="period_tab ${period == 'MONTH' && filterMode == 'period' ? 'active' : ''}">
+                        Tháng này
                     </button>
                     <button type="submit" name="period" value="YEAR"
-                            class="period_tab ${period == 'YEAR' ? 'active' : ''}">
-                        <i class="fa-regular fa-calendar-days"></i> Năm nay
+                            class="period_tab ${period == 'YEAR' && filterMode == 'period' ? 'active' : ''}">
+                         Năm nay
                     </button>
                 </div>
             </form>
+
+            <div class="filter_divider">hoặc</div>
+            <form method="get" action="${pageContext.request.contextPath}/admin/dashboard" class="filter_form">
+                <div class="filter_group ${filterMode == 'range' ? 'active' : ''}">
+                    <label><i class="fa-regular fa-calendar-range"></i> Khoảng ngày</label>
+                    <input type="date" name="from" value="${selectedFrom}" class="filter_input"/>
+                    <span class="filter_sep">→</span>
+                    <input type="date" name="to"   value="${selectedTo}"   class="filter_input"/>
+                    <button type="submit" class="filter_btn">Xem</button>
+                </div>
+            </form>
+
         </div>
         <div class="stats_grid">
 

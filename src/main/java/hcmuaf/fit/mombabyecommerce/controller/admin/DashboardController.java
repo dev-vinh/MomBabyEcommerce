@@ -20,48 +20,51 @@ public class DashboardController extends HttpServlet {
     DashboardService dashboardService = new DashboardService(DBConnection.getJdbi());
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String period = request.getParameter("period");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        if(period == null || period.isEmpty()) {
-            period = "MONTH";
+        String period   = request.getParameter("period");
+        String fromParam = request.getParameter("from");
+        String toParam   = request.getParameter("to");
+
+
+        int currentRevenue, currentOrders;
+        List<DashboardStats> revenueChart;
+        String filterMode = "period";
+
+          if (fromParam != null && !fromParam.isEmpty()
+                && toParam != null && !toParam.isEmpty()) {
+            filterMode = "range";
+            currentRevenue = dashboardService.getRevenueByRange(fromParam, toParam);
+            currentOrders  = dashboardService.getOrdersByRange(fromParam, toParam);
+            revenueChart   = dashboardService.getRevenueChartByRange(fromParam, toParam);
+            request.setAttribute("selectedFrom", fromParam);
+            request.setAttribute("selectedTo", toParam);
+
+        } else {
+            filterMode = "period";
+            if (period == null || period.isEmpty()) period = "MONTH";
+            period = period.toUpperCase();
+            currentRevenue = dashboardService.getRevenue(period);
+            currentOrders  = dashboardService.getOrders(period);
+            revenueChart   = dashboardService.getRevenueChart(period);
+            request.setAttribute("revenueGrowth", dashboardService.getRevenueGrowth(period));
+            request.setAttribute("ordersGrowth",  dashboardService.getOrdersGrowth(period));
         }
-        period = period.toUpperCase();
-        List<Product> products = productService.getTop10();
-        request.setAttribute("top10", products);
-        request.setAttribute("period", period);
 
-        request.setAttribute(
-                "currentRevenue",
-                dashboardService.getRevenue(period)
-        );
+        request.setAttribute("filterMode",     filterMode);
+        request.setAttribute("period",         period != null ? period : "MONTH");
+        request.setAttribute("currentRevenue", currentRevenue);
+        request.setAttribute("currentOrders",  currentOrders);
+        request.setAttribute("revenueChart",   revenueChart);
 
-        request.setAttribute(
-                "currentOrders",
-                dashboardService.getOrders(period)
-        );
-
-        request.setAttribute("totalProducts", dashboardService.getTotalProducts());
-        request.setAttribute("totalCustomers", dashboardService.getTotalCustomers());
-
-        List<DashboardStats> revenueChart = dashboardService.getRevenueChart(period);
-
-        request.setAttribute("revenueChart", revenueChart);
-
-        List<DashboardOrder> recentOrders = dashboardService.getRecentOrders();
-        request.setAttribute("recentOrders", recentOrders);
-
-        request.setAttribute("lowStockCount", dashboardService.getLowStockCount());
-        request.setAttribute("outOfStockCount", dashboardService.getOutOfStockCount());
-
-        List<Product> lowStockProducts = dashboardService.getLowStockProducts();
-        request.setAttribute("lowStockProducts", lowStockProducts);
-        request.setAttribute("revenueGrowth", dashboardService.getRevenueGrowth(period));
-        request.setAttribute("ordersGrowth", dashboardService.getOrdersGrowth(period));
-
-        request.setAttribute("lastRevenue", dashboardService.getLastRevenue(period));
-        request.setAttribute("lastOrders", dashboardService.getLastOrders(period));
-        request.setAttribute("monthlyRevenue", dashboardService.getMonthlyRevenue());
+        request.setAttribute("totalProducts",    dashboardService.getTotalProducts());
+        request.setAttribute("totalCustomers",   dashboardService.getTotalCustomers());
+        request.setAttribute("lowStockCount",    dashboardService.getLowStockCount());
+        request.setAttribute("outOfStockCount",  dashboardService.getOutOfStockCount());
+        request.setAttribute("lowStockProducts", dashboardService.getLowStockProducts());
+        request.setAttribute("recentOrders",     dashboardService.getRecentOrders());
+        request.setAttribute("top10",            productService.getTop10());
 
         request.getRequestDispatcher("dashboard.jsp").forward(request, response);
     }

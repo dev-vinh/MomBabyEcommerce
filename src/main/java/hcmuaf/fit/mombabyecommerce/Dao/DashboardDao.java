@@ -5,6 +5,7 @@ import hcmuaf.fit.mombabyecommerce.model.DashboardStats;
 import hcmuaf.fit.mombabyecommerce.model.Product;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
 import java.util.List;
@@ -228,5 +229,28 @@ public interface DashboardDao {
     """)
     List<Product> getLowStockProducts();
 
-    
+    @SqlQuery("""
+    SELECT COALESCE(SUM(od.total),0)
+    FROM orders o JOIN order_detail od ON o.id = od.orderId
+    WHERE o.paymentStatus='PAID'
+      AND DATE(o.createAt) BETWEEN :from AND :to
+""")
+    Integer getRevenueByRange(@Bind("from") String from, @Bind("to") String to);
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE DATE(createAt) BETWEEN :from AND :to
+""")
+    Integer getOrdersByRange(@Bind("from") String from, @Bind("to") String to);
+
+
+    @SqlQuery("""
+    SELECT DATE(o.createAt) as label, COALESCE(SUM(od.total),0) as revenue
+    FROM orders o JOIN order_detail od ON o.id = od.orderId
+    WHERE o.paymentStatus='PAID'
+      AND DATE(o.createAt) BETWEEN :from AND :to
+    GROUP BY DATE(o.createAt) ORDER BY DATE(o.createAt)
+""")
+    List<DashboardStats> getRevenueChartByRange(@Bind("from") String from, @Bind("to") String to);
+
 }

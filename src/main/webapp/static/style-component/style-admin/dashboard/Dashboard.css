@@ -657,8 +657,13 @@ tbody .product {
     font-size: 12px;
     color: #888;
 }
-.dashboard-filter { margin-bottom: 24px; }
-
+.dashboard-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
 .period_tabs {
     display: inline-flex;
     gap: 6px;
@@ -699,36 +704,75 @@ tbody .product {
 
 .period_tab i { font-size: 12px; }
 
-.growth_badge {
-    font-size: 12px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 20px;
-}
+.filter_form { margin: 0; }
 
-.growth_badge.up      { background: #dcfce7; color: #16a34a; }
-.growth_badge.down    { background: #fee2e2; color: #dc2626; }
-.growth_badge.neutral { background: #f1f5f9; color: #64748b; }
-
-.section_sub {
+.filter_divider {
     font-size: 12px;
     color: #94a3b8;
-    margin-top: 3px;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
-.stat_footer {
+.filter_group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 7px 12px;
+    transition: border-color 0.2s;
     flex-wrap: wrap;
-    min-height: 22px;
-    margin-top: 2px;
 }
 
-.stat_compare {
-    font-size: 11px;
-    color: #94a3b8;
+.filter_group.active {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
 }
+
+.filter_group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter_input {
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    padding: 5px 9px;
+    font-size: 13px;
+    color: #1e293b;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    background: #f8fafc;
+}
+
+.filter_input:focus { border-color: #667eea; background: #fff; }
+
+.filter_year { width: 80px; }
+
+.filter_sep {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.filter_btn {
+    padding: 5px 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    font-family: inherit;
+}
+
+.filter_btn:hover { opacity: 0.88; }

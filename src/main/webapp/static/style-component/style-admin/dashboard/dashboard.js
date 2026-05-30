@@ -1,6 +1,4 @@
-/* dashboard.js */
-
-let revenueChart = null;
+    let revenueChart = null;
 
 function initDashboardChart(labels, data) {
     const ctx = document.getElementById('revenueChart');

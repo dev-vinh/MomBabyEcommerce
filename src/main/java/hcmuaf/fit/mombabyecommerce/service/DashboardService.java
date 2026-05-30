@@ -146,4 +146,21 @@ public class DashboardService {
     public List<DashboardStats> getMonthlyRevenue() {
         return dashboardDAO.getMonthlyRevenue();
     }
+
+    public int getRevenueByRange(String from, String to) {
+        Integer r = dashboardDAO.getRevenueByRange(from, to);
+        return r != null ? r : 0;
+    }
+
+    public int getOrdersByRange(String from, String to) {
+        Integer r = dashboardDAO.getOrdersByRange(from, to);
+        return r != null ? r : 0;
+    }
+
+
+    public List<DashboardStats> getRevenueChartByRange(String from, String to) {
+        return dashboardDAO.getRevenueChartByRange(from, to);
+    }
+
+
 }
