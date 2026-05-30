@@ -2,6 +2,7 @@ package hcmuaf.fit.mombabyecommerce.service;
 
 import hcmuaf.fit.mombabyecommerce.Dao.PermissionDao;
 import hcmuaf.fit.mombabyecommerce.Dao.UserDao;
+import hcmuaf.fit.mombabyecommerce.Dao.UserRoleDao;
 import hcmuaf.fit.mombabyecommerce.contant.ERole;
 import hcmuaf.fit.mombabyecommerce.model.Permission;
 import hcmuaf.fit.mombabyecommerce.model.Role;
@@ -17,10 +18,12 @@ import java.util.UUID;
 public class AuthService {
     private UserDao userDAO;
     private PermissionDao permissionDAO;
+    private UserRoleDao userRoleDao;
     public AuthService(Jdbi jdbi) {
 
         this.userDAO = jdbi.onDemand(UserDao.class);
         this.permissionDAO = jdbi.onDemand(PermissionDao.class);
+        this.userRoleDao = jdbi.onDemand(UserRoleDao.class);
     }
 
     public String  register(String fullName, String displayName, String email, String password) {
@@ -133,6 +136,30 @@ public boolean registerWithGoogleActive(String fullName, String displayName, Str
 
     return false;
 }
+//facebook
+    public boolean registerWithFacebookActive(String firstName, String displayName, String email, String password, String facebookId) {
+        if (userDAO.getUserByEmail(email) != null) {
+            return false;
+        }
+        String salt = HashUtils.generateSalt();
+
+        String hashedPassword = HashUtils.hashWithSalt(password, salt);
+        String confirmationToken = UUID.randomUUID().toString();
+
+        Integer userId = userDAO.createUserWithActiveStatus(firstName, displayName, email, hashedPassword, salt, confirmationToken, facebookId);
+
+        if (userId != null) {
+            // mặc định user
+            Role defaultRole = userDAO.getDefaultUserRole();
+            if (defaultRole != null) {
+                // Thêm role vào bảng user_role
+                userRoleDao.addUserRole(userId, defaultRole.getId());
+            }
+            return true;
+        }
+        return false;
+    }
+
     public List<Permission> getPermissionsByRoleId(Integer roleId) {
         return permissionDAO.getPermissionsByRoleId(roleId);
     }

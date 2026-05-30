@@ -183,7 +183,8 @@
   <div id="auth-error-message" class="slm-error-box"></div>
 
   <div class="social-container">
-    <a href="${pageContext.request.contextPath}/login-google" class="social">
+      <a href="${pageContext.request.contextPath}/facebook-auth?mode=login" class="social"><i class="fab fa-facebook-f"></i></a>
+      <a href="${pageContext.request.contextPath}/login-google" class="social">
       <i class="fa-brands fa-google"></i>
     </a>
   </div>
