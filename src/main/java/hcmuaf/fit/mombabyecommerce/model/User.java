@@ -29,6 +29,7 @@ public class User implements Serializable {
     // xem
     private String confirmationToken;
     private Boolean needRefresh;
+    private String facebookId;
 
     @JdbiConstructor
     public User(@ColumnName("id") Integer id,
@@ -45,6 +46,7 @@ public class User implements Serializable {
                 @ColumnName("avatar_url") @Nullable String avatarUrl,
                 @ColumnName("confirmationToken") @Nullable String confirmationToken,
                 @ColumnName("google_id") @Nullable String googleId,
+                @ColumnName("facebookId") @Nullable String facebookId,
                 @ColumnName("provider") @Nullable String provider,
                 @ColumnName("needRefresh") @Nullable Boolean needRefresh
 
@@ -64,10 +66,19 @@ public class User implements Serializable {
         this.confirmationToken = confirmationToken;
         this.googleId = googleId;
         this.provider = provider;
+        this.facebookId = facebookId;
         this.needRefresh = needRefresh;
     }
 
     public User() {
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
     }
 
     public Integer getId() {

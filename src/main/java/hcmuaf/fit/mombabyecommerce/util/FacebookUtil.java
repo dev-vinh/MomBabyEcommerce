@@ -11,12 +11,13 @@ import java.nio.charset.StandardCharsets;
 
 public class FacebookUtil {
     public static String getAccessToken(String appId, String appSecret, String redirectUri, String code) throws Exception {
-        String tokenUrl = "https://graph.facebook.com/v18.0/oauth/access_token"
+        String tokenUrl = "https://graph.facebook.com/v22.0/oauth/access_token"
                 + "?client_id=" + appId
                 + "&client_secret=" + appSecret
                 + "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8)
                 + "&code=" + code;
-
+        System.out.println("TOKEN URL:");
+        System.out.println(tokenUrl);
         URL url = new URL(tokenUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -39,7 +40,7 @@ public class FacebookUtil {
     }
 
     public static JSONObject getUserData(String accessToken) throws Exception {
-        String graphUrl = "https://graph.facebook.com/v18.0/me"
+        String graphUrl = "https://graph.facebook.com/v22.0/me"
                 + "?fields=id,name,email,picture"
                 + "&access_token=" + accessToken;
 
