@@ -253,4 +253,57 @@ public interface DashboardDao {
 """)
     List<DashboardStats> getRevenueChartByRange(@Bind("from") String from, @Bind("to") String to);
 
+
+    // Đơn hủy hiện tại
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEARWEEK(createAt,1) = YEARWEEK(CURDATE(),1)
+""")
+    Integer getCurrentWeekCancelled();
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEAR(createAt) = YEAR(CURDATE())
+      AND MONTH(createAt) = MONTH(CURDATE())
+""")
+    Integer getCurrentMonthCancelled();
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEAR(createAt) = YEAR(CURDATE())
+""")
+    Integer getCurrentYearCancelled();
+
+    // Đơn hủy kỳ trước
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEARWEEK(createAt,1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK),1)
+""")
+    Integer getLastWeekCancelled();
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEAR(createAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+      AND MONTH(createAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+""")
+    Integer getLastMonthCancelled();
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND YEAR(createAt) = YEAR(CURDATE()) - 1
+""")
+    Integer getLastYearCancelled();
+
+    @SqlQuery("""
+    SELECT COUNT(*) FROM orders
+    WHERE orderStatus = 'CANCELLED'
+      AND DATE(createAt) BETWEEN :from AND :to
+""")
+    Integer getCancelledByRange(@Bind("from") String from, @Bind("to") String to);
 }

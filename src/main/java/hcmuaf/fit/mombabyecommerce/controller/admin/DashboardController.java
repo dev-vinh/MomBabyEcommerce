@@ -23,40 +23,45 @@ public class DashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String period   = request.getParameter("period");
+        String period    = request.getParameter("period");
         String fromParam = request.getParameter("from");
         String toParam   = request.getParameter("to");
 
-
-        int currentRevenue, currentOrders;
+        int currentRevenue, currentOrders, currentCancelled;
         List<DashboardStats> revenueChart;
-        String filterMode = "period";
+        String filterMode;
 
-          if (fromParam != null && !fromParam.isEmpty()
-                && toParam != null && !toParam.isEmpty()) {
-            filterMode = "range";
-            currentRevenue = dashboardService.getRevenueByRange(fromParam, toParam);
-            currentOrders  = dashboardService.getOrdersByRange(fromParam, toParam);
-            revenueChart   = dashboardService.getRevenueChartByRange(fromParam, toParam);
+        boolean isRange = fromParam != null && !fromParam.isEmpty()
+                && toParam   != null && !toParam.isEmpty();
+
+        if (isRange) {
+            filterMode     = "range";
+            currentRevenue  = dashboardService.getRevenueByRange(fromParam, toParam);
+            currentOrders   = dashboardService.getOrdersByRange(fromParam, toParam);
+            currentCancelled= dashboardService.getCancelledByRange(fromParam, toParam);
+            revenueChart    = dashboardService.getRevenueChartByRange(fromParam, toParam);
             request.setAttribute("selectedFrom", fromParam);
-            request.setAttribute("selectedTo", toParam);
+            request.setAttribute("selectedTo",   toParam);
 
         } else {
             filterMode = "period";
             if (period == null || period.isEmpty()) period = "MONTH";
             period = period.toUpperCase();
-            currentRevenue = dashboardService.getRevenue(period);
-            currentOrders  = dashboardService.getOrders(period);
-            revenueChart   = dashboardService.getRevenueChart(period);
-            request.setAttribute("revenueGrowth", dashboardService.getRevenueGrowth(period));
-            request.setAttribute("ordersGrowth",  dashboardService.getOrdersGrowth(period));
+            currentRevenue   = dashboardService.getRevenue(period);
+            currentOrders    = dashboardService.getOrders(period);
+            currentCancelled = dashboardService.getCancelled(period);
+            revenueChart     = dashboardService.getRevenueChart(period);
+            request.setAttribute("revenueGrowth",   dashboardService.getRevenueGrowth(period));
+            request.setAttribute("ordersGrowth",     dashboardService.getOrdersGrowth(period));
+            request.setAttribute("cancelledGrowth",  dashboardService.getCancelledGrowth(period));
         }
 
-        request.setAttribute("filterMode",     filterMode);
-        request.setAttribute("period",         period != null ? period : "MONTH");
-        request.setAttribute("currentRevenue", currentRevenue);
-        request.setAttribute("currentOrders",  currentOrders);
-        request.setAttribute("revenueChart",   revenueChart);
+        request.setAttribute("filterMode",      filterMode);
+        request.setAttribute("period",           period != null ? period : "MONTH");
+        request.setAttribute("currentRevenue",   currentRevenue);
+        request.setAttribute("currentOrders",    currentOrders);
+        request.setAttribute("currentCancelled", currentCancelled);
+        request.setAttribute("revenueChart",     revenueChart);
 
         request.setAttribute("totalProducts",    dashboardService.getTotalProducts());
         request.setAttribute("totalCustomers",   dashboardService.getTotalCustomers());

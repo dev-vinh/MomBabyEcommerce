@@ -118,7 +118,7 @@ a {
 
 .stats_grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 25px;
     margin-bottom: 30px;
 }
@@ -776,3 +776,9 @@ tbody .product {
 }
 
 .filter_btn:hover { opacity: 0.88; }
+
+.stat_card.cancelled .stat_icon {
+    background: #FFF1F2;
+    color: #F43F5E;
+}
+

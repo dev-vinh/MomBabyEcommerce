@@ -138,4 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (typeof window.ordersGrowth !== 'undefined') {
         renderGrowthBadge('ordersGrowthBadge', window.ordersGrowth);
     }
+    if (typeof window.cancelledGrowth !== 'undefined') {
+        renderGrowthBadge('cancelledGrowthBadge', window.cancelledGrowth);
+    }
 });

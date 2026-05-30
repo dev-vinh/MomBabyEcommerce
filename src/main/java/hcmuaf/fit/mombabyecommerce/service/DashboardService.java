@@ -161,6 +161,38 @@ public class DashboardService {
     public List<DashboardStats> getRevenueChartByRange(String from, String to) {
         return dashboardDAO.getRevenueChartByRange(from, to);
     }
+    public int getCancelled(String period) {
+        Integer c;
+        switch (period.toUpperCase()) {
+            case "WEEK":  c = dashboardDAO.getCurrentWeekCancelled();  break;
+            case "YEAR":  c = dashboardDAO.getCurrentYearCancelled();  break;
+            default:      c = dashboardDAO.getCurrentMonthCancelled(); break;
+        }
+        return c != null ? c : 0;
+    }
+
+    public int getLastCancelled(String period) {
+        Integer c;
+        switch (period.toUpperCase()) {
+            case "WEEK":  c = dashboardDAO.getLastWeekCancelled();  break;
+            case "YEAR":  c = dashboardDAO.getLastYearCancelled();  break;
+            default:      c = dashboardDAO.getLastMonthCancelled(); break;
+        }
+        return c != null ? c : 0;
+    }
+
+    public double getCancelledGrowth(String period) {
+        int current = getCancelled(period);
+        int last    = getLastCancelled(period);
+        if (last == 0) return current > 0 ? 100.0 : 0.0;
+        return Math.round(((double)(current - last) / last) * 10000.0) / 100.0;
+    }
+
+    public int getCancelledByRange(String from, String to) {
+        Integer c = dashboardDAO.getCancelledByRange(from, to);
+        return c != null ? c : 0;
+    }
+
 
 
 }

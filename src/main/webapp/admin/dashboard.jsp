@@ -126,6 +126,29 @@
                     </span>
                 </div>
             </div>
+
+            <div class="stat_card cancelled">
+                <div class="stat_icon">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <div class="stat_info">
+        <span class="stat_label">
+            Đơn Hủy
+            <c:choose>
+                <c:when test="${period == 'WEEK'}">Tuần</c:when>
+                <c:when test="${period == 'YEAR'}">Năm</c:when>
+                <c:otherwise>Tháng</c:otherwise>
+            </c:choose>
+        </span>
+                    <span class="stat_value">${not empty currentCancelled ? currentCancelled : 0}</span>
+                    <div class="stat_footer">
+                        <c:if test="${filterMode == 'period'}">
+                            <span id="cancelledGrowthBadge" class="growth_badge"></span>
+                            <span class="stat_compare">so với kỳ trước</span>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
         </div>
         <c:if test="${lowStockCount > 0 || outOfStockCount > 0}">
             <div class="inventory_alert">
@@ -294,6 +317,7 @@
     ];
     window.revenueGrowth = ${not empty revenueGrowth ? revenueGrowth : 0};
     window.ordersGrowth  = ${not empty ordersGrowth  ? ordersGrowth  : 0};
+    window.cancelledGrowth = ${not empty cancelledGrowth ? cancelledGrowth : 0};
 </script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/dashboard/dashboard.js"></script>
 </body>
