@@ -26,11 +26,20 @@
 
   <div class="content">
     <div class="page-header">
-      <div class="row align-items-center">
-        <div class="col-sm mb-2 mb-sm-0">
-          <h1 class="page-header-title" id="pageTitle">Sản phẩm</h1>
+        <div class="row align-items-center" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="col-sm mb-2 mb-sm-0">
+                <h1 class="page-header-title" id="pageTitle" style="margin: 0;">Sản phẩm</h1>
+            </div>
+
+            <div class="import-excel-actions">
+                <input type="file" id="excelImportInput" accept=".xlsx, .xls" style="display: none;" />
+                <button type="button" id="btnImportExcel" class="browse-files"
+                        onclick="document.getElementById('excelImportInput').click()"
+                        style="background-color: #107c41; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-file-excel" style="font-size: 18px;"></i> Nhập từ Excel
+                </button>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="main-container">

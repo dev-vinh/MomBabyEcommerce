@@ -380,6 +380,30 @@ public class ProductService {
     public boolean updateStock(Integer optionId, int quantity) {
         return productDao.updateStock(optionId, quantity) > 0;
     }
+    public int importExcelProducts(List<Product> products) {
+        if (products == null || products.isEmpty()) return 0;
+        return jdbi.inTransaction(handle -> {
+            ProductDao dao = handle.attach(ProductDao.class);
+            int successCount = 0;
+            for (Product product : products) {
+                try {
+                    if (product.getSku() == null || product.getSku().trim().isEmpty()) {
+                        String generatedSku = "PRD-" + System.currentTimeMillis() + "-" + (int)(Math.random() * 1000);
+                        product.setSku(generatedSku);
+                    }
+                    int generatedId = dao.insertProductFromModel(product);
+
+                    if (generatedId > 0) {
+                        successCount++;
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi import dòng sản phẩm có SKU [" + product.getSku() + "]: " + e.getMessage());
+                }
+            }
+            return successCount;
+        });
+    }
+
 
 
 
