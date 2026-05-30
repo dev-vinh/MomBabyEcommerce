@@ -60,4 +60,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modal.classList.add("hidden");
     });
+    const accountModal = document.getElementById("accountModal");
+    const addAccountBtn = document.getElementById("addAccountBtn");
+    const closeAccountBtn = document.getElementById("closeAccountModal");
+    const cancelAccountBtn = document.getElementById("cancelAccountBtn");
+
+    addAccountBtn?.addEventListener("click", () => {
+        accountModal.classList.remove("hidden");
+    });
+
+    closeAccountBtn?.addEventListener("click", () => {
+        accountModal.classList.add("hidden");
+    });
+
+    cancelAccountBtn?.addEventListener("click", () => {
+        accountModal.classList.add("hidden");
+    });
+
+    // Đóng modal khi click nền tối
+    window.addEventListener("click", (e) => {
+
+        if (e.target === modal) {
+            modal.classList.add("hidden");
+        }
+
+        if (e.target === accountModal) {
+            accountModal.classList.add("hidden");
+        }
+    });
+    console.log("END OF FILE");
+
 });

@@ -4,15 +4,19 @@
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
+
 .container {
     display: flex;
 }
+
 .left {
     width: 270px;
 }
+
 .center {
     flex: 1;
 }
+
 .wrap_header {
     position: fixed;
     left: 270px;
@@ -22,6 +26,7 @@
     background: white;
     z-index: 999;
 }
+
 .content {
     margin-top: 80px;
     margin-left: 20px;
@@ -30,142 +35,203 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.disable{
+.disable {
     color: #c5c5c5 !important;
     pointer-events: none;
 }
 
-
-
+/* Header */
 
 .content_header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
 }
+
 .subtitle {
     margin-top: 7px;
     color: #666;
     margin-bottom: 16px;
 }
+
+/* Buttons */
+
 .btn_add_role {
-    background-color: white;
-    color: #0a7cff;
-    padding: 8px 15px;
-    border: 1px solid #007bff;
+    background: white;
+    color: #2563eb;
+    padding: 10px 16px;
+    border: 1px solid #2563eb;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s ease;
+    font-weight: 500;
 }
+
 .btn_add_role:hover {
-    background-color: #1e4fbf;
+    background: #2563eb;
+    color: white;
 }
+
+/* Table */
+
 #role_table {
     width: 100%;
     border-collapse: collapse;
 }
-#role_table th, #role_table td {
+
+#role_table th,
+#role_table td {
     padding: 12px 10px;
     border-bottom: 1px solid #ddd;
     text-align: left;
 }
+
 #role_table thead {
     background-color: #f1f5f9;
 }
+
 .action_icon {
-    color: #333333;
+    color: #333;
     cursor: pointer;
+    transition: 0.2s;
 }
+
 .action_icon:hover {
-    color: #666666;
+    color: #2563eb;
 }
 
 /* Modal */
+
 .modal {
     position: fixed;
-    top: 0; left: 0;
-    width: 100% ;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.4);
+
+    background-color: rgba(0, 0, 0, 0.45);
+
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
 
+    z-index: 9999;
 }
+
 .modal.hidden {
     display: none;
 }
+
 .modal_content {
-    background-color: white;
-    padding: 20px;
-    width: 400px;
-    border-radius: 8px;
+    background: #fff;
+    width: 500px;
+    max-width: 95%;
+    max-height: 85vh;
+
+    padding: 24px;
+
+    border-radius: 12px;
+
+    overflow-y: auto;
+
     position: relative;
-    height: 700px;
-    overflow-y: scroll;
-}
-.close_btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-}
-.form_group {
-    margin: 15px 0 ;
-}
-.form_group input[type="text"],
-textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.form_action {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-.btn_cancel, .btn_submit {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.btn_cancel {
-    background-color: #e5e7eb;
-    color: #111827;
-}
-.btn_cancel:hover {
-    background-color: #cbd5e1;
-}
-.btn_submit {
-    background-color: #2563eb;
-    color: white;
-}
-.btn_submit:hover {
-    background-color: #1e4fbf;
 }
 
+.modal_content h3 {
+    margin-bottom: 20px;
+    color: #111827;
+}
+
+/* Close */
+
+.close_btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+
+    font-size: 22px;
+    cursor: pointer;
+    color: #666;
+}
+
+.close_btn:hover {
+    color: #111;
+}
+
+/* Form */
+
+.form_group {
+    margin-bottom: 16px;
+}
+
+.form_group label {
+    display: block;
+    margin-bottom: 6px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #374151;
+}
+
+.form_group input[type="text"],
+.form_group input[type="email"],
+.form_group input[type="password"],
+.form_group textarea,
+.form_group select {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    transition: all 0.2s ease;
+}
+
+.form_group input:focus,
+.form_group textarea:focus,
+.form_group select:focus {
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form_group textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+.form_group select {
+    background: white;
+    cursor: pointer;
+}
+
+/* Permission list */
 
 .form_group div label {
     display: flex;
-    margin-bottom: 12px;
+    align-items: center;
+
+    margin-bottom: 10px;
+
     font-weight: 400;
-    font-size: 16px;
+    font-size: 15px;
 }
 
-.form_group div input {
-    height: 20px;
-    width: 20px;
+.form_group div input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
     margin-right: 10px;
-    align-items: center;
 }
 
 .form_group div label small {
@@ -173,4 +239,59 @@ textarea {
     font-size: 13px;
     color: #666;
     margin-top: 4px;
+}
+
+/* Form action */
+
+.form_action {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+.btn_cancel,
+.btn_submit {
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.btn_cancel {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.btn_cancel:hover {
+    background: #cbd5e1;
+}
+
+.btn_submit {
+    background: #2563eb;
+    color: white;
+}
+
+.btn_submit:hover {
+    background: #1d4ed8;
+}
+
+/* Scrollbar */
+
+.modal_content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal_content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.modal_content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
 }

@@ -38,6 +38,9 @@
                 <button class="btn_add_role" id="addRoleBtn">
                     <i class="fa-solid fa-plus"></i> Thêm vai trò
                 </button>
+                <button class="btn_add_role" id="addAccountBtn">
+                    <i class="fa-solid fa-user-plus"></i> Cấp tài khoản
+                </button>
             </div>
 
             <table id="role_table">
@@ -103,6 +106,75 @@
                         <button type="button" class="btn_cancel" id="cancelAddRole">Huỷ</button>
                         <button type="submit" class="btn_submit">Thêm</button>
                     </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal hidden" id="accountModal">
+            <div class="modal_content">
+                <span class="close_btn" id="closeAccountModal">&times;</span>
+
+                <h3>Cấp tài khoản nhân viên</h3>
+
+                <form action="${pageContext.request.contextPath}/admin/create-account"
+                      method="post">
+
+                    <div class="form_group">
+                        <label>Họ tên</label>
+                        <input type="text"
+                               name="fullName"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Tên hiển thị</label>
+                        <input type="text"
+                               name="displayName"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Email</label>
+                        <input type="email"
+                               name="email"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Mật khẩu</label>
+                        <input type="password"
+                               name="password"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Vai trò</label>
+
+                        <select name="roleId" required>
+                            <c:forEach items="${roles}" var="role">
+
+                                <c:if test="${role.isActive}">
+                                    <option value="${role.id}">
+                                            ${role.name}
+                                    </option>
+                                </c:if>
+
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div class="form_action">
+                        <button type="button"
+                                class="btn_cancel"
+                                id="cancelAccountBtn">
+                            Huỷ
+                        </button>
+
+                        <button type="submit"
+                                class="btn_submit">
+                            Tạo tài khoản
+                        </button>
+                    </div>
+
                 </form>
             </div>
         </div>

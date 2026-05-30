@@ -19,6 +19,7 @@ public interface UserDao {
     List<User> getAllUsers();
 
 
+
     @SqlQuery("SELECT * FROM users WHERE email = :email")
     User getUserByEmail(@Bind("email") String email);
 
@@ -244,4 +245,35 @@ public interface UserDao {
     @RegisterBeanMapper(value = User.class)
     @RegisterBeanMapper(value = Role.class, prefix = "r")
     User getUserWithRole(@Bind("id") Integer id);
+
+    @SqlUpdate("""
+    INSERT INTO users(
+    fullName,
+    displayName,
+    email,
+    passwordUserName,
+    salt,
+    provider,
+    status
+    )
+    VALUES(
+    :fullName,
+    :displayName,
+    :email,
+    :password,
+    :salt,
+    'local',
+    'ACTIVE'
+    )
+    """)
+    @GetGeneratedKeys("id")
+    Integer createStaffAccount(
+            @Bind("fullName") String fullName,
+            @Bind("displayName") String displayName,
+            @Bind("email") String email,
+            @Bind("password") String password,
+            @Bind("salt") String salt
+    );
 }
+
+
