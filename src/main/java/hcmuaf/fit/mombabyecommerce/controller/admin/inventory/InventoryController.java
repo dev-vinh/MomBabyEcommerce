@@ -75,8 +75,13 @@ public class InventoryController extends HttpServlet {
                         String image = p != null ? p.getImageUrl() : null;
                         return new InventoryDTO(productId, name, image, entry.getValue());
                     })
+                    .sorted(Comparator.comparingInt((InventoryDTO dto) ->
+                            dto.getOptions().stream()
+                                    .mapToInt(OptionVariant::getStock)
+                                    .min()
+                                    .orElse(Integer.MAX_VALUE)
+                    ))
                     .collect(Collectors.toList());
-
             int totalItems = inventoryList.size();
             int totalPages = (int) Math.ceil((double) totalItems / size);
             if (totalPages < 1) totalPages = 1;
