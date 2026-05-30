@@ -212,4 +212,17 @@ public interface OptionVariantDao {
         v.id
     """)
     List<OptionVariant> getOptionsWithStockByProductId(@Bind("productId") Integer productId);
+    @SqlQuery("""
+SELECT COALESCE(
+    ROUND(SUM(od.quantity) / 3),
+    0
+)
+FROM order_detail od
+JOIN orders o ON od.orderId = o.id
+WHERE od.productId = :productId
+AND o.orderStatus = 'DELIVERED'
+AND o.createAt >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+""")
+    Integer getAverageSoldLast3Months(@Bind("productId") Integer productId);
+
 }

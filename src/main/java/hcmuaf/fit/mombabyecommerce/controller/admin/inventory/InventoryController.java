@@ -61,6 +61,15 @@ public class InventoryController extends HttpServlet {
 
             List<Product> products = productService.getAllProducts();
             List<OptionVariant> allOptions = optionService.getAllOptionsWithStock();
+            for (OptionVariant option : allOptions) {
+
+                int avgSoldPerMonth = optionService.getAverageSoldLast3Months(option.getId());
+
+                int suggestedImport =
+                        Math.max(0, avgSoldPerMonth - option.getStock());
+
+                option.setSuggestedImport(suggestedImport);
+            }
             Map<Integer, List<OptionVariant>> optionMap = allOptions.stream()
                     .collect(Collectors.groupingBy(OptionVariant::getProductId));
 
