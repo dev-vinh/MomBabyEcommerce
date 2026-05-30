@@ -18,6 +18,10 @@ public class PermissionService {
         return permissionDAO.getAllPermissions();
     }
 
+    public List<Permission> getPermissionsByRoleId(Integer roleId) {
+        return permissionDAO.getPermissionsByRoleId(roleId);
+    }
+
     public static void main(String[] args) {
         PermissionService permissionService =
                 new PermissionService(DBConnection.getJdbi());

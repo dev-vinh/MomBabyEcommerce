@@ -172,4 +172,36 @@ public boolean registerWithGoogleActive(String fullName, String displayName, Str
         }
         return user;
     }
+    public boolean createStaffAccount(
+            String fullName,
+            String displayName,
+            String email,
+            String password,
+            Integer roleId
+    ) {
+
+        if (userDAO.getUserByEmail(email) != null) {
+            return false;
+        }
+
+        String salt = HashUtils.generateSalt();
+
+        String hashedPassword =
+                HashUtils.hashWithSalt(password, salt);
+
+        Integer userId = userDAO.createStaffAccount(
+                fullName,
+                displayName,
+                email,
+                hashedPassword,
+                salt
+        );
+
+        if (userId > 0) {
+            userDAO.addRoleToUser(userId, roleId);
+            return true;
+        }
+
+        return false;
+    }
 }

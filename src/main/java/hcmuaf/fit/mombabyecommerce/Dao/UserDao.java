@@ -22,6 +22,7 @@ public interface UserDao {
     List<User> getAllUsers();
 
 
+
     @SqlQuery("SELECT * FROM users WHERE email = :email")
     User getUserByEmail(@Bind("email") String email);
 
@@ -248,6 +249,34 @@ public interface UserDao {
     @RegisterBeanMapper(value = Role.class, prefix = "r")
     User getUserWithRole(@Bind("id") Integer id);
 
+    @SqlUpdate("""
+    INSERT INTO users(
+    fullName,
+    displayName,
+    email,
+    passwordUserName,
+    salt,
+    provider,
+    status
+    )
+    VALUES(
+    :fullName,
+    :displayName,
+    :email,
+    :password,
+    :salt,
+    'local',
+    'ACTIVE'
+    )
+    """)
+    @GetGeneratedKeys("id")
+    Integer createStaffAccount(
+            @Bind("fullName") String fullName,
+            @Bind("displayName") String displayName,
+            @Bind("email") String email,
+            @Bind("password") String password,
+            @Bind("salt") String salt
+    );
     @SqlQuery("SELECT id, roleType, name, description, isActive FROM roles WHERE roleType = 'USER' LIMIT 1")
     Role getDefaultUserRole();
     // dung cho facebook
@@ -284,3 +313,5 @@ LIMIT 1
     @SqlQuery("SELECT * FROM users WHERE facebookId = :facebookId")
     User getUserByFacebookId(@Bind("facebookId") String facebookId);
 }
+
+

@@ -38,6 +38,9 @@
                 <button class="btn_add_role" id="addRoleBtn">
                     <i class="fa-solid fa-plus"></i> Thêm vai trò
                 </button>
+                <button class="btn_add_role" id="addAccountBtn">
+                    <i class="fa-solid fa-user-plus"></i> Cấp tài khoản
+                </button>
             </div>
 
             <table id="role_table">
@@ -55,15 +58,18 @@
                     <c:forEach items="${roles}" var="role">
                         <tr>
                             <td><strong>${role.name}</strong><br><small>${role.description}</small></td>
-                            <td>0 thành viên</td>
-                            <td>Không có quyền</td>
+                            <td>${role.memberCount} thành viên</td>
+                            <td>${role.permissionCount} quyền</td>
                             <td>
                                 <c:choose>
                                     <c:when test="${role.roleType != 'CUSTOM'}">
                                         <i class="fa-solid fa-pen action_icon disable"></i>
                                     </c:when>
+
                                     <c:otherwise>
-                                        <i class="fa-solid fa-pen action_icon"></i>
+                                        <i class="fa-solid fa-pen action_icon edit-role"
+                                           data-role-id="${role.id}">
+                                        </i>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
@@ -104,6 +110,128 @@
                         <button type="submit" class="btn_submit">Thêm</button>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div class="modal hidden" id="accountModal">
+            <div class="modal_content">
+                <span class="close_btn" id="closeAccountModal">&times;</span>
+
+                <h3>Cấp tài khoản nhân viên</h3>
+
+                <form action="${pageContext.request.contextPath}/admin/create-account"
+                      method="post">
+
+                    <div class="form_group">
+                        <label>Họ tên</label>
+                        <input type="text"
+                               name="fullName"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Tên hiển thị</label>
+                        <input type="text"
+                               name="displayName"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Email</label>
+                        <input type="email"
+                               name="email"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Mật khẩu</label>
+                        <input type="password"
+                               name="password"
+                               required>
+                    </div>
+
+                    <div class="form_group">
+                        <label>Vai trò</label>
+
+                        <select name="roleId" required>
+                            <c:forEach items="${roles}" var="role">
+
+                                <c:if test="${role.isActive}">
+                                    <option value="${role.id}">
+                                            ${role.name}
+                                    </option>
+                                </c:if>
+
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div class="form_action">
+                        <button type="button"
+                                class="btn_cancel"
+                                id="cancelAccountBtn">
+                            Huỷ
+                        </button>
+
+                        <button type="submit"
+                                class="btn_submit">
+                            Tạo tài khoản
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="modal hidden" id="editRoleModal">
+            <div class="modal_content">
+
+                <span class="close_btn" id="closeEditRoleModal">&times;</span>
+
+                <h3>Chỉnh sửa vai trò</h3>
+
+                <input type="hidden" id="editRoleId">
+
+                <div class="form_group">
+                    <label>Tên vai trò</label>
+                    <input type="text" id="editRoleName">
+                </div>
+
+                <div class="form_group">
+                    <label>Quyền</label>
+
+                    <div id="editPermissions">
+                        <c:forEach items="${adminpermissions}" var="per">
+                            <label>
+                                <input type="checkbox"
+                                       class="edit-permission"
+                                       value="${per.id}">
+                                    ${per.name}
+                            </label>
+                        </c:forEach>
+                    </div>
+                </div>
+
+                <div class="form_group">
+                    <label>Tài khoản thuộc vai trò</label>
+
+                    <div id="roleUsers">
+
+                    </div>
+                </div>
+
+                <div class="form_action">
+                    <button type="button"
+                            class="btn_cancel"
+                            id="cancelEditRole">
+                        Huỷ
+                    </button>
+
+                    <button type="button"
+                            class="btn_submit"
+                            id="saveRoleBtn">
+                        Lưu
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>

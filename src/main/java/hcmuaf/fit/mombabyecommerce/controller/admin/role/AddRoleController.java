@@ -52,7 +52,9 @@ public class AddRoleController extends HttpServlet {
         JSONArray jsonArray = jsonObject.getJSONArray("permissionIds");
         List<Integer> permissionIds = jsonArray.toList().stream().map(o -> Integer.parseInt(o.toString())).toList();
 
-        Role role = new Role(null, ERole.CUSTOM, roleName, description, true);
+        Role role = new Role(null, ERole.CUSTOM, roleName, description, true,0,
+                0,
+                null);
 
         int roleId = roleService.addRole(role);
 
