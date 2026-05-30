@@ -42,15 +42,16 @@
         mục
       </div>
     </div>
-
+    <div class="table-wrapper">
     <table class="inventory-table">
       <thead>
       <tr>
-        <th style="width: 60px">ID</th>
+        <th style="width: 100px">ID</th>
         <th>Sản phẩm / Phiên bản</th>
         <th>Biến thể</th>
         <th>Giá bán</th>
         <th>Tồn kho</th>
+        <th>Gợi ý nhập</th>
         <th>Thao tác</th>
       </tr>
       </thead>
@@ -59,7 +60,7 @@
       <c:forEach var="item" items="${inventoryList}">
         <tr class="product-group-row" data-product-id="${item.productId}">
           <td><strong>${item.productId}</strong></td>
-          <td colspan="5">
+          <td colspan="6">
             <c:if test="${not empty item.productImage}">
               <img src="${item.productImage}" class="product-img" alt="Ảnh sản phẩm">
             </c:if>
@@ -91,6 +92,18 @@
               </c:if>
             </td>
             <td>
+                <c:choose>
+                  <c:when test="${opt.suggestedImport > 0}">
+              <span class="suggest-import">
+                  ${opt.suggestedImport}
+              </span>
+                  </c:when>
+                  <c:otherwise>
+                    0
+                  </c:otherwise>
+                </c:choose>
+            </td>
+            <td>
               <div class="action-icons">
                 <button class="btn-edit-stock"
                         onclick="openEditModal(${opt.id}, ${opt.stock}, '${item.productName} - Option #${opt.id}', '${opt.warehouseLocation}')">
@@ -112,7 +125,7 @@
 
       </tbody>
     </table>
-
+    </div>
     <div class="pagination">
 
       <c:choose>

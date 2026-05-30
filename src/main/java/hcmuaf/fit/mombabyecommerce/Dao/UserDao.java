@@ -1,8 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
+import hcmuaf.fit.mombabyecommerce.controller.auth.ERoleMapper;
 import hcmuaf.fit.mombabyecommerce.model.Role;
 import hcmuaf.fit.mombabyecommerce.model.User;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterColumnMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
@@ -12,7 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RegisterBeanMapper(User.class)
-
+@RegisterColumnMapper(ERoleMapper.class)
+@RegisterBeanMapper(Role.class)
 public interface UserDao {
 
     @SqlQuery("SELECT * FROM users")
@@ -274,6 +277,41 @@ public interface UserDao {
             @Bind("password") String password,
             @Bind("salt") String salt
     );
+    @SqlQuery("SELECT id, roleType, name, description, isActive FROM roles WHERE roleType = 'USER' LIMIT 1")
+    Role getDefaultUserRole();
+    // dung cho facebook
+    @SqlUpdate("INSERT INTO users (fullName, displayName, email, passwordUserName, salt, status, provider, confirmationToken, facebookId) " +
+            "VALUES (:fullName, :displayName, :email, :passwordUserName, :salt, 'ACTIVE', 'facebook', :confirmationToken, :facebookId)")
+    @GetGeneratedKeys("id")
+    Integer createUserWithActiveStatus(
+            @Bind("fullName") String fullName,
+            @Bind("displayName") String displayName,
+            @Bind("email") String email,
+            @Bind("passwordUserName") String passwordUserName,
+            @Bind("salt") String salt,
+            @Bind("confirmationToken") String confirmationToken,
+            @Bind("facebookId") String facebookId
+    );
+
+    @SqlQuery("""
+SELECT id, roleType AS roleType, name, description, isActive AS isActive
+FROM roles
+WHERE roleType = :roleType
+LIMIT 1
+""")
+    Role getRoleByUserType(@Bind("roleType") String roleType);
+
+    @SqlQuery("""
+        SELECT r.id, r.roleType AS roleType, r.name, r.description, r.isActive AS isActive
+        FROM roles r
+        JOIN user_role ur ON r.id = ur.roleId
+        WHERE ur.userId = :userId
+        LIMIT 1
+    """)
+    Role getRoleByUserId(@Bind("userId") int userId);
+
+    @SqlQuery("SELECT * FROM users WHERE facebookId = :facebookId")
+    User getUserByFacebookId(@Bind("facebookId") String facebookId);
 }
 
 

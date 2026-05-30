@@ -61,6 +61,15 @@ public class InventoryController extends HttpServlet {
 
             List<Product> products = productService.getAllProducts();
             List<OptionVariant> allOptions = optionService.getAllOptionsWithStock();
+            for (OptionVariant option : allOptions) {
+
+                int avgSoldPerMonth = optionService.getAverageSoldLast3Months(option.getId());
+
+                int suggestedImport =
+                        Math.max(0, avgSoldPerMonth - option.getStock());
+
+                option.setSuggestedImport(suggestedImport);
+            }
             Map<Integer, List<OptionVariant>> optionMap = allOptions.stream()
                     .collect(Collectors.groupingBy(OptionVariant::getProductId));
 
@@ -75,8 +84,13 @@ public class InventoryController extends HttpServlet {
                         String image = p != null ? p.getImageUrl() : null;
                         return new InventoryDTO(productId, name, image, entry.getValue());
                     })
+                    .sorted(Comparator.comparingInt((InventoryDTO dto) ->
+                            dto.getOptions().stream()
+                                    .mapToInt(OptionVariant::getStock)
+                                    .min()
+                                    .orElse(Integer.MAX_VALUE)
+                    ))
                     .collect(Collectors.toList());
-
             int totalItems = inventoryList.size();
             int totalPages = (int) Math.ceil((double) totalItems / size);
             if (totalPages < 1) totalPages = 1;

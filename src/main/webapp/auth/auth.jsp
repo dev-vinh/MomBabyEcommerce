@@ -17,6 +17,7 @@
         <form action="#">
             <h1>Tạo tài khoản</h1>
             <div class="social-container">
+                <a href="${pageContext.request.contextPath}/facebook-auth?mode=register" class="social"><i class="fab fa-facebook-f"></i></a>
                 <a href="${pageContext.request.contextPath}/login-google" class="social"><i class="fa-brands fa-google"></i></a>
             </div>
             <span>hoặc sử dụng email của bạn để đăng ký</span>
@@ -71,6 +72,9 @@
         <form action="#">
             <h1>Đăng nhập</h1>
             <div class="social-container">
+                <a href="${pageContext.request.contextPath}/facebook-auth?mode=login" class="social">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
                 <a href="${pageContext.request.contextPath}/login-google" class="social"><i class="fa-brands fa-google"></i></a>
             </div>
             <span>hoặc sử dụng tài khoản của bạn</span>
