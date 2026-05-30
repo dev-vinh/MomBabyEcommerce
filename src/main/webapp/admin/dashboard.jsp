@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/dashboard/Dashboard.css">
-    <script src="${pageContext.request.contextPath}/static/style-component/style-admin/dashboard/dashboard.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
@@ -26,27 +25,46 @@
     </div>
 
     <div class="main_content">
-        <div class="welcome_section">
-            <div class="welcome_text">
-                <p>Tổng quan MomBaby Ecommerce</p>
-            </div>
-            <div class="current_date">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span id="currentDate"></span>
-            </div>
+        <div class="dashboard-filter">
+            <form method="get" action="${pageContext.request.contextPath}/admin/dashboard">
+                <div class="period_tabs">
+                    <button type="submit" name="period" value="WEEK"
+                            class="period_tab ${period == 'WEEK' ? 'active' : ''}">
+                        <i class="fa-regular fa-calendar-week"></i> Tuần này
+                    </button>
+                    <button type="submit" name="period" value="MONTH"
+                            class="period_tab ${period == 'MONTH' ? 'active' : ''}">
+                        <i class="fa-regular fa-calendar"></i> Tháng này
+                    </button>
+                    <button type="submit" name="period" value="YEAR"
+                            class="period_tab ${period == 'YEAR' ? 'active' : ''}">
+                        <i class="fa-regular fa-calendar-days"></i> Năm nay
+                    </button>
+                </div>
+            </form>
         </div>
-
         <div class="stats_grid">
+
             <div class="stat_card revenue">
                 <div class="stat_icon">
                     <i class="fa-solid fa-dollar-sign"></i>
                 </div>
                 <div class="stat_info">
-                    <span class="stat_label">Tổng Doanh Thu</span>
-                    <span class="stat_value">168.500.000đ</span>
-                    <span class="stat_change increase">
-                        <i class="fa-solid fa-arrow-up"></i> 12.2%
+                    <span class="stat_label">
+                        Doanh Thu
+                        <c:choose>
+                            <c:when test="${period == 'WEEK'}">Tuần</c:when>
+                            <c:when test="${period == 'YEAR'}">Năm</c:when>
+                            <c:otherwise>Tháng</c:otherwise>
+                        </c:choose>
                     </span>
+                    <span class="stat_value">
+                        <fmt:formatNumber value="${not empty currentRevenue ? currentRevenue : 0}" pattern="#,###"/>đ
+                    </span>
+                    <div class="stat_footer">
+                        <span id="revenueGrowthBadge" class="growth_badge"></span>
+                        <span class="stat_compare">so với kỳ trước</span>
+                    </div>
                 </div>
             </div>
 
@@ -55,11 +73,19 @@
                     <i class="fa-solid fa-cart-shopping"></i>
                 </div>
                 <div class="stat_info">
-                    <span class="stat_label">Tổng Đơn Hàng</span>
-                    <span class="stat_value">342</span>
-                    <span class="stat_change increase">
-                        <i class="fa-solid fa-arrow-up"></i> 8.5%
+                    <span class="stat_label">
+                        Đơn Hàng
+                        <c:choose>
+                            <c:when test="${period == 'WEEK'}">Tuần</c:when>
+                            <c:when test="${period == 'YEAR'}">Năm</c:when>
+                            <c:otherwise>Tháng</c:otherwise>
+                        </c:choose>
                     </span>
+                    <span class="stat_value">${not empty currentOrders ? currentOrders : 0}</span>
+                    <div class="stat_footer">
+                        <span id="ordersGrowthBadge" class="growth_badge"></span>
+                        <span class="stat_compare">so với kỳ trước</span>
+                    </div>
                 </div>
             </div>
 
@@ -68,10 +94,10 @@
                     <i class="fa-solid fa-box"></i>
                 </div>
                 <div class="stat_info">
-                    <span class="stat_label">Sản Phẩm</span>
-                    <span class="stat_value">1.256</span>
-                    <span class="stat_change decrease">
-                        <i class="fa-solid fa-arrow-down"></i> 3.2%
+                    <span class="stat_label">Tổng Sản Phẩm</span>
+                    <span class="stat_value">${not empty totalProducts ? totalProducts : 0}</span>
+                    <span class="stat_change increase">
+                        <i class="fa-solid fa-check"></i> Đang bán
                     </span>
                 </div>
             </div>
@@ -82,39 +108,55 @@
                 </div>
                 <div class="stat_info">
                     <span class="stat_label">Khách Hàng</span>
-                    <span class="stat_value">2.847</span>
+                    <span class="stat_value">${not empty totalCustomers ? totalCustomers : 0}</span>
                     <span class="stat_change increase">
-                        <i class="fa-solid fa-arrow-up"></i> 15.8%
+                        <i class="fa-solid fa-user-plus"></i> Đăng ký
                     </span>
                 </div>
             </div>
         </div>
-
-        <div class="inventory_alert">
-            <div class="alert_header">
-                <div class="alert_title">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <h3>Cảnh Báo Kho Hàng</h3>
+        <c:if test="${lowStockCount > 0 || outOfStockCount > 0}">
+            <div class="inventory_alert">
+                <div class="alert_header">
+                    <div class="alert_title">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <h3>Sản phẩm sắp hết</h3>
+                            <p class="alert_subtitle">
+                                <c:if test="${outOfStockCount > 0}">
+                                    <span class="alert_count danger">${outOfStockCount} hết hàng</span>
+                                </c:if>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="alert_header_right">
+                        <a href="${pageContext.request.contextPath}/admin/inventory" class="alert_link">Xem chi tiết</a>
+                    </div>
                 </div>
-                <div class="alert_header_right">
-                    <span class="alert_count danger">sản phẩm sắp hết</span>
-                    <a href="inventory" class="alert_link">Xem chi tiết</a>
+                <div class="alert_list">
+                    <c:forEach var="product" items="${lowStockProducts}">
+                        <div class="alert_item ${product.stock == 0 ? 'danger' : 'warning'}">
+                            <div class="alert_product">
+                                <img src="${product.imageUrl}" alt="${product.name}">
+                                <div class="alert_product_info">
+                                    <span class="alert_product_name">${product.name}</span>
+                                    <span class="alert_product_sku">SKU: ${product.sku}</span>
+                                </div>
+                            </div>
+                            <div class="alert_stock">
+                                <span class="stock_count ${product.stock == 0 ? 'danger' : 'warning'}">${product.stock}</span>
+                                <span class="stock_label">${product.stock == 0 ? 'HẾT HÀNG' : 'còn lại'}</span>
+                            </div>
+                        </div>
+                    </c:forEach>
                 </div>
             </div>
-            <div class="alert_list">
-
-            </div>
-        </div>
+        </c:if>
 
         <div class="content_grid">
             <div class="chart_section">
                 <div class="section_header">
-                    <h3>Thống Kê Đơn Hàng</h3>
-                    <div class="chart_filters">
-                        <button class="chart-btn active">Theo Tháng</button>
-                        <button class="chart-btn">Theo Tuần</button>
-                        <button class="chart-btn">Theo Ngày</button>
-                    </div>
+                    <h3>Thống Kê Doanh Thu</h3>
                 </div>
                 <div class="chart_container">
                     <canvas id="revenueChart"></canvas>
@@ -124,20 +166,55 @@
             <div class="recent_orders">
                 <div class="section_header">
                     <h3>Đơn Hàng Gần Đây</h3>
-                    <a href="orders" class="view_all">Xem tất cả</a>
+                    <a href="${pageContext.request.contextPath}/admin/orders" class="view_all">Xem tất cả</a>
                 </div>
                 <table class="orders_table">
                     <thead>
-                        <tr>
-                        </tr>
+                    <tr>
+                        <th>Mã ĐH</th>
+                        <th>Khách Hàng</th>
+                        <th>Ngày Đặt</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                    </tr>
                     </thead>
                     <tbody>
-
+                    <c:forEach var="order" items="${recentOrders}">
+                        <tr>
+                            <td>#DH${order.id}</td>
+                            <td>${order.userName}</td>
+                            <td>${order.createAt}</td>
+                            <td><fmt:formatNumber value="${not empty order.total ? order.total : 0}" pattern="#,###"/>đ</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${order.orderStatus == 'DELIVERED'}">
+                                        <span class="status completed">Hoàn Thành</span>
+                                    </c:when>
+                                    <c:when test="${order.orderStatus == 'SHIPPING'}">
+                                        <span class="status shipping">Đang Giao</span>
+                                    </c:when>
+                                    <c:when test="${order.orderStatus == 'PROCESSING'}">
+                                        <span class="status processing">Đang Xử Lý</span>
+                                    </c:when>
+                                    <c:when test="${order.orderStatus == 'CANCELLED'}">
+                                        <span class="status cancelled">Đã Hủy</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="status pending">Chờ Xác Nhận</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty recentOrders}">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #888; padding: 20px;">Chưa có đơn hàng nào</td>
+                        </tr>
+                    </c:if>
                     </tbody>
                 </table>
             </div>
         </div>
-
         <c:if test="${not empty top10}">
             <div class="top_products_section">
                 <div class="section_header">
@@ -146,45 +223,39 @@
                 <div id="table_product">
                     <table id="table">
                         <thead>
-                            <tr>
-                                <td>Top</td>
-                                <td class="product_col">Sản Phẩm</td>
-                                <td>Lượt Mua</td>
-                                <td>Còn Lại</td>
-                                <td>Lượt Xem</td>
-                                <td>Đánh Giá</td>
-                                <td>Xu Hướng</td>
-                            </tr>
+                        <tr>
+                            <td>Top</td>
+                            <td class="product_col">Sản Phẩm</td>
+                            <td>Lượt Mua</td>
+                            <td>Còn Lại</td>
+                            <td>Lượt Xem</td>
+                            <td>Đánh Giá</td>
+                        </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="p" items="${top10}" varStatus="status">
-                                <tr class="product_item">
-                                    <td class="rank">
-                                        <i class="fa-solid fa-medal fa-xl
+                        <c:forEach var="p" items="${top10}" varStatus="status">
+                            <tr class="product_item">
+                                <td class="rank">
+                                    <i class="fa-solid fa-medal fa-xl
                                         <c:choose>
                                            <c:when test="${status.index == 0}">top1</c:when>
                                            <c:when test="${status.index == 1}">top2</c:when>
                                            <c:when test="${status.index == 2}">top3</c:when>
                                         </c:choose>"
-                                        ></i>
-                                    </td>
-                                    <td class="product">
-                                        <img class="product_image" src="${p.imageUrl}"/>
-                                        <span class="product_name">${p.name}</span>
-                                    </td>
-                                    <td class="sold">${p.noOfSold}</td>
-                                    <td class="remaining">${p.stock}</td>
-                                    <td class="view">${p.noOfViews}</td>
-                                    <td class="rating">
-                                        4.8
-                                        <i class="fa-solid fa-star" style="color: #FFD43B;"></i>
-                                    </td>
-                                    <td class="wrap_trend_up">
-                                        <i class="fa-solid fa-arrow-trend-up"></i>
-                                        <span>4.5%</span>
-                                    </td>
-                                </tr>
-                            </c:forEach>
+                                    ></i>
+                                </td>
+                                <td class="product">
+                                    <img class="product_image" src="${p.imageUrl}"/>
+                                    <span class="product_name">${p.name}</span>
+                                </td>
+                                <td class="sold">${p.noOfSold}</td>
+                                <td class="remaining">${p.stock}</td>
+                                <td class="view">${p.noOfViews}</td>
+                                <td class="rating">
+                                    <i class="fa-solid fa-star" style="color: #FFD43B;"></i>
+                                </td>
+                            </tr>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>
@@ -193,5 +264,25 @@
 
     </div>
 </div>
+
+<script>
+    window.chartLabels = [
+        <c:if test="${not empty revenueChart}">
+        <c:forEach var="stat" items="${revenueChart}" varStatus="s">
+        "${stat.label}"<c:if test="${!s.last}">,</c:if>
+        </c:forEach>
+        </c:if>
+    ];
+    window.chartData = [
+        <c:if test="${not empty revenueChart}">
+        <c:forEach var="stat" items="${revenueChart}" varStatus="s">
+        ${not empty stat.revenue ? stat.revenue : 0}<c:if test="${!s.last}">,</c:if>
+        </c:forEach>
+        </c:if>
+    ];
+    window.revenueGrowth = ${not empty revenueGrowth ? revenueGrowth : 0};
+    window.ordersGrowth  = ${not empty ordersGrowth  ? ordersGrowth  : 0};
+</script>
+<script src="${pageContext.request.contextPath}/static/style-component/style-admin/dashboard/dashboard.js"></script>
 </body>
 </html>
