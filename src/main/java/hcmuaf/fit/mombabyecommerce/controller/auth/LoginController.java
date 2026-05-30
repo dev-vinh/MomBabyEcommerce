@@ -124,6 +124,11 @@
 
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            HttpSession currentSession = request.getSession(false);
+            if (currentSession != null && currentSession.getAttribute("userId") != null) {
+                response.sendRedirect(request.getContextPath() + "/home");
+                return;
+            }
             request.getRequestDispatcher("/auth/auth.jsp").forward(request, response);
         }
 

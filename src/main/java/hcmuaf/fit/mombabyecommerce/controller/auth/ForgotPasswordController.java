@@ -22,6 +22,11 @@ public class ForgotPasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession currentSession = request.getSession(false);
+        if (currentSession != null && currentSession.getAttribute("userId") != null) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
 
         String action = request.getParameter("action");
         if ("backToEmail".equals(action)) {
@@ -43,6 +48,12 @@ public class ForgotPasswordController extends HttpServlet {
         response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
 
+        HttpSession currentSession = request.getSession(false);
+        if (currentSession != null && currentSession.getAttribute("userId") != null) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("already_logged_in");
+            return;
+        }
 
         String email = request.getParameter("email");
         if(email == null || email.trim().isEmpty()){

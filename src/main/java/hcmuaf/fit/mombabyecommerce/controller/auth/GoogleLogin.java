@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -39,6 +40,12 @@ public class GoogleLogin extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     try{
+        HttpSession currentSession = request.getSession(false);
+        if (currentSession != null && currentSession.getAttribute("userId") != null) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
+
         if (clientId == null || clientId.trim().isEmpty()) {
             throw new ServletException("Google Client ID is not configured");
         }
