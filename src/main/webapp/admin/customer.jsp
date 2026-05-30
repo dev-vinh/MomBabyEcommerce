@@ -80,13 +80,13 @@
                             <td><input type="checkbox"></td>
                             <td>
                                 <a href="customer?id=${c.id}" class="name">
-                                    <c:if test="${not empty c.avatar_url}">
-                                        <img src="${c.avatar_url}" alt="Avatar"
+                                    <c:if test="${not empty c.avatarUrl}">
+                                        <img src="${c.avatarUrl}" alt="Avatar"
                                              style="width:50px; height:50px; border-radius:50%; margin-right:10px;">
                                     </c:if>
 
-                                    <c:if test="${empty c.avatar_url}">
-                                        <img src="${pageContext.request.contextPath}/static/image/default-avatar.png" alt="Avatar"
+                                    <c:if test="${empty c.avatarUrl}">
+                                        <img src="${pageContext.request.contextPath}/static/image/default_img.jpg" alt="Avatar"
                                              style="width:50px; height:50px; border-radius:50%; margin-right:10px;">
                                     </c:if>
 

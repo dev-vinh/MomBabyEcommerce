@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,85 +31,85 @@
 
     <!-- Nội dung chính -->
     <div class="content">
-        <!-- Bảng bên trái -->
-        <div class="left-panel">
-            <div class="profile-card">
-                <div class ="info">
-                    <img src="https://dashui.codescandy.com/dashuipro/assets/images/avatar/avatar-11.jpg" alt="Jessica Moore" class="profile-pic">
-                    <h3>Phan Ngọc Vĩnh</h3>
-                    <p><a href="mailto:jessica-moore@example.com">phanngocvinh@gmail.com</a></p>
-                    <p class="phone">012388888</p>
+        <h1 class="header-title">Khách Hàng</h1>
+        <c:if test="${not empty customer}">
+            <div class="wrap_content">
+
+                <div class="left-panel">
+                    <div class="profile-card">
+                        <div class ="info">
+                            <c:if test="${not empty customer.avatarUrl}">
+                                <img src="${customer.avatarUrl}" alt="Avatar"
+                                     style="width:50px; height:50px; border-radius:50%; margin-right:10px;">
+                            </c:if>
+
+                            <c:if test="${empty customer.avatarUrl}">
+                                <img src="${pageContext.request.contextPath}/static/image/avatar.jpg" alt="Avatar"
+                                     style="width:50px; height:50px; border-radius:50%; margin-right:10px;">
+                            </c:if>
+
+                            <h3>${customer.fullName}</h3>
+                            <p>${customer.email}</p>
+                            <p> ${customer.phoneNumber}</p>
+                        </div>
+                        <hr>
+                    </div>
                 </div>
-                <hr>
-                <p><strong>Đơn hàng gần nhất:</strong>  <a href="#">#80294</a></p>
-                <p><strong>Giá trị đơn hàng trung bình:</strong> 574.000 VND </p>
-                <p><strong>Đăng ký:</strong> 2 tháng trước</p>
-                <p><strong>Email Marketing:</strong> Đã đăng ký</p>
-            </div>
-        </div>
 
-        <!-- Bảng bên phải -->
-        <div class="right-panel">
-            <!-- Phần Ghi chú -->
-            <div class="notes">
-                <textarea placeholder="Ghi chú về khách hàng"></textarea>
-            </div>
+                <!-- Bảng bên phải -->
+                <div class="right-panel">
+                    <!-- Phần Đơn hàng -->
+                    <div class="orders">
+                        <c:if test="${not empty order}">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Đơn hàng</th>
+                                    <th>Ngày</th>
+                                    <th>Tình trạng</th>
+                                    <th>Thanh toán</th>
+                                    <th>Tổng cộng</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="o" items="${order}">
+                                    <tr>
+                                        <td><a href="order-detail?orderId=${o.id}">#${o.id}</a></td>
+                                        <td>${o.createAt}</td>
+                                        <td>${o.orderStatus}</td>
+                                        <td>${o.paymentStatus}</td>
+                                        <td> <fmt:formatNumber value="${o.total}" pattern="#,###"/>  VND</td>
+                                    </tr>
+                                </c:forEach>
 
-            <!-- Phần Đơn hàng -->
-            <div class="orders">
-                <h4>Đơn hàng</h4>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Đơn hàng</th>
-                        <th>Ngày</th>
-                        <th>Tình trạng</th>
-                        <th>Số mặt hàng</th>
-                        <th>Tổng cộng</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><a href="#">#80294</a></td>
-                        <td>Hôm nay lúc 6:10 PM</td>
-                        <td>Chờ xử lý</td>
-                        <td>4</td>
-                        <td>320.000 VND</td>
-                    </tr>
-                    <tr>
-                        <td><a href="#">#63736</a></td>
-                        <td>15 Tháng 5, 2025</td>
-                        <td>Hoàn thành</td>
-                        <td>7</td>
-                        <td>2,574.311 VND</td>
-                    </tr>
-                    <tr>
-                        <td><a href="#">#63501</a></td>
-                        <td>7 Tháng 4, 2025</td>
-                        <td>Hoàn thành</td>
-                        <td>1</td>
-                        <td>34.000 VND</td>
-                    </tr>
-                    <tr>
-                        <td><a href="#">#40278</a></td>
-                        <td>19 Tháng 3, 2025</td>
-                        <td>Hoàn thành</td>
-                        <td>2</td>
-                        <td>704.000 VND</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <p><a href="#">Xem tất cả 7 đơn hàng</a></p>
-            </div>
+                                </tbody>
+                            </table>
+                        </c:if>
 
-            <!-- Phần Địa chỉ -->
-            <div class="addresses">
-                <h4>Địa chỉ</h4>
-                <p><strong> Quận 1</strong><br>Thành phố Hồ Chí Minh</p>
-                <p><strong>Quận 2</strong><br>Thành phố Hồ Chí Minh</p>
-                <button class="btn new-address">Thêm Địa chỉ Mới</button>
+                        <c:if test="${empty order}">
+                            <p>Chưa có đơn hàng.</p>
+                        </c:if>
+
+                    </div>
+
+                    <!-- Phần Địa chỉ -->
+                    <div class="addresses">
+                        <h4>Địa chỉ</h4>
+                        <div class="wrap_info">
+                            <c:if test="${not empty address}">
+                                <c:forEach items="${address}" var="a">
+                                    <p> ${a.street}, ${a.city} ${a.state} ${a.country} </p>
+                                </c:forEach>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </c:if>
+
+        <c:if test="${empty customer}">
+            <h1>Đã có lỗi xảy ra</h1>
+        </c:if>
     </div>
 </div>
 </body>
