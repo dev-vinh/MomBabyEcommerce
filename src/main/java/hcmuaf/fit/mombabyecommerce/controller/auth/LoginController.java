@@ -94,6 +94,10 @@
                     String roleType = user.getRole().getRoleType().name();
                     if (roleType.equals(ERole.SUPER_ADMIN.name())) {
                         redirectUrl = request.getContextPath() + "/admin/dashboard";
+                    } else if (roleType.equals(ERole.ORDER_MANAGER.name())) {
+                        redirectUrl = request.getContextPath() + "/admin/list-product";
+                    } else if (roleType.equals(ERole.INVENTORY_MANAGER.name())) {
+                        redirectUrl = request.getContextPath() + "/admin/inventory-log";
                     } else {
                         redirectUrl = request.getContextPath() + "/home";
                     }

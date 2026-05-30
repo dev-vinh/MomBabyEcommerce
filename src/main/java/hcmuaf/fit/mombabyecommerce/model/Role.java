@@ -12,6 +12,9 @@ public class Role implements Serializable {
     private String name;
     private String description;
     private Boolean isActive;
+    private Integer memberCount;
+    private Integer permissionCount;
+    private String permissions;
 
     public Role() {
     }
@@ -22,13 +25,19 @@ public class Role implements Serializable {
             @ColumnName("roleType") ERole roleType,
             @ColumnName("name") String name,
             @ColumnName("description") String description,
-            @ColumnName("isActive") Boolean isActive
+            @ColumnName("isActive") Boolean isActive,
+            @ColumnName("memberCount") Integer memberCount,
+            @ColumnName("permissionCount") Integer permissionCount,
+            @ColumnName("permissions") String permissions
     ) {
         this.id = id;
         this.roleType = roleType;
         this.name = name;
         this.description = description;
         this.isActive = isActive;
+        this.memberCount = memberCount;
+        this.permissionCount = permissionCount;
+        this.permissions = permissions;
     }
 
     public Integer getId() {
@@ -69,6 +78,30 @@ public class Role implements Serializable {
         this.isActive = isActive;
     }
 
+    public Integer getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(Integer memberCount) {
+        this.memberCount = memberCount;
+    }
+
+    public Integer getPermissionCount() {
+        return permissionCount;
+    }
+
+    public void setPermissionCount(Integer permissionCount) {
+        this.permissionCount = permissionCount;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
+
     @Override
     public String toString() {
         return "Role{" +
@@ -77,6 +110,9 @@ public class Role implements Serializable {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", isActive=" + isActive +
-                "}\n";
+                ", memberCount=" + memberCount +
+                ", permissionCount=" + permissionCount +
+                ", permissions='" + permissions + '\'' +
+                '}';
     }
 }

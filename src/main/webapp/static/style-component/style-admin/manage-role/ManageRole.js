@@ -88,6 +88,89 @@ document.addEventListener("DOMContentLoaded", () => {
             accountModal.classList.add("hidden");
         }
     });
+    document.querySelectorAll(".edit-role")
+        .forEach(icon => {
+
+            icon.addEventListener("click", () => {
+
+                const roleId = icon.dataset.roleId;
+
+                console.log("Role Id:", roleId);
+
+            });
+
+        });
+    const editRoleModal =
+        document.getElementById("editRoleModal");
+
+    const closeEditRoleModal =
+        document.getElementById("closeEditRoleModal");
+
+    const cancelEditRole =
+        document.getElementById("cancelEditRole");
+
+    document.querySelectorAll(".edit-role")
+        .forEach(btn => {
+
+            btn.addEventListener("click", () => {
+
+                const roleId =
+                    btn.dataset.roleId;
+
+                console.log("Role Id:", roleId);
+
+                editRoleModal.classList.remove("hidden");
+
+                loadRoleDetail(roleId);
+            });
+
+        });
+
+    closeEditRoleModal?.addEventListener("click", () => {
+        editRoleModal.classList.add("hidden");
+    });
+
+    cancelEditRole?.addEventListener("click", () => {
+        editRoleModal.classList.add("hidden");
+    });
+    function loadRoleDetail(roleId){
+
+        fetch(
+            `${CONTEXT_PATH}/admin/role-detail?id=${roleId}`
+        )
+            .then(res => res.json())
+            .then(data => {
+
+                document.getElementById("editRoleId").value =
+                    data.id;
+
+                document.getElementById("editRoleName").value =
+                    data.name;
+
+                document
+                    .querySelectorAll(".edit-permission")
+                    .forEach(cb => {
+
+                        cb.checked =
+                            data.permissions.includes(
+                                parseInt(cb.value)
+                            );
+
+                    });
+
+                const roleUsers =
+                    document.getElementById("roleUsers");
+
+                roleUsers.innerHTML =
+                    data.users
+                        .map(u =>
+                            `<div>${u.displayName}</div>`
+                        )
+                        .join("");
+
+            });
+
+    }
     console.log("END OF FILE");
 
 });

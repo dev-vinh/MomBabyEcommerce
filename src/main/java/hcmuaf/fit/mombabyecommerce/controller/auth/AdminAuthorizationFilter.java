@@ -49,7 +49,7 @@ public class AdminAuthorizationFilter implements Filter{
         }
         ERole roleType = ERole.valueOf(roleStr);
 
-        if (roleType != ERole.SUPER_ADMIN) {
+        if (roleType != ERole.SUPER_ADMIN && roleType != ERole.ORDER_MANAGER && roleType != ERole.INVENTORY_MANAGER ) {
             session.invalidate();
             redirectToLoginWithMessage(request, response, "Bạn không có quyền truy cập.");
             return;

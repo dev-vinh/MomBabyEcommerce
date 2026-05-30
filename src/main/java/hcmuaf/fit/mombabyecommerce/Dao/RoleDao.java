@@ -1,6 +1,7 @@
 package hcmuaf.fit.mombabyecommerce.Dao;
 
 import hcmuaf.fit.mombabyecommerce.model.Role;
+import hcmuaf.fit.mombabyecommerce.model.User;
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -12,10 +13,15 @@ import java.util.List;
 @RegisterConstructorMapper(Role.class)
 public interface RoleDao {
     @SqlQuery("""
-        SELECT * FROM roles
-        WHERE isActive = 1
+    SELECT u.*
+    FROM users u
+    JOIN user_role ur
+        ON u.id = ur.userId
+    WHERE ur.roleId = :roleId
     """)
-    List<Role> getRoles();
+    List<User> getUsersByRoleId(
+            @Bind("roleId") Integer roleId
+    );
 
     @SqlQuery("""
         SELECT * FROM roles
@@ -62,5 +68,44 @@ public interface RoleDao {
         WHERE id = :id
     """)
     int deleteRole(@Bind("id") Integer id);
+
+    @SqlQuery("""
+SELECT
+    r.id,
+    r.roleType,
+    r.name,
+    r.description,
+    r.isActive,
+
+    COUNT(DISTINCT ur.userId) AS memberCount,
+    COUNT(DISTINCT rp.permissionId) AS permissionCount,
+
+    GROUP_CONCAT(
+        DISTINCT p.name
+        ORDER BY p.id
+        SEPARATOR ', '
+    ) AS permissions
+
+FROM roles r
+
+LEFT JOIN user_role ur
+    ON ur.roleId = r.id
+
+LEFT JOIN role_permission rp
+    ON rp.roleId = r.id
+
+LEFT JOIN permissions p
+    ON p.id = rp.permissionId
+
+WHERE r.isActive = 1
+
+GROUP BY
+    r.id,
+    r.roleType,
+    r.name,
+    r.description,
+    r.isActive
+""")
+    List<Role> getRoles();
 
 }
