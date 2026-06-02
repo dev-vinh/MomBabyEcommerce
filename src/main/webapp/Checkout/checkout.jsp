@@ -244,10 +244,17 @@
                         <button id="applyVoucher">Áp dụng</button>
                     </div>
                     <div id="voucherResult"></div>
-                    <div id="discountAmount"></div>
                 </div>
 
                 <div class="wrap_total">
+                    <div class="total_label">
+                        <span>Tạm tính</span>
+                        <span id="subTotal">0 VND</span>
+                    </div>
+                    <div class="total_label">
+                        <span>Giảm giá</span>
+                        <span id="discountAmount">0 VND</span>
+                    </div>
                     <div class="total_label">
                         <span>Tổng cộng </span>
                         <span id="total">0 VND </span>
