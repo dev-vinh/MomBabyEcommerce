@@ -255,6 +255,7 @@ public class Order implements Serializable {
                 ", shippingFee=" + shippingFee +
                 ", shippingId='" + shippingId + '\'' +
                 ", isReviewed=" + isReviewed +
+                ", discount_amount=" + discount_amount +
                 '}';
     }
 }

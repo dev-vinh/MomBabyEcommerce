@@ -265,8 +265,11 @@
                             <div class="content_item">
                                 <span class="desc">Tổng giá trị</span>
                                 <span id="product_price" class="value">
-                                        <fmt:formatNumber value="${order.total}" pattern="#,###"/> VND
-                                    </span>
+                                <fmt:formatNumber
+                                        value="${(empty order.total ? 0 : order.total)
+                                                - (empty order.shippingFee ? 0 : order.shippingFee)
+                                                + (empty order.discount_amount ? 0 : order.discount_amount)}"
+                                pattern="#,###"/> VND</span>
                             </div>
 
 
@@ -277,6 +280,12 @@
                                     </span>
 
                             </div>
+                            <div class="content_item">
+                                <span class="desc">Voucher giảm giá</span>
+                                <span id="discountAmount" class="value">-
+                                            <fmt:formatNumber value="${order.discount_amount}" pattern="#,###"/> VND
+                                    </span>
+                            </div>
 
                             <div class="rec_horizontal"></div>
 
@@ -284,8 +293,7 @@
                                 <span class="desc">Tổng thanh toán:</span>
                                 <span id="total_charge" class="value">
                                          <fmt:formatNumber
-                                                 value="${(empty order.total ? 0 : order.total) +
-                                                            (empty order.shippingFee ? 0 : order.shippingFee)}"
+                                                 value="${(empty order.total ? 0 : order.total) }"
                                                  pattern="#,###"/> VND
                                     </span>
                             </div>
