@@ -37,6 +37,9 @@ public class ExcelImportService {
                 if (row.getCell(4) != null && row.getCell(4).getCellType() == CellType.NUMERIC) {
                     product.setBrandId((int) row.getCell(4).getNumericCellValue());
                 }
+                if (row.getCell(5) != null) {
+                    product.setImageUrl(row.getCell(5).getStringCellValue().trim());
+                }
                 product.setActive(true);
                 if (product.getName() != null && !product.getName().isEmpty() && product.getSku() != null) {
                     products.add(product);
