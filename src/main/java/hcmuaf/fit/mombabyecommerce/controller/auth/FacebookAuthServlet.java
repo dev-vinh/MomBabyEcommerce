@@ -32,6 +32,12 @@ public class FacebookAuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //lấy mode
+        HttpSession currentSession = request.getSession(false);
+        if (currentSession != null && currentSession.getAttribute("userId") != null) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
+
         String mode = request.getParameter("mode");
 
         if (mode == null || (!mode.equals("login") && !mode.equals("register"))) {

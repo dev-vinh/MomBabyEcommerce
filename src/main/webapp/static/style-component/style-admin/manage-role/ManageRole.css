@@ -16,19 +16,12 @@
 .center {
     flex: 1;
 }
-
-.wrap_header {
-    position: fixed;
-    left: 270px;
-    right: 0;
-    top: 0;
-    height: 60px;
-    background: white;
-    z-index: 999;
+.content_header{
+    margin-bottom: 30px;
 }
 
+
 .content {
-    margin-top: 80px;
     margin-left: 20px;
     margin-right: 20px;
     background: #fff;
@@ -43,20 +36,6 @@
     pointer-events: none;
 }
 
-/* Header */
-
-.content_header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.subtitle {
-    margin-top: 7px;
-    color: #666;
-    margin-bottom: 16px;
-}
 
 /* Buttons */
 

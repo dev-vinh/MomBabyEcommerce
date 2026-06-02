@@ -5,8 +5,6 @@ function initDashboardChart(labels, data) {
     if (!ctx) return;
 
     if (revenueChart) revenueChart.destroy();
-    const maxVal = Math.max(...data, 1);
-
     revenueChart = new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
@@ -14,34 +12,63 @@ function initDashboardChart(labels, data) {
             datasets: [{
                 label: 'Doanh Thu',
                 data: data,
-                backgroundColor: function(context) {
-                    const chart = context.chart;
-                    const { ctx: c, chartArea } = chart;
-                    if (!chartArea) return 'rgba(99,102,241,0.8)';
-                    const gradient = c.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                    gradient.addColorStop(0, 'rgba(99,102,241,0.4)');
-                    gradient.addColorStop(1, 'rgba(99,102,241,0.9)');
-                    return gradient;
-                },
-                borderColor: '#6366F1',
+                backgroundColor: '#2563EB',
+                borderColor: '#1D4ED8',
                 borderWidth: 0,
-                borderRadius: 8,
+                borderRadius: 6,
                 borderSkipped: false,
-                hoverBackgroundColor: '#4F46E5'
+                hoverBackgroundColor: '#1D4ED8',
+                barPercentage: 0.72,
+                categoryPercentage: 0.7,
+                maxBarThickness: 48
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 8,
+                    right: 8,
+                    bottom: 4,
+                    left: 4
+                }
+            },
             plugins: {
                 legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Biểu đồ doanh thu',
+                    color: '#111827',
+                    align: 'start',
+                    padding: {
+                        bottom: 6
+                    },
+                    font: {
+                        size: 16,
+                        weight: '700'
+                    }
+                },
+                subtitle: {
+                    display: true,
+                    text: 'Theo khoảng thời gian đã chọn',
+                    color: '#6B7280',
+                    align: 'start',
+                    padding: {
+                        bottom: 18
+                    },
+                    font: {
+                        size: 12,
+                        weight: '500'
+                    }
+                },
                 tooltip: {
-                    backgroundColor: '#1E293B',
-                    titleColor: '#94A3B8',
-                    bodyColor: '#F8FAFC',
+                    backgroundColor: '#111827',
+                    titleColor: '#D1D5DB',
+                    bodyColor: '#FFFFFF',
                     padding: 14,
                     displayColors: false,
-                    cornerRadius: 10,
+                    cornerRadius: 12,
                     titleFont: { size: 11 },
                     bodyFont: { size: 14, weight: '700' },
                     callbacks: {
@@ -53,19 +80,34 @@ function initDashboardChart(labels, data) {
             },
             scales: {
                 x: {
+                    title: {
+                        display: true,
+                        text: 'Thời gian',
+                        color: '#374151',
+                        font: { size: 12, weight: '600' },
+                        padding: { top: 10 }
+                    },
                     grid: { display: false },
                     border: { display: false },
                     ticks: {
-                        color: '#94A3B8',
+                        color: '#475569',
                         font: { size: 11, weight: '500' }
                     }
                 },
                 y: {
-                    grid: { color: '#F1F5F9', drawBorder: false },
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Doanh thu (VNĐ)',
+                        color: '#374151',
+                        font: { size: 12, weight: '600' },
+                        padding: { bottom: 10 }
+                    },
+                    grid: { color: '#E2E8F0', drawBorder: false },
                     border: { display: false, dash: [4, 4] },
                     ticks: {
-                        color: '#94A3B8',
-                        font: { size: 11 },
+                        color: '#475569',
+                        font: { size: 11, weight: '500' },
                         padding: 8,
                         callback: function(value) {
                             if (value >= 1000000000) return (value / 1000000000).toFixed(1) + 'B';

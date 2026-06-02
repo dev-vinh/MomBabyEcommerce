@@ -82,40 +82,41 @@ public interface ProductReviewDao {
                           @Bind("productId") int productId);
 
     @SqlQuery("""
-            SELECT
-                pr.id,
-                pr.userId,
-                pr.productId,
-                pr.orderId,
-                pr.rating,
-                pr.description,
-                pr.isVerifiedPurchase,
-                DATE_FORMAT(pr.createdAt, '%d/%m/%Y %H:%i') AS createdAt,
-                DATE_FORMAT(pr.updatedAt, '%d/%m/%Y %H:%i') AS updatedAt,
-                pr.adminReply,
-                pr.repliedBy,
-                DATE_FORMAT(pr.repliedAt, '%d/%m/%Y %H:%i') AS repliedAt,
-                COALESCE(NULLIF(u.displayName, ''), u.fullName) AS userName,
-                img.url AS avatarUrl,
-                CAST(COUNT(DISTINCT l.userId) AS SIGNED) AS likeCount,
-                CASE
-                    WHEN :currentUserId IS NULL THEN 0
-                    WHEN SUM(CASE WHEN l.userId = :currentUserId THEN 1 ELSE 0 END) > 0 THEN 1
-                    ELSE 0
-                END AS likedByCurrentUser
-            FROM product_reviews pr
-            JOIN users u ON pr.userId = u.id
-            LEFT JOIN image img ON u.avatarId = img.id
-            LEFT JOIN product_review_likes l ON pr.id = l.reviewId
-            WHERE pr.productId = :productId
-            GROUP BY pr.id, u.id, img.url
-            ORDER BY
-                CASE WHEN :sort = 'rating_desc' THEN pr.rating END DESC,
-                CASE WHEN :sort = 'rating_asc' THEN pr.rating END ASC,
-                CASE WHEN :sort = 'oldest' THEN pr.createdAt END ASC,
-                pr.createdAt DESC
-            LIMIT :limit OFFSET :offset
-            """)
+    SELECT
+        pr.id,
+        pr.userId,
+        pr.productId,
+        pr.orderId,
+        pr.rating,
+        pr.description,
+        pr.isVerifiedPurchase,
+        DATE_FORMAT(pr.createdAt, '%d/%m/%Y %H:%i') AS createdAt,
+        DATE_FORMAT(pr.updatedAt, '%d/%m/%Y %H:%i') AS updatedAt,
+        pr.adminReply,
+        pr.repliedBy,
+        DATE_FORMAT(pr.repliedAt, '%d/%m/%Y %H:%i') AS repliedAt,
+        COALESCE(NULLIF(u.displayName, ''), u.fullName) AS userName,
+        img.url AS avatarUrl,
+        CAST(COUNT(DISTINCT l.userId) AS SIGNED) AS likeCount,
+        CASE
+            WHEN :currentUserId IS NULL THEN 0
+            WHEN SUM(CASE WHEN l.userId = :currentUserId THEN 1 ELSE 0 END) > 0 THEN 1
+            ELSE 0
+        END AS likedByCurrentUser
+    FROM product_reviews pr
+    JOIN users u ON pr.userId = u.id
+    LEFT JOIN image img ON u.avatarId = img.id
+    LEFT JOIN product_review_likes l ON pr.id = l.reviewId
+    WHERE pr.productId = :productId
+      AND (:currentUserId IS NULL OR pr.userId <> :currentUserId)
+    GROUP BY pr.id, u.id, img.url
+    ORDER BY
+        CASE WHEN :sort = 'rating_desc' THEN pr.rating END DESC,
+        CASE WHEN :sort = 'rating_asc' THEN pr.rating END ASC,
+        CASE WHEN :sort = 'oldest' THEN pr.createdAt END ASC,
+        pr.createdAt DESC
+    LIMIT :limit OFFSET :offset
+""")
     List<ProductReview> getReviewsByProduct(@Bind("productId") int productId,
                                             @Bind("currentUserId") Integer currentUserId,
                                             @Bind("sort") String sort,

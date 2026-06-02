@@ -4,7 +4,12 @@
 
 <div class="review-wrapper">
     <div class="review-title-row">
-        <h2>Đánh giá sản phẩm</h2>
+        <div class="review-heading">
+            <div>
+                <h2>Đánh giá sản phẩm</h2>
+                <p>${reviewStats.totalReviews} đánh giá</p>
+            </div>
+        </div>
 
         <form method="get"
               action="${pageContext.request.contextPath}/product-detail"
@@ -12,7 +17,8 @@
 
             <input type="hidden" name="id" value="${product.id}">
 
-            <select name="sort" onchange="this.form.submit()">
+            <label for="review-sort">Sắp xếp</label>
+            <select id="review-sort" name="sort" onchange="this.form.submit()">
                 <option value="newest" ${reviewSort == 'newest' ? 'selected' : ''}>
                     Mới nhất
                 </option>
@@ -34,6 +40,7 @@
 
     <div class="rating-overview">
         <div class="rating-score-box">
+            <span class="rating-score-label">Điểm trung bình</span>
             <div class="rating-score">
                 <fmt:formatNumber value="${reviewStats.averageRating}" pattern="0.0"/>
             </div>
@@ -93,17 +100,78 @@
 
     <c:choose>
         <c:when test="${canReview}">
-            <div class="review-form-box">
-                <h3>
-                    <c:choose>
-                        <c:when test="${not empty myReview}">
-                            Sửa đánh giá của bạn
-                        </c:when>
-                        <c:otherwise>
-                            Viết đánh giá của bạn
-                        </c:otherwise>
-                    </c:choose>
-                </h3>
+            <c:if test="${not empty myReview}">
+                <div id="my-review-summary" class="my-review-summary">
+                    <div class="my-review-header">
+                        <div class="my-review-title">
+                            <span class="my-review-icon">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                            <div>
+                                <h3>Đánh giá của bạn</h3>
+                                <p>Đánh giá đã được ghi nhận. Bạn có thể chỉnh sửa khi cần.</p>
+                            </div>
+                        </div>
+
+                        <button type="button" id="review-edit-toggle" class="review-edit-toggle">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                    </div>
+
+                    <div class="my-review-stars">
+                        <c:forEach begin="1" end="5" var="i">
+                            <c:choose>
+                                <c:when test="${i <= myReview.rating}">
+                                    ★
+                                </c:when>
+                                <c:otherwise>
+                                    ☆
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </div>
+
+                    <div class="my-review-content"><c:out value="${myReview.description}"/></div>
+
+                    <c:if test="${not empty myReview.imageUrls}">
+                        <div class="my-review-images">
+                            <c:forEach var="img" items="${myReview.imageUrls}">
+                                <img src="${img}" alt="Ảnh đánh giá của bạn">
+                            </c:forEach>
+                        </div>
+                    </c:if>
+                </div>
+            </c:if>
+
+            <div id="review-form-panel"
+                 class="review-form-box ${not empty myReview ? 'is-hidden' : ''}">
+                <div class="review-form-header">
+                    <span class="review-form-icon">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </span>
+                    <div>
+                        <h3>
+                            <c:choose>
+                                <c:when test="${not empty myReview}">
+                                    Chỉnh sửa đánh giá
+                                </c:when>
+                                <c:otherwise>
+                                    Viết đánh giá của bạn
+                                </c:otherwise>
+                            </c:choose>
+                        </h3>
+                        <p>
+                            <c:choose>
+                                <c:when test="${not empty myReview}">
+                                    Cập nhật sao, nội dung hoặc chọn ảnh mới nếu bạn muốn thay ảnh cũ.
+                                </c:when>
+                                <c:otherwise>
+                                    Chia sẻ cảm nhận thực tế để giúp khách hàng khác chọn đúng sản phẩm.
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
+                    </div>
+                </div>
 
                 <form id="review-form"
                       enctype="multipart/form-data"
@@ -135,9 +203,28 @@
                               maxlength="1000"
                               placeholder="Chia sẻ cảm nhận thật của bạn về sản phẩm..."><c:out value="${myReview.description}"/></textarea>
 
+                    <c:if test="${not empty myReview.imageUrls}">
+                        <div class="review-current-images">
+                            <span>Ảnh hiện tại</span>
+                            <div>
+                                <c:forEach var="img" items="${myReview.imageUrls}">
+                                    <img src="${img}" alt="Ảnh đánh giá hiện tại">
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+
                     <div class="review-upload-row">
                         <label for="review-photo">
-                            Thêm ảnh thực tế, tối đa 5 ảnh
+                            <i class="fa-regular fa-images"></i>
+                            <c:choose>
+                                <c:when test="${not empty myReview}">
+                                    Chọn ảnh mới nếu muốn thay ảnh cũ
+                                </c:when>
+                                <c:otherwise>
+                                    Thêm ảnh thực tế, tối đa 5 ảnh
+                                </c:otherwise>
+                            </c:choose>
                         </label>
 
                         <input type="file"
@@ -149,22 +236,32 @@
 
                     <div id="photo-preview" class="photo-preview"></div>
 
-                    <button type="submit" class="review-submit-btn">
-                        <c:choose>
-                            <c:when test="${not empty myReview}">
-                                Cập nhật đánh giá
-                            </c:when>
-                            <c:otherwise>
-                                Gửi đánh giá
-                            </c:otherwise>
-                        </c:choose>
-                    </button>
+                    <div class="review-form-actions">
+                        <button type="submit" class="review-submit-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <c:choose>
+                                <c:when test="${not empty myReview}">
+                                    Lưu thay đổi
+                                </c:when>
+                                <c:otherwise>
+                                    Gửi đánh giá
+                                </c:otherwise>
+                            </c:choose>
+                        </button>
+
+                        <c:if test="${not empty myReview}">
+                            <button type="button" id="review-cancel-edit" class="review-cancel-btn">
+                                Hủy chỉnh sửa
+                            </button>
+                        </c:if>
+                    </div>
                 </form>
             </div>
         </c:when>
 
         <c:otherwise>
             <div class="review-note">
+                <i class="fa-solid fa-circle-info"></i>
                 Bạn cần mua sản phẩm và đơn hàng phải hoàn thành thì mới có thể đánh giá.
             </div>
         </c:otherwise>
@@ -174,6 +271,7 @@
         <c:choose>
             <c:when test="${empty reviews}">
                 <div class="empty-review">
+                    <i class="fa-regular fa-comment-dots"></i>
                     Chưa có đánh giá nào cho sản phẩm này.
                 </div>
             </c:when>
@@ -221,14 +319,13 @@
 
                             <c:if test="${review.verifiedPurchase}">
                                 <span class="verified-badge">
+                                    <i class="fa-solid fa-check"></i>
                                     Đã mua hàng
                                 </span>
                             </c:if>
                         </div>
 
-                        <div class="review-content">
-                            <c:out value="${review.description}"/>
-                        </div>
+                        <div class="review-content"><c:out value="${review.description}"/></div>
 
                         <c:if test="${not empty review.imageUrls}">
                             <div class="review-images">
@@ -257,7 +354,10 @@
 
                         <c:if test="${not empty review.adminReply}">
                             <div class="shop-reply">
-                                <strong>Phản hồi từ shop</strong>
+                                <strong>
+                                    <i class="fa-solid fa-store"></i>
+                                    Phản hồi từ shop
+                                </strong>
                                 <p>
                                     <c:out value="${review.adminReply}"/>
                                 </p>

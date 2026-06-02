@@ -40,6 +40,12 @@ public class GoogleRegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            HttpSession currentSession = request.getSession(false);
+            if (currentSession != null && currentSession.getAttribute("userId") != null) {
+                response.sendRedirect(request.getContextPath() + "/home");
+                return;
+            }
+
             if (clientId == null || clientId.trim().isEmpty()) {
                 throw new ServletException("Google Client ID is not configured");
             }

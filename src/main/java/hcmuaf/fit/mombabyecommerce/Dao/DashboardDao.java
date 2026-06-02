@@ -225,7 +225,7 @@ public interface DashboardDao {
         GROUP BY p.id, p.name, p.sku, p.description, p.isActive,
                  p.categoryId, p.brandId, p.noOfViews, p.noOfSold, p.imageId, img.url
         ORDER BY stock ASC
-        LIMIT 10
+        LIMIT 30
     """)
     List<Product> getLowStockProducts();
 
