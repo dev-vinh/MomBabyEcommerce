@@ -138,4 +138,19 @@ public class Voucher implements Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Voucher{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", discountPercent=" + discountPercent +
+                ", minOrderAmount=" + minOrderAmount +
+                ", maxDiscount=" + maxDiscount +
+                ", quantity=" + quantity +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", active=" + active +
+                '}';
+    }
 }

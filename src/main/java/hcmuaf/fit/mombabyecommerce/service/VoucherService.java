@@ -25,5 +25,7 @@ public class VoucherService {
         if(voucher.getQuantity() <= 0) return false;
         return true;
     }
-
+    public int decreaseQuantity(Integer id){
+        return voucherDao.decreaseQuantity(id);
+    }
 }
