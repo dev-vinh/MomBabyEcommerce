@@ -811,6 +811,49 @@ async function fetchProductDetails(productId) {
     renderOptionRows(product.options || []);
     validateSaveButton();
 }
+async function handleImportExcel(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+        notify('Vui lòng chọn đúng file Excel định dạng .xlsx hoặc .xls', 'error');
+        fileInput.value = '';
+        return;
+    }
+
+    notify('Đang tải và xử lý file dữ liệu, vui lòng đợi...', 'info');
+
+    const formData = new FormData();
+    formData.append('excelFile', file);
+
+    try {
+        const response = await fetch(`${ADMIN_BASE}/api/products/import-excel`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || result.status === 'error') {
+            throw new Error(result.message || 'Có lỗi xảy ra trong quá trình Import.');
+        }
+
+        notify(result.message || 'Import sản phẩm từ file Excel thành công!', 'success');
+
+        setTimeout(() => {
+            window.location.href = `${ADMIN_BASE}/list-product`;
+        }, 1500);
+
+    } catch (error) {
+        console.error('Excel Import Error:', error);
+        notify(error.message || 'Hệ thống không thể xử lý file Excel này.', 'error');
+    } finally {
+        fileInput.value = '';
+    }
+}
 
 window.addVariant = () => addOptionRow();
 window.addOptionGroup = () => {};
@@ -830,6 +873,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const categoryDropdown = $('categoryDropdown');
     const addOptionRowButton = $('addOptionRowButton');
     const mediaUploadBox = $('mediaUploadBox');
+    const excelImportInput = $('excelImportInput');
 
     currentProductId = getProductIdFromUrl();
 
@@ -844,7 +888,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (fileInput) fileInput.addEventListener('change', () => previewSelectedImages(fileInput.files));
     if (saveButton) saveButton.addEventListener('click', saveProduct);
     if (addOptionRowButton) addOptionRowButton.addEventListener('click', () => addOptionRow());
-
+    if (excelImportInput) {
+        excelImportInput.addEventListener('change', handleImportExcel);
+    }
     if (mediaUploadBox && fileInput) {
         mediaUploadBox.addEventListener('click', event => {
             if (event.target.closest('button') || event.target.closest('.image-wrapper')) return;

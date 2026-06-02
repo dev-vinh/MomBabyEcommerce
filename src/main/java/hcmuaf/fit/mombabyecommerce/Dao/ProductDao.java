@@ -7,6 +7,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import org.jdbi.v3.sqlobject.customizer.BindBean;
 
 import java.util.List;
 
@@ -489,4 +490,10 @@ public interface ProductDao {
             @Bind("keyword") String keyword,
             @Bind("hasKeyword") int hasKeyword
     );
+    @SqlUpdate("""
+        INSERT INTO products (name, description, isActive, categoryId, brandId, noOfViews, noOfSold, imageId, sku)
+        VALUES (:name, :description, COALESCE(:isActive, 1), :categoryId, :brandId, 0, 0, COALESCE(:imageId, NULL), :sku)
+    """)
+    @GetGeneratedKeys
+    int insertProductFromModel(@BindBean Product product);
 }

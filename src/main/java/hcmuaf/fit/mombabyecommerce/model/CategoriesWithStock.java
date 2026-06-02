@@ -1,8 +1,10 @@
 package hcmuaf.fit.mombabyecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.annotation.Nullable;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
-
+import org.jdbi.v3.core.mapper.reflect.JdbiConstructor;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoriesWithStock {
     private Integer id;
     private String name;
@@ -11,7 +13,7 @@ public class CategoriesWithStock {
 
     public CategoriesWithStock() {
     }
-
+    @JdbiConstructor
     public CategoriesWithStock(@ColumnName("id") @Nullable Integer id, @ColumnName("name") @Nullable String name, @ColumnName("totalStock") @Nullable Integer totalStock, @ColumnName("isActive") @Nullable Boolean isActive) {
         this.id = id;
         this.name = name;

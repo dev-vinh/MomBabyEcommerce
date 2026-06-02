@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // ==== Sắp xếp bảng ====
     let currentSortColumn = null;
     let currentSortOrder = 'asc';
 
