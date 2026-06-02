@@ -492,7 +492,7 @@ public interface ProductDao {
     );
     @SqlUpdate("""
         INSERT INTO products (name, description, isActive, categoryId, brandId, noOfViews, noOfSold, imageId, sku)
-        VALUES (:name, :description, COALESCE(:isActive, 1), :categoryId, :brandId, 0, 0, COALESCE(:imageId, NULL), :sku)
+        VALUES (:name, :description, COALESCE(:active, 1), :categoryId, :brandId, 0, 0, COALESCE(:imageId, NULL), :sku)
     """)
     @GetGeneratedKeys
     int insertProductFromModel(@BindBean Product product);
