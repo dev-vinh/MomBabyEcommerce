@@ -130,6 +130,8 @@ public class CheckoutController extends HttpServlet {
                 return;
             }
             Cart cart = (Cart) session.getAttribute("cart");
+            List<ProductCart> buyNowList = (List<ProductCart>) session.getAttribute("buyNowList");
+            boolean isBuyNow = buyNowList != null && !buyNowList.isEmpty();
 //            if (cart == null || cart.getData().isEmpty()) {
 //                response.getWriter().write("""
 //                        {"success":false,"message":"Giỏ hàng trống"}
@@ -137,6 +139,15 @@ public class CheckoutController extends HttpServlet {
 //
 //                return;
 //            }
+            if ((cart == null || cart.getData().isEmpty()) && (buyNowList == null || buyNowList.isEmpty())) {
+                response.getWriter().write("""
+            {
+                "success":false,
+                "message":"Không có sản phẩm thanh toán"
+            }
+            """);
+                return;
+            }
             BufferedReader reader = request.getReader();
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
@@ -221,9 +232,13 @@ public class CheckoutController extends HttpServlet {
                 od.setTotal(product.getPrice() * quantity);
 
                 flag &= orderDetailService.addOrderDetail(od);
-                cart.getData().remove(optionId);
+                if(!isBuyNow){ cart.getData().remove(optionId);}
             }
-            session.setAttribute("cart", cart);
+            if(isBuyNow){
+                session.removeAttribute("buyNowList");
+            }else{
+                session.setAttribute("cart", cart);
+            }
             if (codAmount > 30000000) {
                 codAmount = 29999999;
             }
