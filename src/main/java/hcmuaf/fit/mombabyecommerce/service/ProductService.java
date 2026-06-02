@@ -22,10 +22,12 @@ import java.util.stream.Collectors;
 public class ProductService {
     Jdbi jdbi;
     private ProductDao productDao;
+    private ImageDao imageDao;
 
     public ProductService(Jdbi jdbi) {
         this.jdbi = jdbi;
         this.productDao = jdbi.onDemand(ProductDao.class);
+        this.imageDao = jdbi.onDemand(ImageDao.class);
     }
 
     public Product getProductById(int productId) {
@@ -391,8 +393,13 @@ public class ProductService {
                         String generatedSku = "PRD-" + System.currentTimeMillis() + "-" + (int)(Math.random() * 1000);
                         product.setSku(generatedSku);
                     }
-                    int generatedId = dao.insertProductFromModel(product);
+                    if (product.getImageUrl() != null
+                            && !product.getImageUrl().trim().isEmpty()) {
 
+                        int imageId = imageDao.saveImage(product.getImageUrl());
+                        product.setImageId(imageId);
+                    }
+                    int generatedId = productDao.insertProductFromModel(product);
                     if (generatedId > 0) {
                         successCount++;
                     }
