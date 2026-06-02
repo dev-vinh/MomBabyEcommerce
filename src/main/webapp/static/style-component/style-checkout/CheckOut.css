@@ -490,3 +490,19 @@ a{
 .ads span{
     padding-left:5px;
 }
+/*// design button*/
+.voucher-box button {
+    padding: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+input #voucherCode{
+    border-radius: 5px;
+}
+#applyVoucher :hover{
+    background: #94e67e;
+}
+#voucherMessage{
+    color:red;
+    font-size:14px;
+}

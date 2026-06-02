@@ -25,7 +25,9 @@ public class OrderService {
                 order.getAddressId(),
                 order.getCardId(),
                 order.getCOD(),
-                order.getShippingFee()
+                order.getShippingFee(),
+                order.getVoucher_id(),
+                order.getDiscount_amount()
         );
     }
 

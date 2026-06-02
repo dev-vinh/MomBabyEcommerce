@@ -36,6 +36,7 @@ public class UserOrderController extends HttpServlet {
                 } else {
                     orders = orderService.getOrdersByUserId(userId);
                 }
+                System.out.println("orders"+orders);
 
                 int savings = orders.stream().mapToInt(Order::getTotal).sum();
                 roundedSavings = Math.round(savings / 1_000_000f);

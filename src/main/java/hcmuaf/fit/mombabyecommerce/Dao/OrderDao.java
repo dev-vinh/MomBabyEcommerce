@@ -16,8 +16,8 @@ import java.util.List;
 @RegisterConstructorMapper(Order.class)
 public interface OrderDao {
 
-    @SqlUpdate(value = "INSERT INTO orders(createAt, paymentStatus, orderStatus, userId, addressId, cardId, isCOD, shippingFee)" +
-            "VALUE (" + "  :createAt , :paymentStatus, :orderStatus , :userId, :addressId, :cardId, :isCOD,:shippingFee)")
+    @SqlUpdate(value = "INSERT INTO orders(createAt, paymentStatus, orderStatus, userId, addressId, cardId, isCOD, shippingFee, voucher_id,discount_amount)" +
+            "VALUE (" + "  :createAt , :paymentStatus, :orderStatus , :userId, :addressId, :cardId, :isCOD,:shippingFee,  :voucher_id, :discount_amount)")
     @GetGeneratedKeys
     Integer createOrder(
             @Bind("createAt") LocalDate createAt,
@@ -27,7 +27,9 @@ public interface OrderDao {
             @Bind("addressId") Integer addressId,
             @Bind("cardId") Integer cardId,
             @Bind("isCOD") Boolean isCOD,
-            @Bind("shippingFee") Integer shippingFee
+            @Bind("shippingFee") Integer shippingFee,
+            @Bind("voucher_id") Integer voucherId,
+            @Bind("discount_amount") Integer discount_amount
     );
 
 
@@ -43,8 +45,9 @@ public interface OrderDao {
             o.cardId,
             o.isCOD,
             o.shippingFee,
+            o.discount_amount,
             SUM(od.quantity) AS quantity,
-            (SUM(od.total) + o.shippingFee) AS total,
+            (SUM(od.total)) AS total,
             MIN(p.name) AS product_name,
             MIN(i.url) AS product_image
         FROM
@@ -63,6 +66,7 @@ public interface OrderDao {
             o.addressId,
             o.cardId,
             o.isCOD,
+            o.discount_amount,
             o.shippingFee
         ORDER BY
             o.createAt DESC
@@ -74,7 +78,8 @@ public interface OrderDao {
             "    o.id as id, o.createAt, o.paymentStatus, o.orderStatus,\n" +
             "    o.userId, o.addressId, o.cardId, o.isCOD,o.shippingFee as  shippingFee,\n " +
             " o.shippingId as shippingId , " +
-            "    sum(od.total) as total\n" +
+            " o.discount_amount, " +
+            "   sum(od.total) as total\n" +
             "from orders as o inner join order_detail as od\n" +
             "                            on o.id = od.orderId\n" +
             "where o.userId = :userId and o.id = :orderId\n" +
@@ -153,8 +158,9 @@ public interface OrderDao {
         o.cardId,
         o.isCOD,
         o.shippingFee,
+        o.discount_amount,
         SUM(od.quantity) AS quantity,
-        (SUM(od.total) + o.shippingFee) AS total,
+        (SUM(od.total)) AS total,
         MIN(p.name) AS product_name,
         MIN(i.url) AS product_image
     FROM
@@ -174,7 +180,8 @@ public interface OrderDao {
         o.addressId,
         o.cardId,
         o.isCOD,
-        o.shippingFee
+        o.shippingFee,
+        o.discount_amount
     ORDER BY
         o.createAt DESC
 """)

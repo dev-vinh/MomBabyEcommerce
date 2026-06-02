@@ -239,9 +239,22 @@
                         <span>Phí vận chuyển</span>
                         <span id="ship_fee" class="value">0 VND </span>
                     </div>
+                    <div class="voucher-box item_price">
+                        <input type="text" id="voucherCode" placeholder="Nhập mã giảm giá">
+                        <button id="applyVoucher">Áp dụng</button>
+                    </div>
+                    <div id="voucherResult"></div>
                 </div>
 
                 <div class="wrap_total">
+                    <div class="total_label">
+                        <span>Tạm tính</span>
+                        <span id="subTotal">0 VND</span>
+                    </div>
+                    <div class="total_label">
+                        <span>Giảm giá</span>
+                        <span id="discountAmount">0 VND</span>
+                    </div>
                     <div class="total_label">
                         <span>Tổng cộng </span>
                         <span id="total">0 VND </span>
