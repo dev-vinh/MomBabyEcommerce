@@ -47,6 +47,7 @@ public class CheckoutController extends HttpServlet {
     AddressService addressService = new AddressService(DBConnection.getJdbi());
     ProductService productService = new ProductService(DBConnection.getJdbi());
     UserService userService = new UserService(DBConnection.getJdbi());
+    VoucherService voucherService = new VoucherService(DBConnection.getJdbi());
     private int codAmount = 0;
     private StringBuilder content = new StringBuilder();
     private List<GHNItem> items = new ArrayList<>();
@@ -65,20 +66,22 @@ public class CheckoutController extends HttpServlet {
             return;
         }
         Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null || cart.getProducts().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/cart");
-            return;
-        }
-        List<ProductCart> buyNowList = (List<ProductCart>)
-                session.getAttribute("buyNowList");
-        if (buyNowList == null || buyNowList.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
-        }
-        String optionIdsParam = request.getParameter("optionIds");
+        List<ProductCart> buyNowList = (List<ProductCart>) session.getAttribute("buyNowList");
         List<ProductCart> productList = new ArrayList<>();
-        if (optionIdsParam != null && !optionIdsParam.trim().isEmpty()) {
-            String[] optionIds = optionIdsParam.split(",");
+        if (buyNowList != null && !buyNowList.isEmpty()) {
+            productList.addAll(buyNowList);
+        }
+        else {
+            if (cart == null || cart.getData().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            }
+            String optionIdsParam = request.getParameter("optionIds");
+            if (optionIdsParam == null || optionIdsParam.isBlank()) {
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            }
+            String[]optionIds = optionIdsParam.split(",");
             for (String optionIdStr : optionIds) {
                 try {
                     Integer optionId = Integer.parseInt(optionIdStr.trim());
@@ -122,7 +125,7 @@ public class CheckoutController extends HttpServlet {
         try {
             HttpSession session = request.getSession();
             Integer userId = (Integer) session.getAttribute("userId");
-
+            Voucher voucher = (Voucher) session.getAttribute("voucher");
             if (userId == null) {
                 response.getWriter().write("""
                         {"success":false,"message":"Vui lòng đăng nhập"}
@@ -166,6 +169,14 @@ public class CheckoutController extends HttpServlet {
                 throw new RuntimeException("Địa chỉ không hợp lệ");
             }
             Order order = new Order();
+            int discountAmount = jsonObject.get("discountAmount").getAsInt();
+            System.out.println(discountAmount);
+            if(voucher != null){
+                order.setVoucher_id(voucher.getId());
+                order.setDiscount_amount(discountAmount);
+            }
+            int finalTotal = jsonObject.get("finalTotal").getAsInt();
+            System.out.println("Final Total = " + finalTotal);
             order.setCreateAt(LocalDate.now());
             order.setOrderStatus(OrderStatus.PENDING);
             order.setShippingFee(shippingFee);
@@ -182,6 +193,11 @@ public class CheckoutController extends HttpServlet {
                 order.setPaymentStatus(PaymentStatus.PENDING);
             }
             Integer orderId = orderService.addOrder(order);
+            // Nếu có voucher thì giảm số lượng
+            if(voucher != null){
+                voucherService.decreaseQuantity(voucher.getId());
+            }
+            session.removeAttribute("voucher");
             if (orderId == null) {
                 throw new RuntimeException("Không thể tạo đơn hàng");
             }
@@ -229,7 +245,7 @@ public class CheckoutController extends HttpServlet {
                 od.setProductId(productId);
                 od.setOptionId(optionId);
                 od.setQuantity(quantity);
-                od.setTotal(product.getPrice() * quantity);
+                od.setTotal(finalTotal);
 
                 flag &= orderDetailService.addOrderDetail(od);
                 if(!isBuyNow){ cart.getData().remove(optionId);}
