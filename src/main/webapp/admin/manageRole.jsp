@@ -21,18 +21,12 @@
     <jsp:include page="header.jsp"/>
 </div>
 <div class="container">
-    <div class="left">
-        <div class="side_bar">
-            <jsp:include page="sidebar.jsp"/>
-        </div>
+    <div class="side_bar">
+        <jsp:include page="sidebar.jsp"/>
     </div>
 
     <div class="center">
-
-
         <div class="content">
-            <h2>Quản lý vai trò</h2>
-            <p class="subtitle">Tạo và quản lý các vai trò với quyền tuỳ chỉnh</p>
 
             <div class="content_header">
                 <button class="btn_add_role" id="addRoleBtn">

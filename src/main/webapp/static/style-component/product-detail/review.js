@@ -1,9 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initReviewEditFlow();
     initReviewStars();
     initReviewImagePreview();
     initReviewSubmit();
     initReviewLike();
 });
+
+function initReviewEditFlow() {
+    const summary = document.getElementById('my-review-summary');
+    const formPanel = document.getElementById('review-form-panel');
+    const editButton = document.getElementById('review-edit-toggle');
+    const cancelButton = document.getElementById('review-cancel-edit');
+    const form = document.getElementById('review-form');
+    const ratingInput = document.getElementById('rating-value');
+    const descriptionInput = document.getElementById('review-description');
+    const starBox = document.getElementById('user-rating');
+    const photoInput = document.getElementById('review-photo');
+    const photoPreview = document.getElementById('photo-preview');
+
+    if (!summary || !formPanel || !editButton || !form) return;
+
+    const initialRating = ratingInput ? ratingInput.value : '0';
+    const initialDescription = descriptionInput ? descriptionInput.value : '';
+
+    editButton.addEventListener('click', () => {
+        summary.classList.add('is-hidden');
+        formPanel.classList.remove('is-hidden');
+
+        if (descriptionInput) {
+            descriptionInput.focus();
+        }
+    });
+
+    if (cancelButton) {
+        cancelButton.addEventListener('click', () => {
+            if (ratingInput) {
+                ratingInput.value = initialRating;
+            }
+
+            if (descriptionInput) {
+                descriptionInput.value = initialDescription;
+            }
+
+            if (photoInput) {
+                photoInput.value = '';
+            }
+
+            if (photoPreview) {
+                photoPreview.innerHTML = '';
+            }
+
+            if (starBox) {
+                starBox.dispatchEvent(new CustomEvent('review:set-rating', {
+                    detail: {rating: initialRating}
+                }));
+            }
+
+            formPanel.classList.add('is-hidden');
+            summary.classList.remove('is-hidden');
+        });
+    }
+}
 
 function initReviewStars() {
     const starBox = document.getElementById('user-rating');
@@ -29,6 +86,12 @@ function initReviewStars() {
     });
 
     starBox.addEventListener('mouseleave', () => {
+        paintStars(stars, currentRating);
+    });
+
+    starBox.addEventListener('review:set-rating', event => {
+        currentRating = parseInt(event.detail.rating || '0');
+        ratingInput.value = currentRating;
         paintStars(stars, currentRating);
     });
 }
@@ -87,6 +150,7 @@ function initReviewSubmit() {
     form.addEventListener('submit', async e => {
         e.preventDefault();
 
+        const submitButton = form.querySelector('.review-submit-btn');
         const productId = form.dataset.productId;
         const rating = document.getElementById('rating-value').value;
         const description = document.getElementById('review-description').value.trim();
@@ -119,6 +183,10 @@ function initReviewSubmit() {
         }
 
         try {
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
             const response = await fetch(getContextPath() + '/add-review', {
                 method: 'POST',
                 body: formData
@@ -128,6 +196,11 @@ function initReviewSubmit() {
 
             if (!response.ok || result.status !== 'success') {
                 showReviewToast(result.message || 'Không thể gửi đánh giá', 'error');
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+
                 return;
             }
 
@@ -135,11 +208,15 @@ function initReviewSubmit() {
 
             setTimeout(() => {
                 window.location.reload();
-            }, 1000);
+            }, 500);
 
         } catch (error) {
             console.error(error);
             showReviewToast('Có lỗi xảy ra khi gửi đánh giá', 'error');
+
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
         }
     });
 }

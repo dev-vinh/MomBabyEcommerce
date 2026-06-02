@@ -9,7 +9,6 @@ body {
 /* Layout */
 .container {
     display: flex;
-    flex-direction: row;
 }
 
 .left {
@@ -29,8 +28,6 @@ body {
 
 .wrap_content {
     padding: 20px;
-    margin-top: 80px;
-    /*margin-left: 20px;*/
 }
 
 .content {
@@ -40,14 +37,6 @@ body {
 
 
 
-/* Common styles */
-.row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-}
 
 .header-title {
     font-size: 24px;

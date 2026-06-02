@@ -15,9 +15,10 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
 </head>
 <body>
-<div class="header">
+<div class="wrap_header">
     <jsp:include page="header.jsp"/>
 </div>
+
 <div class="container">
     <div class="left">
         <div class="side_bar">
@@ -27,9 +28,6 @@
 
     <div class="center">
         <div class="wrap_content">
-            <div class="row">
-                <h1 class="header-title">Đơn Hàng</h1>
-            </div>
             <div class="content">
                 <div class="header-container">
                     <div class="search-bar">
