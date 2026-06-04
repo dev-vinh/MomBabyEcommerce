@@ -29,5 +29,7 @@ public enum EPermission {
 
     VIEW_CUSTOMERS,
 
-    CUSTOMERS
+    CUSTOMERS,
+    CREATE_VOUCHER,
+    MANAGE_VOUCHER
 }
