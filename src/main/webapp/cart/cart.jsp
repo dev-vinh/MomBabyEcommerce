@@ -140,17 +140,15 @@
                                             </div>
 
                                             <div class="bill mid_align rol ">
-                                                <div class="discount">
-                                                    <span class="title">Nhập Mã Khuyến Mãi</span>
-
-                                                    <div class="wrap_input">
-                                                        <input id="voucher" type="text"
-                                                            placeholder="Voucher hoặc gift code ">
-                                                        <label for="voucher"></label>
-                                                        <button type="submit">Áp Dụng</button>
-                                                    </div>
-
-                                                </div>
+<%--                                                <div class="discount">--%>
+<%--                                                    <span class="title">Nhập Mã Khuyến Mãi</span>--%>
+<%--                                                    <div class="wrap_input">--%>
+<%--                                                        <input id="voucher" type="text"--%>
+<%--                                                            placeholder="Voucher hoặc gift code ">--%>
+<%--                                                        <label for="voucher"></label>--%>
+<%--                                                        <button type="submit">Áp Dụng</button>--%>
+<%--                                                    </div>--%>
+<%--                                                </div>--%>
 
 
                                                 <div class="summary col">

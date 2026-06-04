@@ -1,13 +1,28 @@
 let shipFee = 0;
-
+let totalPrice = 0;
+let discountAmount = 0;
+let finalTotal = 0;
 $(document).ready(async function () {
     await calculateBill();
     bindCheckout();
 });
 
+function updateTotal() {
+    const vat = totalPrice * 0.1;
+    const subTotal = totalPrice + vat + shipFee;
+    finalTotal = subTotal - discountAmount;
+
+    $('#before_tax').text(formatCurrency(totalPrice));
+    $('#subTotal').text(formatCurrency(subTotal));
+    $('#VAT').text(formatCurrency(vat));
+    $('#ship_fee').text(formatCurrency(shipFee));
+    $('#discountAmount').text(formatCurrency(discountAmount));
+    $('#total').text(formatCurrency(finalTotal));
+}
+
 async function calculateBill() {
     const productItems = $('.product-item');
-    let totalPrice = 0;
+    totalPrice = 0;
     const items = [];
 
     productItems.each(function () {
@@ -40,14 +55,7 @@ async function calculateBill() {
     console.log("Address:", address);
 
     shipFee = await getShipFee(items, address);
-
-    const vat = totalPrice * 0.1;
-    const finalTotal = totalPrice + vat + shipFee;
-
-    $('#before_tax').text(formatCurrency(totalPrice));
-    $('#VAT').text(formatCurrency(vat));
-    $('#ship_fee').text(formatCurrency(shipFee));
-    $('#total').text(formatCurrency(finalTotal));
+    updateTotal();
 }
 
 async function getShipFee(items, address) {
@@ -133,8 +141,10 @@ function bindCheckout() {
         const formData = {
             address_id: addressId,
             paymentMethod: paymentMethod,
+            finalTotal: finalTotal,
             products: products,
-            ship_fee: shipFee
+            ship_fee: shipFee,
+            discountAmount: discountAmount
         };
 
         console.log("Dữ liệu submit thanh toán:", formData);
@@ -175,3 +185,29 @@ function bindCheckout() {
 function formatCurrency(value) {
     return new Intl.NumberFormat('vi-VN').format(value) + ' VND';
 }
+// xử lý khi nhấn vào nút áp dụng ở phần voucher
+const message = $('#voucherResult');
+$('#applyVoucher').click(function () {
+    const code = $('#voucherCode').val();
+    $.ajax({
+        url: 'apply-voucher',
+        method: 'POST',
+        data: {code: code},
+
+        success: function(result){
+            console.log(result);
+            if(result.success){
+                message.css('color','green');
+                discountAmount = totalPrice * result.discountPercent /100;
+                discountAmount = Math.min(discountAmount, result.maxDiscount);
+
+                message.html(result.message +
+                    "<br>Bạn được giảm <strong>" + formatCurrency(discountAmount) + "</strong>");
+                updateTotal();
+            }else{
+                message.text(result.message);
+                message.css('color','red');
+            }
+        }
+    });
+})

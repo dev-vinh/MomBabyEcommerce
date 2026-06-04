@@ -32,6 +32,8 @@ public class Order implements Serializable {
 
     private Boolean isReviewed;
     private EPaymentMethod paymentMethod;
+    private Integer voucher_id;
+    private Integer discount_amount;
 
     @JdbiConstructor
     public Order(@ColumnName("id") @Nullable Integer id,
@@ -54,8 +56,9 @@ public class Order implements Serializable {
                  @ColumnName("shippingId") @Nullable String shippingId,
 
                  @ColumnName("paymentMethod") @Nullable EPaymentMethod paymentMethod,
-                 @ColumnName("isReviewed") @Nullable Boolean isReviewed
-
+                 @ColumnName("isReviewed") @Nullable Boolean isReviewed,
+                 @ColumnName("voucher_id") @Nullable Integer voucher_id,
+                 @ColumnName("discount_amount") @Nullable Integer discount_amount
     ){
         this.id = id;
         this.createAt = createAt;
@@ -74,7 +77,24 @@ public class Order implements Serializable {
         this.shippingId = shippingId;
         this.paymentMethod = paymentMethod;
         this.isReviewed = false;
+        this.voucher_id = voucher_id;
+        this.discount_amount = discount_amount;
 
+    }
+    public Integer getVoucher_id() {
+        return voucher_id;
+    }
+
+    public void setVoucher_id(Integer voucher_id) {
+        this.voucher_id = voucher_id;
+    }
+
+    public Integer getDiscount_amount() {
+        return discount_amount;
+    }
+
+    public void setDiscount_amount(Integer discount_amount) {
+        this.discount_amount = discount_amount;
     }
 
     public Order( ) {
@@ -235,6 +255,7 @@ public class Order implements Serializable {
                 ", shippingFee=" + shippingFee +
                 ", shippingId='" + shippingId + '\'' +
                 ", isReviewed=" + isReviewed +
+                ", discount_amount=" + discount_amount +
                 '}';
     }
 }
