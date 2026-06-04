@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -23,59 +24,74 @@
         <div class="content-container">
             <div class="form-container">
                 <div class="form-card">
-                    <div class="form-header"><h2>Thông Tin Voucher</h2>
+                    <div class="form-header"><h2>${voucher == null ? 'Thêm Voucher' : 'Chỉnh sửa Voucher'}</h2>
                         <p>Vui lòng nhập đầy đủ các thông tin bắt buộc để phát hành mã giảm giá.</p></div>
-                    <form id="voucherForm" class="voucher-form" method="post" action="${pageContext.request.contextPath}/admin/vouchers/add">
+                    <form id="voucherForm" class="voucher-form" method="post" action="${pageContext.request.contextPath}${voucher == null ?
+                                                                                        '/admin/vouchers/add' : '/admin/vouchers/edit'}">
+
                         <div class="form-main-grid"> <!-- Cột Trái -->
                             <div class="form-column">
+                                <input type="hidden" name="id" value="${voucher.id}">
                                 <div class="form-group"><label>Mã Voucher <span class="required">*</span></label>
 
-                                    <input type="text" id="voucherCode" name="code" placeholder="VD: SUMMER2026" required>
+                                    <input type="text" id="voucherCode" name="code" placeholder="VD: SUMMER2026" value="${voucher.code}" required>
 
                                     <small class="helper-text">Mã voucher nên ngắn gọn và dễ nhớ.</small></div>
                                 <div class="form-group"><label>Tên chiến dịch (Tùy chọn)</label> <input type="text"
                                                                                                         id="campaignName"
+                                                                                                        name="description"
                                                                                                         placeholder="Khuyến mãi hè 2026"
-                                                                                                        name="description">
+                                                                                                        value="${voucher.description}">
                                 </div>
                                 <div class="status-box">
                                     <div class="status-info"><strong>Trạng thái hoạt động</strong>
                                         <p>Cho phép sử dụng ngay sau khi lưu</p></div>
-                                    <label class="switch"> <input type="checkbox" id="isActive" name="active" checked>
+                                    <label class="switch"> <input type="checkbox" id="isActive" name="active"
+                                                                <c:if test="${voucher == null || voucher.active}">
+                                                                  checked</c:if>>
                                         <span class="slider round"></span> </label></div>
                             </div> <!-- Cột Phải -->
                             <div class="form-column">
                                 <div class="input-grid">
                                     <div class="form-group"><label>Phần trăm giảm (%) <span
                                             class="required">*</span></label>
-                                        <div class="input-with-suffix"><input type="number" id="discountPercent" name="discountPercent" min="1" max="100">
+                                        <div class="input-with-suffix">
+
+                                            <input type="number" id="discountPercent" name="discountPercent" min="1" max="100"
+                                                                              value="${voucher.discountPercent}">
+
                                             <span class="suffix">%</span></div>
                                     </div>
                                     <div class="form-group"><label>Số lượng phát hành <span
                                             class="required">*</span></label>
                                         <div class="input-with-suffix">
 
-                                            <input type="number" id="quantity" name="quantity">
+                                            <input type="number" id="quantity" name="quantity" value="${voucher.quantity}">
 
                                             <span class="material-icons-outlined suffix">confirmation_number</span></div>
                                     </div>
                                     <div class="form-group"><label>Giá trị đơn tối thiểu <span class="required">*</span></label>
-                                        <div class="input-with-suffix"><input type="number" value="0" min="0" id="minOrder" value="0 " name="minOrderAmount" required>
+                                        <div class="input-with-suffix"><input type="number" id="minOrder" name="minOrderAmount" min="0"
+                                                                              value="${voucher.minOrderAmount}" required>
+
                                             <span class="suffix">VND</span></div>
                                     </div>
                                     <div class="form-group"><label>Giảm tối đa</label>
-                                        <div class="input-with-suffix"><input type="number" id="maxDiscount" name="maxDiscount" value="0" required>
+                                        <div class="input-with-suffix"><input type="number" id="maxDiscount" name="maxDiscount"
+                                                                              value="${voucher.maxDiscount}" required>
 
                                             <span class="suffix">VND</span></div>
                                     </div>
                                 </div>
                                 <div class="date-grid">
                                     <div class="form-group"><label>Ngày bắt đầu</label>
-                                        <div class="input-with-suffix"><input type="date" id="startDate" name="startDate"required></div>
+                                        <div class="input-with-suffix"><input type="date" name="startDate"
+                                                                              value="${voucher.startDate.toLocalDate()}"></div>
 
                                     </div>
                                     <div class="form-group"><label>Ngày kết thúc</label>
-                                        <div class="input-with-suffix"><input type="date" id="endDate" name="endDate" required>
+                                        <div class="input-with-suffix"><input type="date" name="endDate"
+                                                                              value="${voucher.endDate.toLocalDate()}">
                                         </div>
                                     </div>
                                 </div>

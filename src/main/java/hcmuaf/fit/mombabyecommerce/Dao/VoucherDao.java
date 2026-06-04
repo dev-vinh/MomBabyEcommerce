@@ -60,4 +60,33 @@ VALUES(
 )
 """)
     void insertVoucher(@BindBean Voucher voucher);
+
+    @SqlUpdate("""
+    UPDATE vouchers
+    SET active = 0
+    WHERE id = :id
+    """)
+    void disableVoucher(@Bind("id") Integer id);
+
+    @SqlQuery("""
+    select *
+    from vouchers
+    where id = :id
+    """)
+    Voucher findById(@Bind("id") Integer id);
+
+    @SqlUpdate("""
+UPDATE vouchers
+SET code = :code,
+    discount_percent = :discountPercent,
+    min_order_amount = :minOrderAmount,
+    max_discount = :maxDiscount,
+    quantity = :quantity,
+    start_date = :startDate,
+    end_date = :endDate,
+    active = :active,
+    description = :description
+WHERE id = :id
+""")
+    void updateVoucher(@BindBean Voucher voucher);
 }

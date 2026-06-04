@@ -23,6 +23,8 @@ private VoucherService voucherService = new VoucherService(DBConnection.getJdbi(
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //lấy dữ liệu
+        Integer id = request.getParameter("id") == null ? null : Integer.parseInt(request.getParameter("id"));
+
         String code = request.getParameter("code");
         Integer discountPercent = Integer.parseInt(request.getParameter("discountPercent"));
 

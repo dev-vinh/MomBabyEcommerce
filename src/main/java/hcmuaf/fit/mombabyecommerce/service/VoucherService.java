@@ -41,4 +41,15 @@ public class VoucherService {
         voucherDao.insertVoucher( voucher);
     }
 
+    public void disableVoucher(Integer id) {
+        this.voucherDao.disableVoucher(id);
+    }
+
+    public Voucher findById(Integer id) {
+        return this.voucherDao.findById(id);
+    }
+
+    public void updateVoucher(Voucher voucher) {
+        voucherDao.updateVoucher(voucher);
+    }
 }

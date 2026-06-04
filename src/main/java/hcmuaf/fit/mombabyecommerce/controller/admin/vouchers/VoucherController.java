@@ -21,7 +21,7 @@ public class VoucherController extends HttpServlet {
 
         long activeVoucher = vouchers.stream().filter(v -> "Active".equals(v.getStatus())).count();
 
-        long expiredVoucher = vouchers.stream().filter(v -> "Expired".equals(v.getStatus())).count();
+        long expiredVoucher = vouchers.stream().filter(v -> "Disabled".equals(v.getStatus())).count();
 
         long scheduledVoucher = vouchers.stream().filter(v -> "Scheduled".equals(v.getStatus())).count();
 
