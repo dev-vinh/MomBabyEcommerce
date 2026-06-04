@@ -4,6 +4,8 @@ import hcmuaf.fit.mombabyecommerce.Dao.VoucherDao;
 import hcmuaf.fit.mombabyecommerce.model.Voucher;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
+
 public class VoucherService {
     private VoucherDao voucherDao;
     public VoucherService (Jdbi jdbi){
@@ -28,4 +30,15 @@ public class VoucherService {
     public int decreaseQuantity(Integer id){
         return voucherDao.decreaseQuantity(id);
     }
+    public List<Voucher> getAllVouchers(){
+        return this.voucherDao.getAllVouchers();
+    }
+
+    public int countAll() {
+        return voucherDao.getAllVouchers().size();
+    }
+    public void inserVoucher(Voucher voucher){
+        voucherDao.insertVoucher( voucher);
+    }
+
 }
