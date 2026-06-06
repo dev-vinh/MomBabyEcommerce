@@ -1,15 +1,17 @@
 const APP_CONTEXT = window.location.pathname.split('/admin/')[0];
 const ADMIN_BASE = `${APP_CONTEXT}/admin`;
 const API_BASE = `${APP_CONTEXT}/api`;
+const ADD_NEW_VARIANT_TYPE_VALUE = '__add_new_variant_type__';
 
 let currentProductId = null;
 let allVariants = [];
 let productImages = [];
 let tempImageCounter = 1;
 
-function $(id) {
+function byId(id) {
     return document.getElementById(id);
 }
+
 
 function notify(message, type = 'info') {
     if (typeof window.showToast === 'function') {
@@ -20,7 +22,7 @@ function notify(message, type = 'info') {
 }
 
 function setInputValue(id, value) {
-    const element = $(id);
+    const element = byId(id);
     if (!element) {
         console.warn(`Không tìm thấy element có id="${id}" trong addProduct.jsp`);
         return;
@@ -29,7 +31,7 @@ function setInputValue(id, value) {
 }
 
 function getInputValue(id) {
-    const element = $(id);
+    const element = byId(id);
     return element ? element.value : '';
 }
 
@@ -71,7 +73,7 @@ function getOptionCards() {
 }
 
 function validateSaveButton() {
-    const saveButton = $('saveButton');
+    const saveButton = byId('saveButton');
     if (!saveButton) return;
 
     try {
@@ -84,7 +86,7 @@ function validateSaveButton() {
 
 async function loadCategories() {
     const data = await fetchJson(`${ADMIN_BASE}/api/categories`);
-    const dropdown = $('categoryDropdown');
+    const dropdown = byId('categoryDropdown');
     if (!dropdown) return;
 
     dropdown.innerHTML = '<option value="">Chọn danh mục</option>';
@@ -98,7 +100,7 @@ async function loadCategories() {
 
 async function loadBrands() {
     const data = await fetchJson(`${ADMIN_BASE}/api/brand`);
-    const dropdown = $('vendor');
+    const dropdown = byId('vendor');
     if (!dropdown) return;
 
     dropdown.innerHTML = '<option value="">Chọn nhà cung cấp</option>';
@@ -122,17 +124,75 @@ async function loadVariantsByCategory(categoryId) {
     });
 }
 
-function populateVariantTypeSelect(select) {
+function populateVariantTypeSelect(select, selectedId = null) {
     select.innerHTML = '<option value="">Chọn thuộc tính</option>';
+
     allVariants.forEach(variant => {
         const option = document.createElement('option');
         option.value = variant.id;
-        option.dataset.name = variant.name;
         option.textContent = variant.name;
+        if (selectedId && String(selectedId) === String(variant.id)) {
+            option.selected = true;
+        }
         select.appendChild(option);
     });
-}
 
+    const addNewOption = document.createElement('option');
+    addNewOption.value = ADD_NEW_VARIANT_TYPE_VALUE;
+    addNewOption.textContent = '+ Thêm thuộc tính mới';
+    select.appendChild(addNewOption);
+}
+async function createVariantType(typeSelect) {
+    const categoryId = getInputValue('categoryDropdown');
+
+    if (!categoryId) {
+        notify('Vui lòng chọn danh mục trước khi thêm thuộc tính biến thể.', 'error');
+        typeSelect.value = '';
+        validateSaveButton();
+        return;
+    }
+
+    const input = prompt('Nhập tên thuộc tính biến thể mới, ví dụ: Màu sắc, Dung tích, Size:');
+    const name = input ? input.trim() : '';
+
+    if (!name) {
+        typeSelect.value = '';
+        validateSaveButton();
+        return;
+    }
+
+    try {
+        const result = await fetchJson(`${ADMIN_BASE}/api/variants`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify({
+                categoryId: Number(categoryId),
+                name
+            })
+        });
+
+        await loadVariantsByCategory(categoryId);
+
+        typeSelect.value = String(result.data?.id || '');
+
+        await loadVariantValues(typeSelect);
+
+        notify('Đã thêm thuộc tính biến thể. Bấm nút + để thêm giá trị cho thuộc tính này.', 'success');
+    } catch (error) {
+        console.error(error);
+        typeSelect.value = '';
+        notify(error.message || 'Không thể thêm thuộc tính biến thể.', 'error');
+        validateSaveButton();
+    }
+}
+async function handleVariantTypeChange(typeSelect) {
+    if (typeSelect.value === ADD_NEW_VARIANT_TYPE_VALUE) {
+        await createVariantType(typeSelect);
+        return;
+    }
+
+    await loadVariantValues(typeSelect);
+}
 async function loadVariantValues(typeSelect, selectedValueId = null, selectedValueText = null) {
     const attributeRow = typeSelect.closest('.attribute-row');
     if (!attributeRow) return;
@@ -304,7 +364,23 @@ function createAttributeRow(card, selectedTypeId = null, selectedValueId = null,
     const typeSelect = document.createElement('select');
     typeSelect.className = 'option-select variant-type-select';
     populateVariantTypeSelect(typeSelect);
+    const typeCell = document.createElement('div');
+    typeCell.className = 'variant-type-cell';
 
+    const typeActions = document.createElement('div');
+    typeActions.className = 'variant-type-actions';
+
+    const deleteTypeButton = document.createElement('button');
+    deleteTypeButton.type = 'button';
+    deleteTypeButton.className = 'variant-value-tool delete-template-type-button';
+    deleteTypeButton.textContent = '×';
+    deleteTypeButton.title = 'Xóa thuộc tính biến thể đang chọn';
+    deleteTypeButton.addEventListener('click', () => deleteVariantType(typeSelect));
+
+    typeActions.appendChild(deleteTypeButton);
+
+    typeCell.appendChild(typeSelect);
+    typeCell.appendChild(typeActions);
     const valueSelect = document.createElement('select');
     valueSelect.className = 'option-select variant-value-select';
     valueSelect.innerHTML = '<option value="">Chọn giá trị</option>';
@@ -354,10 +430,10 @@ function createAttributeRow(card, selectedTypeId = null, selectedValueId = null,
         validateSaveButton();
     });
 
-    typeSelect.addEventListener('change', () => loadVariantValues(typeSelect));
+    typeSelect.addEventListener('change', () => handleVariantTypeChange(typeSelect));
     valueSelect.addEventListener('change', validateSaveButton);
 
-    row.appendChild(typeSelect);
+    row.appendChild(typeCell);
     row.appendChild(valueCell);
     row.appendChild(removeButton);
 
@@ -370,7 +446,50 @@ function createAttributeRow(card, selectedTypeId = null, selectedValueId = null,
 
     return row;
 }
+async function deleteVariantType(typeSelect) {
+    if (!typeSelect.value || typeSelect.value === ADD_NEW_VARIANT_TYPE_VALUE) {
+        notify('Vui lòng chọn thuộc tính biến thể cần xóa.', 'error');
+        return;
+    }
 
+    const typeName = getSelectedOptionText(typeSelect);
+
+    const confirmed = confirm(
+        `Xóa thuộc tính biến thể "${typeName}"?\n\n` +
+        `Tất cả giá trị dropdown của "${typeName}" cũng sẽ bị xóa.\n` +
+        `Dữ liệu biến thể đã gắn với sản phẩm sẽ không bị xóa.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+        await fetchJson(`${ADMIN_BASE}/api/variants/${typeSelect.value}?scope=name`, {
+            method: 'DELETE'
+        });
+
+        const categoryId = getInputValue('categoryDropdown');
+
+        await loadVariantsByCategory(categoryId);
+
+        document.querySelectorAll('.attribute-row').forEach(row => {
+            const rowTypeSelect = row.querySelector('.variant-type-select');
+            const rowValueSelect = row.querySelector('.variant-value-select');
+
+            if (!rowTypeSelect || !rowValueSelect) return;
+
+            if (rowTypeSelect.value === typeSelect.value) {
+                rowTypeSelect.value = '';
+                rowValueSelect.innerHTML = '<option value="">Chọn giá trị</option>';
+            }
+        });
+
+        notify('Đã xóa thuộc tính biến thể.', 'success');
+        validateSaveButton();
+    } catch (error) {
+        console.error(error);
+        notify(error.message || 'Không thể xóa thuộc tính biến thể.', 'error');
+    }
+}
 function createOptionCard(option = {}) {
     const card = document.createElement('div');
     card.className = 'variant-card';
@@ -423,7 +542,7 @@ function createOptionCard(option = {}) {
 }
 
 function addOptionRow(option = {}) {
-    const container = $('optionRows');
+    const container = byId('optionRows');
     if (!container) return;
     const card = createOptionCard(option);
     container.appendChild(card);
@@ -460,7 +579,7 @@ function groupOptionsFromApi(options) {
 }
 
 function renderOptionRows(options) {
-    const container = $('optionRows');
+    const container = byId('optionRows');
     if (!container) return;
     container.innerHTML = '';
 
@@ -530,7 +649,7 @@ function gatherProductData(strict = true) {
     const categoryId = getInputValue('categoryDropdown');
     const brandId = getInputValue('vendor');
     const description = getInputValue('description').trim();
-    const isActive = $('statusSelect') ? $('statusSelect').value === 'true' : true;
+    const isActive = byId('statusSelect') ? byId('statusSelect').value === 'true' : true;
     const primaryImage = getPrimaryImage();
 
     if (strict) {
@@ -555,10 +674,10 @@ function gatherProductData(strict = true) {
 }
 
 function renderImagePreview() {
-    const container = $('imagePreviewContainer');
-    const uploadIcon = $('uploadIcon');
-    const dragDropText = $('dragDropText');
-    const previewImage = $('previewImage');
+    const container = byId('imagePreviewContainer');
+    const uploadIcon = byId('uploadIcon');
+    const dragDropText = byId('dragDropText');
+    const previewImage = byId('previewImage');
 
     if (!container) return;
     container.innerHTML = '';
@@ -649,7 +768,7 @@ function previewSelectedImages(files) {
         });
     });
 
-    if ($('fileInput')) $('fileInput').value = '';
+    if (byId('fileInput')) byId('fileInput').value = '';
     renderImagePreview();
 }
 
@@ -747,7 +866,7 @@ async function updateProduct(productData) {
 }
 
 async function saveProduct() {
-    const saveButton = $('saveButton');
+    const saveButton = byId('saveButton');
 
     try {
         if (saveButton) saveButton.disabled = true;
@@ -867,18 +986,18 @@ window.fetchVariantValues = function () {
 };
 
 window.addEventListener('DOMContentLoaded', async () => {
-    const uploadButton = $('uploadButton');
-    const fileInput = $('fileInput');
-    const saveButton = $('saveButton');
-    const categoryDropdown = $('categoryDropdown');
-    const addOptionRowButton = $('addOptionRowButton');
-    const mediaUploadBox = $('mediaUploadBox');
-    const excelImportInput = $('excelImportInput');
+    const uploadButton = byId('uploadButton');
+    const fileInput = byId('fileInput');
+    const saveButton = byId('saveButton');
+    const categoryDropdown = byId('categoryDropdown');
+    const addOptionRowButton = byId('addOptionRowButton');
+    const mediaUploadBox = byId('mediaUploadBox');
+    const excelImportInput = byId('excelImportInput');
 
     currentProductId = getProductIdFromUrl();
 
-    if ($('pageTitle')) {
-        $('pageTitle').textContent = currentProductId ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm';
+    if (byId('pageTitle')) {
+        byId('pageTitle').textContent = currentProductId ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm';
     }
 
     if (uploadButton && fileInput) uploadButton.addEventListener('click', event => {
@@ -912,7 +1031,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     ['productName', 'sku', 'vendor', 'statusSelect'].forEach(id => {
-        const element = $(id);
+        const element = byId(id);
         if (element) {
             element.addEventListener('input', validateSaveButton);
             element.addEventListener('change', validateSaveButton);

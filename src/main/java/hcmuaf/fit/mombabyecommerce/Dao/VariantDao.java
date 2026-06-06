@@ -13,36 +13,53 @@ import java.util.List;
 public interface VariantDao {
 
     @SqlQuery("""
-            SELECT a.id as id,
-                   a.categoryId as categoryId,
-                   a.name as name,
-                   CAST(NULL AS CHAR) as value,
-                   CAST(NULL AS SIGNED) as optionId
-            FROM attributes a
-            WHERE (:categoryId IS NULL OR a.categoryId = :categoryId)
-            ORDER BY a.name
-            """)
+        SELECT MIN(v.id) as id,
+               v.categoryId as categoryId,
+               v.name as name,
+               CAST(NULL AS CHAR) as value,
+               CAST(NULL AS SIGNED) as optionId
+        FROM variant v
+        WHERE (:categoryId IS NULL OR v.categoryId = :categoryId)
+          AND v.optionId IS NULL
+          AND v.name IS NOT NULL
+          AND TRIM(v.name) <> ''
+        GROUP BY v.categoryId, v.name
+        ORDER BY v.name
+        """)
     List<Variant> getVariantsByCategoryId(@Bind("categoryId") Integer categoryId);
+    @SqlQuery("""
+        SELECT COUNT(*)
+        FROM variant v
+        WHERE v.categoryId = :categoryId
+          AND v.optionId IS NULL
+          AND v.name IS NOT NULL
+          AND TRIM(v.name) COLLATE utf8mb4_unicode_ci = TRIM(:name) COLLATE utf8mb4_unicode_ci
+          AND (:excludeId IS NULL OR v.id <> :excludeId)
+        """)
+    int countTemplateNameExists(@Bind("categoryId") Integer categoryId,
+                                @Bind("name") String name,
+                                @Bind("excludeId") Integer excludeId);
 
     // Load giá trị mẫu cho dropdown. Chỉ lấy optionId IS NULL.
     @SqlQuery("""
-            SELECT MIN(v.id) as id,
-                   v.categoryId as categoryId,
-                   v.name as name,
-                   v.value as value,
-                   CAST(NULL AS SIGNED) as optionId
-            FROM attributes a
-            JOIN variant v
-                ON v.categoryId = a.categoryId
-               AND v.name COLLATE utf8mb4_unicode_ci = a.name COLLATE utf8mb4_unicode_ci
-            WHERE a.id = :attributeId
-              AND v.optionId IS NULL
-              AND v.value IS NOT NULL
-              AND TRIM(v.value) <> ''
-            GROUP BY v.categoryId, v.name, v.value
-            ORDER BY v.value
-            """)
-    List<Variant> getVariantValuesByAttributeId(@Bind("attributeId") Integer attributeId);
+        SELECT MIN(v.id) as id,
+               v.categoryId as categoryId,
+               v.name as name,
+               v.value as value,
+               CAST(NULL AS SIGNED) as optionId
+        FROM variant typeVariant
+        JOIN variant v
+          ON v.categoryId = typeVariant.categoryId
+         AND v.name COLLATE utf8mb4_unicode_ci = typeVariant.name COLLATE utf8mb4_unicode_ci
+        WHERE typeVariant.id = :typeId
+          AND typeVariant.optionId IS NULL
+          AND v.optionId IS NULL
+          AND v.value IS NOT NULL
+          AND TRIM(v.value) <> ''
+        GROUP BY v.categoryId, v.name, v.value
+        ORDER BY v.value
+        """)
+    List<Variant> getVariantValuesByAttributeId(@Bind("typeId") Integer typeId);
 
     @SqlQuery("""
             SELECT v.id as id,
@@ -57,28 +74,31 @@ public interface VariantDao {
     Variant getTemplateVariantById(@Bind("id") Integer id);
 
     @SqlQuery("""
-            SELECT COUNT(*)
-            FROM attributes a
-            JOIN variant v
-              ON v.categoryId = a.categoryId
-             AND v.name COLLATE utf8mb4_unicode_ci = a.name COLLATE utf8mb4_unicode_ci
-            WHERE a.id = :attributeId
-              AND v.optionId IS NULL
-              AND TRIM(v.value) COLLATE utf8mb4_unicode_ci = TRIM(:value) COLLATE utf8mb4_unicode_ci
-              AND (:excludeId IS NULL OR v.id <> :excludeId)
-            """)
-    int countTemplateValueExists(@Bind("attributeId") Integer attributeId,
+        SELECT COUNT(*)
+        FROM variant typeVariant
+        JOIN variant v
+          ON v.categoryId = typeVariant.categoryId
+         AND v.name COLLATE utf8mb4_unicode_ci = typeVariant.name COLLATE utf8mb4_unicode_ci
+        WHERE typeVariant.id = :typeId
+          AND typeVariant.optionId IS NULL
+          AND v.optionId IS NULL
+          AND v.value IS NOT NULL
+          AND TRIM(v.value) COLLATE utf8mb4_unicode_ci = TRIM(:value) COLLATE utf8mb4_unicode_ci
+          AND (:excludeId IS NULL OR v.id <> :excludeId)
+        """)
+    int countTemplateValueExists(@Bind("typeId") Integer typeId,
                                  @Bind("value") String value,
                                  @Bind("excludeId") Integer excludeId);
 
     @SqlUpdate("""
-            INSERT INTO variant (categoryId, name, value, optionId)
-            SELECT a.categoryId, a.name, :value, NULL
-            FROM attributes a
-            WHERE a.id = :attributeId
-            """)
+        INSERT INTO variant (categoryId, name, value, optionId)
+        SELECT categoryId, name, :value, NULL
+        FROM variant
+        WHERE id = :typeId
+          AND optionId IS NULL
+        """)
     @GetGeneratedKeys
-    int createTemplateValue(@Bind("attributeId") Integer attributeId,
+    int createTemplateValue(@Bind("typeId") Integer typeId,
                             @Bind("value") String value);
 
     @SqlUpdate("""
@@ -109,4 +129,22 @@ public interface VariantDao {
 
     @SqlUpdate("DELETE FROM variant WHERE optionId = :optionId")
     int deleteOptionVariants(@Bind("optionId") Integer optionId);
+    @SqlUpdate("""
+        INSERT INTO variant (categoryId, name, value, optionId)
+        VALUES (:categoryId, :name, NULL, NULL)
+        """)
+    @GetGeneratedKeys
+    int createTemplateName(@Bind("categoryId") Integer categoryId,
+                           @Bind("name") String name);
+    @SqlUpdate("""
+        DELETE v
+        FROM variant v
+        JOIN variant typeVariant
+          ON v.categoryId = typeVariant.categoryId
+         AND v.name COLLATE utf8mb4_unicode_ci = typeVariant.name COLLATE utf8mb4_unicode_ci
+        WHERE typeVariant.id = :typeId
+          AND typeVariant.optionId IS NULL
+          AND v.optionId IS NULL
+        """)
+    int deleteTemplateName(@Bind("typeId") Integer typeId);
 }

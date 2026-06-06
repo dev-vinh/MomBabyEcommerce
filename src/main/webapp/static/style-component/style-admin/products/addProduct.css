@@ -1172,3 +1172,28 @@ textarea:focus {
         justify-content: center;
     }
 }
+.variant-type-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.variant-type-cell .variant-type-select {
+    flex: 1;
+}
+
+.variant-type-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.delete-template-type-button {
+    color: #dc3545;
+}
+.attribute-row {
+     display: grid;
+     grid-template-columns: 1fr 1fr auto;
+     gap: 8px;
+     align-items: center;
+ }

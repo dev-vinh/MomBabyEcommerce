@@ -133,7 +133,10 @@
     </div>
   </div>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/global-toast.js?v=<%= System.currentTimeMillis() %>"></script>
 <script src="${pageContext.request.contextPath}/static/style-component/style-admin/products/addProduct.js?v=<%= System.currentTimeMillis() %>"></script>
+
+
 </body>
 </html>

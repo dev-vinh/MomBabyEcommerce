@@ -89,15 +89,27 @@ public class VariantController extends HttpServlet {
         try {
             JsonNode body = objectMapper.readTree(request.getReader());
 
+            Integer categoryId = readInteger(body, "categoryId");
+            String name = readText(body, "name");
+
             Integer attributeId = readInteger(body, "attributeId");
             String value = readText(body, "value");
 
-            Variant created = variantService.createTemplateValue(attributeId, value);
+            Variant created;
+            String message;
+
+            if (name != null && !name.trim().isEmpty()) {
+                created = variantService.createTemplateName(categoryId, name);
+                message = "Thêm thuộc tính biến thể thành công.";
+            } else {
+                created = variantService.createTemplateValue(attributeId, value);
+                message = "Thêm giá trị dropdown thành công.";
+            }
 
             writeResponse(response, new ResponseWrapper<>(
                     HttpServletResponse.SC_CREATED,
                     "success",
-                    "Thêm giá trị dropdown thành công.",
+                    message,
                     created
             ));
         } catch (IllegalArgumentException e) {
@@ -161,33 +173,23 @@ public class VariantController extends HttpServlet {
             throws ServletException, IOException {
 
         prepareJsonResponse(response);
-
         try {
             Integer id = parsePathId(request.getPathInfo());
+            String scope = request.getParameter("scope");
+            if ("name".equalsIgnoreCase(scope)) {
+                variantService.deleteTemplateName(id);
+                writeResponse(response, new ResponseWrapper<>(HttpServletResponse.SC_OK, "success", "Xóa thuộc tính biến thể thành công.", null));
+                return;
+            }
 
             variantService.deleteTemplateValue(id);
-
-            writeResponse(response, new ResponseWrapper<>(
-                    HttpServletResponse.SC_OK,
-                    "success",
-                    "Xóa giá trị dropdown thành công.",
-                    null
-            ));
+            writeResponse(response, new ResponseWrapper<>(HttpServletResponse.SC_OK, "success", "Xóa giá trị dropdown thành công.", null));
         } catch (IllegalArgumentException e) {
-            writeResponse(response, new ResponseWrapper<>(
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    "error",
-                    e.getMessage(),
-                    null
-            ));
+            writeResponse(response, new ResponseWrapper<>(HttpServletResponse.SC_BAD_REQUEST, "error", e.getMessage(), null));
         } catch (Exception e) {
+
             e.printStackTrace();
-            writeResponse(response, new ResponseWrapper<>(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "error",
-                    "Lỗi xóa giá trị dropdown: " + e.getMessage(),
-                    null
-            ));
+            writeResponse(response, new ResponseWrapper<>(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "error", "Lỗi xóa giá trị dropdown: " + e.getMessage(), null));
         }
     }
 

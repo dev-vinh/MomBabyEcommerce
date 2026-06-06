@@ -27,7 +27,7 @@ public class VariantService {
         String normalizedValue = value.trim();
 
         if (variantDao.countTemplateValueExists(attributeId, normalizedValue, null) > 0) {
-            throw new IllegalArgumentException("Giá trị biến thể này đã tồn tại trong dropdown.");
+            throw new IllegalArgumentException("Giá trị biến thể này đã tồn tại.");
         }
 
         int id = variantDao.createTemplateValue(attributeId, normalizedValue);
@@ -116,5 +116,56 @@ public class VariantService {
                 .map(Variant::getId)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy thuộc tính tương ứng của giá trị biến thể."));
+    }
+
+    public Variant createTemplateName(Integer categoryId, String name) {
+        if (categoryId == null || categoryId <= 0) {
+            throw new IllegalArgumentException("Vui lòng chọn danh mục trước khi thêm thuộc tính biến thể.");
+        }
+
+        String normalizedName = normalizeTemplateName(name);
+
+        if (variantDao.countTemplateNameExists(categoryId, normalizedName, null) > 0) {
+            throw new IllegalArgumentException("Tên thuộc tính biến thể này đã tồn tại trong danh mục.");
+        }
+
+        int id = variantDao.createTemplateName(categoryId, normalizedName);
+        Variant created = variantDao.getTemplateVariantById(id);
+
+        if (created == null) {
+            throw new IllegalStateException("Không thể tạo thuộc tính biến thể.");
+        }
+
+        return created;
+    }
+    private String normalizeTemplateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên thuộc tính biến thể không được để trống.");
+        }
+
+        String normalizedName = name.trim();
+
+        if (normalizedName.length() > 50) {
+            throw new IllegalArgumentException("Tên thuộc tính biến thể không được vượt quá 50 ký tự.");
+        }
+
+        return normalizedName;
+    }
+    public void deleteTemplateName(Integer typeId) {
+        if (typeId == null || typeId <= 0) {
+            throw new IllegalArgumentException("Mã thuộc tính biến thể không hợp lệ.");
+        }
+
+        Variant current = variantDao.getTemplateVariantById(typeId);
+
+        if (current == null || current.getName() == null || current.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy thuộc tính biến thể cần xóa.");
+        }
+
+        int deleted = variantDao.deleteTemplateName(typeId);
+
+        if (deleted == 0) {
+            throw new IllegalStateException("Không thể xóa thuộc tính biến thể.");
+        }
     }
 }
