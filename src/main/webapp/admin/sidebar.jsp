@@ -145,6 +145,27 @@
                     </div>
                 </li>
             </c:if>
+            <li class="menu_item">
+                <div class="wrap_menu_item">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Vouchers</span>
+                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
+                </div>
+                <ul class="submenu">
+                    <c:if test="${permissions != null and
+                        (permissions.contains('MANAGE_VOUCHER'))}">
+                        <li class="submenu_item">
+                            <a href="/admin/vouchers">Quản lý Voucher</a>
+                        </li>
+                    </c:if>
+                    <c:if test="${permissions != null and
+                        (permissions.contains('CREATE_VOUCHER'))}">
+                        <li class="submenu_item">
+                            <a href="/admin/vouchers/add">Thêm Voucher</a>
+                        </li>
+                    </c:if>
+                </ul>
+            </li>
 
         </ul>
     </nav>

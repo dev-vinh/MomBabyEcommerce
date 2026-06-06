@@ -27,6 +27,7 @@ public class Voucher implements Serializable {
 
     private Boolean active;
 
+    private String description;
     public Voucher() {
     }
 
@@ -54,7 +55,9 @@ public class Voucher implements Serializable {
             @ColumnName("end_date")
             @Nullable LocalDateTime endDate,
             @ColumnName("active")
-            @Nullable Boolean active
+            @Nullable Boolean active,
+            @ColumnName("description")
+            @Nullable String description
     ) {
         this.id = id;
         this.code = code;
@@ -65,6 +68,15 @@ public class Voucher implements Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.active = active;
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getId() {
@@ -138,7 +150,22 @@ public class Voucher implements Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
-
+    public String getStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        if (!Boolean.TRUE.equals(active)) {
+            return "Disabled";
+        }
+        if (quantity != null && quantity <= 0) {
+            return "Out of Stock";
+        }
+        if (startDate != null && now.isBefore(startDate)) {
+            return "Scheduled";
+        }
+        if (endDate != null && now.isAfter(endDate)) {
+            return "Expired";
+        }
+        return "Active";
+    }
     @Override
     public String toString() {
         return "Voucher{" +
