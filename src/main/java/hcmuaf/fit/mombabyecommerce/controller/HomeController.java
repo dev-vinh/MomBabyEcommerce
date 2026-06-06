@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "HomeController", value = "/home")
+@WebServlet(name = "HomeController",  value = "/home")
 public class HomeController extends HttpServlet {
     private final BannerService bannerService = new BannerService(DBConnection.getJdbi());
     @Override

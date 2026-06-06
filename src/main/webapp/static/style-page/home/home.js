@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function checkSession() {
         try {
-            const res = await fetch("/api/check-session", {
+            const res = await fetch((window.contextPath || "") + "/api/check-session", {
                 method: "GET",
                 credentials: "include"
             });

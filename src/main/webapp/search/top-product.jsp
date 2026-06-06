@@ -91,7 +91,7 @@
 <%--            });--%>
 <%--    }--%>
 <%--</script>--%>
-<script src="${pageContext.request.contextPath}/static/style-component/style_product/TopProduct.js"></script>
+<script src="${pageContext.rhost.dev=https://equest.contextPath}/static/style-component/style_product/TopProduct.js"></script>
 
 
 </body>

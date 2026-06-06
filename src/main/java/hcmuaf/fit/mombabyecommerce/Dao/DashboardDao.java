@@ -127,18 +127,18 @@ public interface DashboardDao {
     ORDER BY DATE(o.createAt)""")
     List<DashboardStats> getCurrentWeekRevenueChart();
 
-    @SqlQuery("""
-    SELECT
-        DAY(o.createAt) as label,
-        COALESCE(SUM(od.total),0) as revenue
-    FROM orders o
-    JOIN order_detail od ON o.id = od.orderId
-    WHERE YEAR(o.createAt)=YEAR(CURDATE())
-      AND MONTH(o.createAt)=MONTH(CURDATE())
-      AND o.paymentStatus='PAID'
-    GROUP BY DAY(o.createAt)
-    ORDER BY DAY(o.createAt)""")
-    List<DashboardStats> getCurrentMonthRevenueChart();
+            @SqlQuery("""
+            SELECT
+                DAY(o.createAt) as label,
+                COALESCE(SUM(od.total),0) as revenue
+            FROM orders o
+            JOIN order_detail od ON o.id = od.orderId
+            WHERE YEAR(o.createAt)=YEAR(CURDATE())
+              AND MONTH(o.createAt)=MONTH(CURDATE())
+              AND o.paymentStatus='PAID'
+            GROUP BY DAY(o.createAt)
+            ORDER BY DAY(o.createAt)""")
+            List<DashboardStats> getCurrentMonthRevenueChart();
 
     @SqlQuery("""
     SELECT
