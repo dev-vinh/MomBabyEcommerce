@@ -83,9 +83,9 @@ public class FacebookCallbackServlet extends HttpServlet {
                 User existing = dao.getUserByFacebookId(facebookId);
 
                 // nếu login
-                if (!isRegister) {
-                    return existing;
-                }
+//                if (!isRegister) {
+//                    return existing;
+//                }
 
                 // trường hợp đăng ký
                 if (existing != null) {
