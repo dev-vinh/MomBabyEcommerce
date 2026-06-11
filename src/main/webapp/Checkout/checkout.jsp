@@ -23,6 +23,7 @@
           href="${pageContext.request.contextPath}/static/style-component/style-cart/CartItem.css">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/static/style-component/style-checkout/CheckOut.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
     <style>
         #price {
             margin-bottom: 5px;

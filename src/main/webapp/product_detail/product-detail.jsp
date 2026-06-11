@@ -177,15 +177,6 @@
 
             </div>
 
-            <!-- SHORT DESC -->
-            <div class="short-description">
-
-                <c:if test="${not empty descriptions}">
-                    ${descriptions[0]}
-                </c:if>
-
-            </div>
-
 
             <div class="product-info-box">
 

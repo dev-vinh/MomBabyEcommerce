@@ -142,7 +142,7 @@
                             </td>
                             <td>
                                 <div class="row-actions">
-                                    <a href="${pageContext.request.contextPath}/admin/vouchers/edit?id=${voucher.id}">
+                                    <a href="${pageContext.request.contextPath}/admin/vouchers-edit?id=${voucher.id}">
                                         <span class="material-icons-outlined">edit</span></a>
                                     <a class="delete-btn" href="${pageContext.request.contextPath}/admin/vouchers/delete?id=${voucher.id}">
                                         <span class="material-icons-outlined">delete</span>

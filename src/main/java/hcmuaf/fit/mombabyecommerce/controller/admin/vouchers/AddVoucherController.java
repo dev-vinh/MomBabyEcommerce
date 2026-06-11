@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@WebServlet("/admin/vouchers/add")
+@WebServlet("/admin/vouchers-add")
 public class AddVoucherController extends HttpServlet {
 private VoucherService voucherService = new VoucherService(DBConnection.getJdbi());
     @Override

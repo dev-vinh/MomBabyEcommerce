@@ -10,7 +10,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
 
-@WebServlet(name = "EditVoucherController", value = "/admin/vouchers/edit")
+@WebServlet(name = "EditVoucherController", value = "/admin/vouchers-edit")
 public class EditVoucherController extends HttpServlet {
 
     VoucherService voucherService = new VoucherService(DBConnection.getJdbi());

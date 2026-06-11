@@ -27,6 +27,10 @@ public interface BrandDao {
     @SqlUpdate("DELETE FROM brands WHERE id = :id")
     void deleteBrand(@Bind("id") Integer id);
 
-
+    @SqlQuery("SELECT DISTINCT b.* FROM brands b " +
+            "JOIN products p ON p.brandId = b.id " +
+            "WHERE p.categoryId = :categoryId AND b.isActive = 1 " +
+            "ORDER BY b.name")
+    List<Brand> getBrandsByCategory(@Bind("categoryId") Integer categoryId);
 
 }

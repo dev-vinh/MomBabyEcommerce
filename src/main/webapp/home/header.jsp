@@ -33,11 +33,6 @@
 
   <nav class="navbar">
     <ul>
-      <li>
-        <a href="${pageContext.request.contextPath}/search-category?categoryId=1">
-          Combo Đồ sơ sinh
-        </a>
-      </li>
       <c:choose>
         <c:when test="${not empty categories}">
           <c:forEach var="c" items="${categories}">
@@ -48,7 +43,6 @@
             </li>
           </c:forEach>
         </c:when>
-
         <c:otherwise>
 
           <li>
@@ -159,13 +153,12 @@
         <div class="keyword-suggestions">
           <span class="keyword-label">Gợi ý:</span>
 
-          <button class="keyword-tag" onclick="searchKeyword('Bỉm tã')">Bỉm tã</button>
-
-          <button class="keyword-tag" onclick="searchKeyword('Máy hâm sữa')">Máy hâm sữa</button>
-          <button class="keyword-tag" onclick="searchKeyword('Sữa bột')">Sữa bột</button>
-          <button class="keyword-tag" onclick="searchKeyword('Quần áo')">Quần áo</button>
-          <button class="keyword-tag" onclick="searchKeyword('Bình sữa')">Bình sữa</button>
-          <button class="keyword-tag" onclick="searchKeyword('Khăn ướt')">Khăn ướt</button>
+          <button class="keyword-tag" onclick="searchKeyword('Bỉm')">Bỉm</button>
+          <button class="keyword-tag" onclick="searchKeyword('Tã')">Tã</button>
+          <button class="keyword-tag" onclick="searchKeyword('Bánh')">Bánh</button>
+          <button class="keyword-tag" onclick="searchKeyword('Áo thun')">Áo thun</button>
+          <button class="keyword-tag" onclick="searchKeyword('Combo')">Combo</button>
+          <button class="keyword-tag" onclick="searchKeyword('Xe')">Xe</button>
         </div>
 
         <div id="suggestion-box"  style="display:none;">

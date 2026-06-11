@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/style-admin/vouchers/addVoucher.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/style-component/global-typography.css">
+
 </head>
 <body>
 <div class="wrap_header">
@@ -27,7 +29,7 @@
                     <div class="form-header"><h2>${voucher == null ? 'Thêm Voucher' : 'Chỉnh sửa Voucher'}</h2>
                         <p>Vui lòng nhập đầy đủ các thông tin bắt buộc để phát hành mã giảm giá.</p></div>
                     <form id="voucherForm" class="voucher-form" method="post" action="${pageContext.request.contextPath}${voucher == null ?
-                                                                                        '/admin/vouchers/add' : '/admin/vouchers/edit'}">
+                                                                                        '/admin/voucher-add' : '/admin/vouchers-edit'}">
 
                         <div class="form-main-grid"> <!-- Cột Trái -->
                             <div class="form-column">

@@ -38,5 +38,5 @@ document.addEventListener("click", function (e) {
 });
 const addVoucherBtn = document.getElementById("addVoucherBtn");
 addVoucherBtn?.addEventListener("click", () => {
-    window.location.href = "/admin/vouchers/add";
+    window.location.href = "/admin/vouchers-add";
 });
